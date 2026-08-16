@@ -1,0 +1,32 @@
+[
+    {
+        "id": "f1",
+        "title": "Free Shipping",
+        "image": "/img/features/f1.png"
+    },
+    {
+        "id": "f2",
+        "title": "Online Order",
+        "image": "/img/features/f2.png"
+    },
+    {
+        "id": "f3",
+        "title": "Save Money",
+        "image": "/img/features/f3.png"
+    },
+    {
+        "id": "f4",
+        "title": "Promotions",
+        "image": "/img/features/f4.png"
+    },
+    {
+        "id": "f5",
+        "title": "Happy sell",
+        "image": "/img/features/f5.png"
+    },
+    {
+        "id": "f6",
+        "title": "24/7 Support",
+        "image": "/img/features/f6.png"
+    }
+]

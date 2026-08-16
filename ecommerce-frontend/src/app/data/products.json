@@ -1,0 +1,146 @@
+[
+  {
+    "id": "f1",
+    "brand": "Adidas",
+    "title": "Cartoon Astronaut T-Shirts",
+    "image": "/img/products/f1.jpg",
+    "rating": 5,
+    "price": 78,
+    "category": "featured"
+  },
+  {
+    "id": "f2",
+    "brand": "Nike",
+    "title": "Classic Windbreaker Jacket",
+    "image": "/img/products/f2.jpg",
+    "rating": 5,
+    "price": 120,
+    "category": "featured"
+  },
+  {
+    "id": "f3",
+    "brand": "H&M",
+    "title": "Graphic Cotton T-Shirt",
+    "image": "/img/products/f3.jpg",
+    "rating": 5,
+    "price": 25,
+    "category": "featured"
+  },
+  {
+    "id": "f4",
+    "brand": "Uniqlo",
+    "title": "Premium Oxford Shirt",
+    "image": "/img/products/f4.jpg",
+    "rating": 5,
+    "price": 45,
+    "category": "featured"
+  },
+  {
+    "id": "f5",
+    "brand": "Ralph Lauren",
+    "title": "Classic Fit Polo Shirt",
+    "image": "/img/products/f5.jpg",
+    "rating": 5,
+    "price": 85,
+    "category": "featured"
+  },
+  {
+    "id": "f6",
+    "brand": "Zara",
+    "title": "Oversized Urban T-Shirt",
+    "image": "/img/products/f6.jpg",
+    "rating": 5,
+    "price": 35,
+    "category": "featured"
+  },
+  {
+    "id": "f7",
+    "brand": "Adidas",
+    "title": "TechFit Workout T-Shirt",
+    "image": "/img/products/f7.jpg",
+    "rating": 5,
+    "price": 60,
+    "category": "featured"
+  },
+  {
+    "id": "f8",
+    "brand": "H&M",
+    "title": "Slim Fit Linen Shirt",
+    "image": "/img/products/f8.jpg",
+    "rating": 5,
+    "price": 139,
+    "category": "featured"
+  },
+  {
+    "id": "n1",
+    "brand": "Adidas",
+    "title": "Cartoon Astronaut T-Shirts",
+    "image": "/img/products/n1.jpg",
+    "rating": 5,
+    "price": 78,
+    "category": "newArrival"
+  },
+  {
+    "id": "n2",
+    "brand": "Nike",
+    "title": "Classic Windbreaker Jacket",
+    "image": "/img/products/n2.jpg",
+    "rating": 5,
+    "price": 120,
+    "category": "newArrival"
+  },
+  {
+    "id": "n3",
+    "brand": "H&M",
+    "title": "Graphic Cotton T-Shirt",
+    "image": "/img/products/n3.jpg",
+    "rating": 5,
+    "price": 25,
+    "category": "newArrival"
+  },
+  {
+    "id": "n4",
+    "brand": "Uniqlo",
+    "title": "Premium Oxford Shirt",
+    "image": "/img/products/n4.jpg",
+    "rating": 5,
+    "price": 45,
+    "category": "newArrival"
+  },
+  {
+    "id": "n5",
+    "brand": "Ralph Lauren",
+    "title": "Classic Fit Polo Shirt",
+    "image": "/img/products/n5.jpg",
+    "rating": 5,
+    "price": 85,
+    "category": "newArrival"
+  },
+  {
+    "id": "n6",
+    "brand": "Zara",
+    "title": "Oversized Urban T-Shirt",
+    "image": "/img/products/n6.jpg",
+    "rating": 5,
+    "price": 35,
+    "category": "newArrival"
+  },
+  {
+    "id": "n7",
+    "brand": "Adidas",
+    "title": "TechFit Workout T-Shirt",
+    "image": "/img/products/n7.jpg",
+    "rating": 5,
+    "price": 60,
+    "category": "newArrival"
+  },
+  {
+    "id": "n8",
+    "brand": "H&M",
+    "title": "Slim Fit Linen Shirt",
+    "image": "/img/products/n8.jpg",
+    "rating": 5,
+    "price": 139,
+    "category": "newArrival"
+  }
+]

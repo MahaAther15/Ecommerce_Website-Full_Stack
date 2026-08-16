@@ -1,0 +1,68 @@
+[
+  {
+    "id": 1,
+    "name": "Wireless Bluetooth Headphones",
+    "description": "Premium noise-cancelling headphones with 30-hour battery life and superior sound quality.",
+    "category": "Electronics",
+    "price": 129.99,
+    "originalPrice": 199.99,
+    "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+    "stock": "in-stock",
+    "discount": 35
+  },
+  {
+    "id": 2,
+    "name": "Classic Leather Watch",
+    "description": "Elegant leather strap watch with stainless steel case and water resistance up to 50m.",
+    "category": "Fashion",
+    "price": 89.99,
+    "originalPrice": 120.00,
+    "image": "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?ixlib=rb-4.0.3&auto=format&fit=crop&w=2080&q=80",
+    "stock": "low-stock",
+    "discount": 25
+  },
+  {
+    "id": 3,
+    "name": "Organic Cotton T-Shirt",
+    "description": "Soft, breathable organic cotton t-shirt available in multiple colors. Sustainable and comfortable.",
+    "category": "Clothing",
+    "price": 24.99,
+    "originalPrice": 34.99,
+    "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=2080&q=80",
+    "stock": "in-stock",
+    "discount": 29
+  },
+  {
+    "id": 4,
+    "name": "Smart Fitness Tracker",
+    "description": "Track your steps, heart rate, sleep, and more with this advanced fitness tracker.",
+    "category": "Fitness",
+    "price": 79.99,
+    "originalPrice": 99.99,
+    "image": "https://images.unsplash.com/photo-1576243345690-4e4b79b63288?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+    "stock": "out-of-stock",
+    "discount": 20
+  },
+  {
+    "id": 5,
+    "name": "Stainless Steel Water Bottle",
+    "description": "Keep your drinks hot or cold for hours with this double-walled insulated water bottle.",
+    "category": "Home & Kitchen",
+    "price": 34.99,
+    "originalPrice": 49.99,
+    "image": "https://images.unsplash.com/photo-1523362628745-0c100150b504?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+    "stock": "in-stock",
+    "discount": 30
+  },
+  {
+    "id": 6,
+    "name": "Wireless Charging Pad",
+    "description": "Fast wireless charging pad compatible with all Qi-enabled devices. Sleek and compact design.",
+    "category": "Electronics",
+    "price": 29.99,
+    "originalPrice": 39.99,
+    "image": "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+    "stock": "in-stock",
+    "discount": 25
+  }
+]
