@@ -1,8 +1,7 @@
-import Navbar from "./Components/Layout/Navbar";
-import Footer from "./Components/Layout/Footer";
+import MainLayout from "./Components/Layout/MainLayout";
 import "./globals.css";
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
@@ -16,9 +15,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
       </head>
       <body className="flex flex-col min-h-screen">
-        <Navbar />
-        <main className="flex-grow">{children}</main>
-        <Footer />
+        <MainLayout>{children}</MainLayout>
       </body>
     </html>
   );

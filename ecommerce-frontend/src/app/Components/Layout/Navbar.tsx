@@ -45,6 +45,17 @@ export default function Navbar() {
               <i className="far fa-shopping-bag"></i>
             </Link>
           </li>
+          <li id="user">
+            <Link
+              className={
+                pathname === "/login" || pathname === "/register" ? "active" : ""
+              }
+              href="/login"
+              title="Login / Register"
+            >
+              <i className="far fa-user"></i>
+            </Link>
+          </li>
           <a href="#" id="close">
             <i className="far fa-times"></i>
           </a>
@@ -53,6 +64,9 @@ export default function Navbar() {
       <div className="mobile">
         <Link href="/cart">
           <i className="far fa-shopping-bag"></i>
+        </Link>
+        <Link href="/login" style={{ marginLeft: "15px" }}>
+          <i className="far fa-user"></i>
         </Link>
         <i id="bar" className="fas fa-outdent"></i>
       </div>
