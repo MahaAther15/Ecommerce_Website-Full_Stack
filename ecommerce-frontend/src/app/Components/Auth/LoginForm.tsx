@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { loginApi, setAuthSession } from "@/app/libs/authApi";
+import { loginApi, googleLoginApi, setAuthSession } from "@/app/libs/authApi";
 import Link from "next/link";
 import { LoginFormData, AuthFormErrors } from "@/app/types/auth";
+import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from "@react-oauth/google";
 
 export default function LoginForm() {
   const [formData, setFormData] = useState<LoginFormData>({
@@ -71,6 +72,36 @@ export default function LoginForm() {
       }, 1200);
     } catch (err: any) {
       setErrors({ general: err.message || "Failed to login." });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
+
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+    try {
+      if (!credentialResponse.credential) {
+        throw new Error("No Google credential received.");
+      }
+
+      setLoading(true);
+      setErrors({});
+      setSuccessMessage(null);
+
+      // Call backend Google Login API
+      const response = await googleLoginApi(credentialResponse.credential);
+
+      // Save token and user details to localStorage
+      setAuthSession(response);
+
+      setSuccessMessage(`Google sign in successful! Welcome, ${response.fullName}. Redirecting...`);
+
+      setTimeout(() => {
+        router.push("/");
+      }, 1200);
+    } catch (err: any) {
+      setErrors({ general: err.message || "Google authentication failed. Please try again." });
     } finally {
       setLoading(false);
     }
@@ -396,12 +427,8 @@ export default function LoginForm() {
                 />
                 Remember me
               </label>
-              <a
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  alert("Password reset feature coming soon!");
-                }}
+              <Link
+                href="/forgot-password"
                 style={{
                   color: "#088178",
                   fontWeight: "600",
@@ -409,7 +436,7 @@ export default function LoginForm() {
                 }}
               >
                 Forgot Password?
-              </a>
+              </Link>
             </div>
 
             {/* Submit Button */}
@@ -450,29 +477,27 @@ export default function LoginForm() {
           </div>
 
           {/* Secondary / Social Sign in */}
-          <button
-            type="button"
-            onClick={() => alert("Google sign in coming soon!")}
+          <div
             style={{
-              width: "100%",
-              padding: "12px",
-              backgroundColor: "#ffffff",
-              color: "#333333",
-              border: "1px solid #dcdcdc",
-              borderRadius: "8px",
-              fontSize: "14px",
-              fontWeight: "600",
-              cursor: "pointer",
               display: "flex",
-              alignItems: "center",
               justifyContent: "center",
-              gap: "10px",
-              transition: "border-color 0.2s ease",
+              width: "100%",
             }}
           >
-            <i className="fab fa-google" style={{ color: "#4285F4" }}></i>
-            Sign in with Google
-          </button>
+            <GoogleOAuthProvider clientId={googleClientId}>
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={() => {
+                  setErrors({ general: "Google sign-in was unsuccessful. Please try again." });
+                }}
+                theme="outline"
+                size="large"
+                shape="rectangular"
+                width="350"
+                text="continue_with"
+              />
+            </GoogleOAuthProvider>
+          </div>
 
           {/* Footer Navigation */}
           <p

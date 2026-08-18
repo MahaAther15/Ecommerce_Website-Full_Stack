@@ -6,9 +6,14 @@ import Footer from "./Footer";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isAuthPage = pathname === "/login" || pathname === "/register";
+  const isNoHeaderFooterPage =
+    pathname === "/login" ||
+    pathname === "/register" ||
+    pathname === "/profile" ||
+    pathname === "/forgot-password" ||
+    pathname === "/reset-password";
 
-  if (isAuthPage) {
+  if (isNoHeaderFooterPage) {
     return <main style={{ height: "100vh", overflow: "hidden" }}>{children}</main>;
   }
 

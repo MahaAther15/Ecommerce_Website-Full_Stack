@@ -86,11 +86,35 @@ button.white {
   left: 0;
 }
 
+.nav-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 #nav-bar {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 0;
+  padding: 0;
+}
 
+.nav-icons {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-icons a {
+  text-decoration: none;
+  color: black;
+  font-size: 16px;
+  transition: 0.3s ease;
+}
+
+.nav-icons a:hover {
+  color: #088178;
 }
 
 #nav-bar li {

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using ecommerce_backend.Models;
 namespace ecommerce_backend.Services.Interfaces{
     // this method is used to generate jwt token
@@ -6,5 +7,7 @@ namespace ecommerce_backend.Services.Interfaces{
     public interface IJwtTokenGenerator
     {
         string GenerateToken(User user);
+        string GenerateRefreshToken();
+        ClaimsPrincipal? GetPrincipalFromExpiredToken(string token);
     }
 }

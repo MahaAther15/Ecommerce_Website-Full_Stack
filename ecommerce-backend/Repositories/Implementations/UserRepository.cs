@@ -44,6 +44,27 @@ namespace ecommerce_backend.Repositories.Implementations
             return await _context.Users.AnyAsync(u=>u.Email.ToLower()==email.ToLower());
         }
 
+        // method to Update user in Db by using Async
+        // UpdateAsync is used to update the changes in the database by tracking it from memory
+        //return void (no return value)
+        public async Task UpdateAsync(User user)
+        {
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<User?> GetByResetTokenAsync(string token)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.PasswordResetToken == token);
+        }
+        // Method to Delete user from Db
+public async Task DeleteAsync(User user)
+{
+    _context.Users.Remove(user);
+    await _context.SaveChangesAsync();
+}
+
+
 
     }
 }

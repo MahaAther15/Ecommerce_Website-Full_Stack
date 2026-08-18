@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { registerApi, setAuthSession } from "@/app/libs/authApi";
+import { registerApi, googleLoginApi, setAuthSession } from "@/app/libs/authApi";
 import Link from "next/link";
 import { RegisterFormData, AuthFormErrors } from "@/app/types/auth";
+import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from "@react-oauth/google";
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState<RegisterFormData>({
@@ -79,6 +80,36 @@ export default function RegisterForm() {
       }, 1200);
     } catch (err: any) {
       setErrors({ general: err.message || "Failed to register account." });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
+
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+    try {
+      if (!credentialResponse.credential) {
+        throw new Error("No Google credential received.");
+      }
+
+      setLoading(true);
+      setErrors({});
+      setSuccessMessage(null);
+
+      // Call backend Google Login/Register API
+      const response = await googleLoginApi(credentialResponse.credential);
+
+      // Save session
+      setAuthSession(response);
+
+      setSuccessMessage(`Account created / signed in successfully! Welcome, ${response.fullName}. Redirecting...`);
+
+      setTimeout(() => {
+        router.push("/");
+      }, 1200);
+    } catch (err: any) {
+      setErrors({ general: err.message || "Google registration failed. Please try again." });
     } finally {
       setLoading(false);
     }
@@ -482,6 +513,44 @@ export default function RegisterForm() {
               {loading ? "Creating Account..." : "Create Account"}
             </button>
           </form>
+
+          {/* Divider */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              margin: "18px 0",
+              color: "#aaa",
+              fontSize: "12px",
+            }}
+          >
+            <div style={{ flex: 1, height: "1px", backgroundColor: "#eee" }} />
+            <span style={{ padding: "0 12px", textTransform: "lowercase" }}>or</span>
+            <div style={{ flex: 1, height: "1px", backgroundColor: "#eee" }} />
+          </div>
+
+          {/* Secondary / Social Sign Up */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              width: "100%",
+            }}
+          >
+            <GoogleOAuthProvider clientId={googleClientId}>
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={() => {
+                  setErrors({ general: "Google registration was unsuccessful. Please try again." });
+                }}
+                theme="outline"
+                size="large"
+                shape="rectangular"
+                width="350"
+                text="signup_with"
+              />
+            </GoogleOAuthProvider>
+          </div>
 
           {/* Footer Navigation */}
           <p

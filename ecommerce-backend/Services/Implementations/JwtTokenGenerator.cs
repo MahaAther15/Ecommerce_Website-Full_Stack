@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using ecommerce_backend.Models;
 using ecommerce_backend.Services.Interfaces;
@@ -14,10 +15,10 @@ namespace ecommerce_backend.Services.Implementations{
         public JwtTokenGenerator(IConfiguration configuration){
             _configuration=configuration;
         }
-        // method to generate jwt token
-        // it takes user object as parameter
-        // it returns jwt token as string
-        public string GenerateToken(User user){
+
+        // 1. Generate 30-Minute Access Token
+        public string GenerateToken(User user)
+        {
             var jwtSettings = _configuration.GetSection("JwtSettings");
             var secretKey = jwtSettings["SecretKey"]!;
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
@@ -34,16 +35,42 @@ namespace ecommerce_backend.Services.Implementations{
                 issuer: jwtSettings["Issuer"],
                 audience: jwtSettings["Audience"],
                 claims: claims,
-                // setting expiry time for token
-                // it is taken from appsettings.json file
-                // expore within 24 hours
-                expires: DateTime.UtcNow.AddHours(Convert.ToDouble(jwtSettings["ExpiryInHours"] ?? "24")),
+                // ⏱️ Set expiration to exactly 30 minutes
+                expires: DateTime.UtcNow.AddMinutes(30),
                 signingCredentials: credentials
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
-            
-            
         }
-        
+        // 2. Generate Cryptographically Secure 64-byte Refresh Token
+        public string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[64];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomNumber);
+            return Convert.ToBase64String(randomNumber);
+        }
+        // 3. Extract User Identity from Expired Token without throwing expiration exception
+        public ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
+        {
+            var jwtSettings = _configuration.GetSection("JwtSettings");
+            var secretKey = jwtSettings["SecretKey"]!;
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateAudience = false,
+                ValidateIssuer = false,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+                ValidateLifetime = false // Bypasses expiry check to allow reading claims
+            };
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+            if (securityToken is not JwtSecurityToken jwtSecurityToken ||
+                !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            {
+                throw new SecurityTokenException("Invalid token algorithm.");
+            }
+            return principal;
+        }
     }
+        
 }
