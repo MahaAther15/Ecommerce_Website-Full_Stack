@@ -1,8 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Product } from "@/app/types/product";
+import { useAppDispatch } from "@/app/redux/hooks";
+import { addToCart } from "@/app/redux/slices/cartslice";
 
 interface ProductCardProps {
   product: Product;
@@ -10,14 +11,28 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const handleCardClick = (e: React.MouseEvent) => {
     // Prevent navigation if user clicked on the cart button directly
     const target = e.target as HTMLElement;
-    if (target.closest(".cart")) {
+    if (target.closest(".cart-btn")) {
       return;
     }
     router.push(`/Products/${product.id}`);
+  };
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    dispatch(
+      addToCart({
+        id: product.id,
+        name: product.title,
+        price: product.price,
+        image: product.image,
+        quantity: 1,
+      })
+    );
   };
 
   return (
@@ -33,9 +48,22 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
         <h4>${product.price}</h4>
       </div>
-      <Link href="/cart" onClick={(e) => e.stopPropagation()}>
+      <button
+        type="button"
+        className="cart-btn"
+        onClick={handleAddToCart}
+        style={{
+          border: "none",
+          background: "transparent",
+          cursor: "pointer",
+          position: "absolute",
+          bottom: "12px",
+          right: "10px",
+        }}
+        title="Add to Cart"
+      >
         <i className="fal fa-shopping-cart cart"></i>
-      </Link>
+      </button>
     </div>
   );
 }

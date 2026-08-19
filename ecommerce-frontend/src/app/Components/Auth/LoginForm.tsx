@@ -6,6 +6,8 @@ import { loginApi, googleLoginApi, setAuthSession } from "@/app/libs/authApi";
 import Link from "next/link";
 import { LoginFormData, AuthFormErrors } from "@/app/types/auth";
 import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from "@react-oauth/google";
+import { useAppDispatch } from "@/app/redux/hooks";
+import { setCredentials } from "@/app/redux/slices/authslice";
 
 export default function LoginForm() {
   const [formData, setFormData] = useState<LoginFormData>({
@@ -14,7 +16,7 @@ export default function LoginForm() {
   });
 
   const router = useRouter();
-
+  const dispatch = useAppDispatch();
 
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -63,13 +65,23 @@ export default function LoginForm() {
       // 2. Save JWT Token & User Data in LocalStorage
       setAuthSession(response);
 
-      // 3. Display success badge in form theme color
+      // 3. Update Redux Global State
+      dispatch(setCredentials({
+        user: {
+          name: response.fullName,
+          email: response.email,
+          role: response.role,
+        },
+        token: response.token,
+      }));
+
+      // 4. Display success badge in form theme color
       setSuccessMessage(`Login completely successful! Welcome back, ${response.fullName}. Redirecting...`);
 
-      // 4. Redirect after short delay
+      // 5. Redirect to Home page after short delay
       setTimeout(() => {
         router.push("/");
-      }, 1200);
+      }, 1000);
     } catch (err: any) {
       setErrors({ general: err.message || "Failed to login." });
     } finally {
@@ -95,11 +107,21 @@ export default function LoginForm() {
       // Save token and user details to localStorage
       setAuthSession(response);
 
+      // Update Redux Global State
+      dispatch(setCredentials({
+        user: {
+          name: response.fullName,
+          email: response.email,
+          role: response.role,
+        },
+        token: response.token,
+      }));
+
       setSuccessMessage(`Google sign in successful! Welcome, ${response.fullName}. Redirecting...`);
 
       setTimeout(() => {
         router.push("/");
-      }, 1200);
+      }, 1000);
     } catch (err: any) {
       setErrors({ general: err.message || "Google authentication failed. Please try again." });
     } finally {

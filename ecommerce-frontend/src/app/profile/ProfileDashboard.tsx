@@ -6,9 +6,12 @@ import Link from "next/link";
 import { getUserProfileApi, updateUserProfileApi, deleteUserAccountApi } from "@/app/libs/userApi";
 import { logout } from "@/app/libs/authApi";
 import { UserProfile, UpdateProfileData } from "@/app/types/user";
+import { useAppDispatch } from "@/app/redux/hooks";
+import { logout as reduxLogout } from "@/app/redux/slices/authslice";
 
 export default function ProfileDashboard() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = useState<"dashboard" | "profile" | "address" | "orders" | "settings">("dashboard");
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -52,6 +55,7 @@ export default function ProfileDashboard() {
 
       // 2. Clear Session
       logout();
+      dispatch(reduxLogout());
 
       // 3. Show Success Badge in Modal
       setDeleteSuccessMessage("Account deleted successfully! Redirecting to login...");
@@ -114,7 +118,8 @@ export default function ProfileDashboard() {
 
   const handleLogout = () => {
     logout();
-    router.push("/");
+    dispatch(reduxLogout());
+    router.push("/login");
   };
 
   // Calculate profile completion percentage

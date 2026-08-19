@@ -12,8 +12,9 @@ Ecommerce(Full Stack)/
 │   ├── Controllers/               # API Endpoints (Auth, User Profile)
 │   ├── Data/                      # AppDbContext & EF Core Configurations
 │   ├── Dtos/                      # Data Transfer Objects with Data Annotations
+│   ├── Middlewares/               # Custom Middleware Pipeline (Exception, CorrelationId, Security, Logging)
 │   ├── Migrations/                # EF Core Database Migrations
-│   ├── Models/                    # Domain Entities (User)
+│   ├── Models/                    # Domain Entities (User) & Common Models (ApiResponse<T>)
 │   ├── Repositories/              # Repository Layer (Data Access)
 │   └── Services/                  # Business Logic Layer & Security Engines
 │
@@ -21,6 +22,7 @@ Ecommerce(Full Stack)/
     ├── src/app/
     │   ├── Components/            # Modular UI Components (Auth, Layout, Products, etc.)
     │   ├── libs/                  # API Clients & Auth Interceptors (authApi, userApi)
+    │   ├── redux/                 # Redux Toolkit Store, Slices (Auth, Cart, Wishlist) & Provider
     │   ├── types/                 # TypeScript Interfaces & Models
     │   ├── login/                 # Login Page (Local + Google OAuth)
     │   ├── register/              # Register Page (Local + Google OAuth)
@@ -254,3 +256,161 @@ npm run dev
 - [x] **Safe Account Deletion:** Requires explicit user email verification matching before execution.
 - [x] **OAuth Security:** Server-side verification of Google ID tokens via `GoogleJsonWebSignature`.
 - [x] **Password Protection:** Cryptographic hashing on all local user passwords.
+- [x] **Security Headers:** `X-Content-Type-Options`, `X-Frame-Options`, `X-XSS-Protection`, `Referrer-Policy` injected on every response.
+
+---
+
+# ⚙️ 3. Backend Middleware Pipeline (`Middlewares/`)
+
+The backend implements a **16-layer middleware pipeline** registered in `Program.cs`, including **4 custom-built middlewares** and **12 built-in ASP.NET Core middlewares**, all ordered for maximum security, observability, and performance.
+
+### 3.1 Custom Middlewares
+
+#### 🛡️ `ExceptionHandlingMiddleware` (Pipeline Position: 1st)
+* **Purpose:** Global try-catch that wraps every request. Catches all unhandled exceptions thrown by controllers or services and returns a structured JSON error response instead of raw 500 stack traces.
+* **Exception Mapping:**
+  | Exception Type | HTTP Status Code |
+  | :--- | :--- |
+  | `KeyNotFoundException` | `404 Not Found` |
+  | `UnauthorizedAccessException` | `401 Unauthorized` |
+  | `ArgumentException` / `InvalidOperationException` | `400 Bad Request` |
+  | All other exceptions | `500 Internal Server Error` |
+* **Environment Awareness:** In `Development`, the response includes full `StackTrace` in `errorDetails`. In `Production`, `errorDetails` is `null` to prevent information leakage.
+* **Uses:** `ApiResponse<T>.Fail()` standardized response wrapper.
+* **Registration:** `app.UseGlobalExceptionHandling();`
+
+#### 🔗 `CorrelationIdMiddleware` (Pipeline Position: 2nd)
+* **Purpose:** End-to-end request tracing across distributed systems. Assigns a unique `X-Correlation-ID` header to every HTTP request.
+* **Behavior:**
+  * If the client sends an `X-Correlation-ID` header, that value is reused (for tracing across microservices).
+  * If no header is present, a new `Guid` is generated (`Guid.NewGuid().ToString("N")`).
+  * The Correlation ID is attached to `HttpContext.Items` for downstream access and to `Response.Headers` for the frontend.
+  * Pushed into **Serilog `LogContext`** so all log entries within the request automatically contain the `CorrelationId` property.
+* **Registration:** `app.UseCorrelationId();`
+
+#### 🔐 `SecurityHeadersMiddleware` (Pipeline Position: 3rd)
+* **Purpose:** Injects critical HTTP security headers into every response to protect against common web attacks.
+* **Headers Applied:**
+  | Header | Value | Protection |
+  | :--- | :--- | :--- |
+  | `X-Content-Type-Options` | `nosniff` | Prevents MIME-type sniffing attacks |
+  | `X-Frame-Options` | `DENY` | Blocks clickjacking via iframe embedding |
+  | `X-XSS-Protection` | `1; mode=block` | Activates browser XSS filter |
+  | `Referrer-Policy` | `strict-origin-when-cross-origin` | Controls referrer information leakage |
+  | `Server` | *(removed)* | Hides Kestrel server identity |
+* **Registration:** `app.UseSecurityHeaders();`
+
+#### 📊 `RequestLoggingMiddleware` (Pipeline Position: 5th)
+* **Purpose:** Structured HTTP request/response logging with performance metrics for every API call.
+* **Captured Data:** HTTP Method, Path, Status Code, Elapsed Time (ms), Client IP Address, Authenticated User Email.
+* **Log Level Strategy:**
+  | Status Code Range | Log Level |
+  | :--- | :--- |
+  | `5xx` (Server Errors) | `LogError` |
+  | `4xx` (Client Errors) | `LogWarning` |
+  | `1xx-3xx` (Success) | `LogInformation` |
+* **Smart Filtering:** Skips logging for `/swagger`, `/uploads`, and `.ico` requests to reduce noise.
+* **User Context:** Extracts authenticated user's email from JWT claims (`ClaimTypes.Email` → `ClaimTypes.NameIdentifier` → `"Anonymous"`).
+* **Registration:** `app.UseRequestLogging();`
+
+---
+
+### 3.2 Built-in Middlewares (Pipeline Positions 4, 6–16)
+
+| # | Middleware | Purpose |
+| :--- | :--- | :--- |
+| 4 | `UseForwardedHeaders()` | Resolves real client IP behind reverse proxies (Nginx, Azure) |
+| 6-7 | `UseHsts()` + `UseHttpsRedirection()` | HTTPS enforcement (**Production only**, disabled in Development to prevent CORS 307 redirects) |
+| 8 | `UseResponseCompression()` | Brotli + Gzip compression for fast JSON payload delivery |
+| 9 | `UseStaticFiles()` | Serves product images and assets directly from disk |
+| 10 | `UseRouting()` | Endpoint selection and route matching |
+| 11 | `UseCors("AllowFrontend")` | Cross-Origin Resource Sharing for `localhost:3000` with `AllowCredentials` |
+| 12 | `UseRateLimiter()` | Request throttling to prevent API abuse |
+| 13 | `UseAuthentication()` | JWT Bearer token validation |
+| 14 | `UseAuthorization()` | Role-based and policy-based access control |
+| 15 | `MapControllers()` | Maps controller endpoints |
+| 16 | `app.Run()` | Starts the application |
+
+---
+
+### 3.3 Standardized API Response Model (`Models/Common/ApiResponse.cs`)
+
+All API error responses follow a consistent `ApiResponse<T>` envelope pattern:
+
+```json
+{
+  "success": false,
+  "message": "An unexpected error occurred. Please try again later.",
+  "data": null,
+  "errorDetails": "Stack trace... (Development only)"
+}
+```
+
+* **`Success`** (`bool`): Indicates if the operation succeeded.
+* **`Message`** (`string`): Human-readable status message.
+* **`Data`** (`T?`): Generic payload (null on failure).
+* **`ErrorDetails`** (`string?`): Stack trace in Development, `null` in Production.
+* **Factory Method:** `ApiResponse<T>.Fail(message, errorDetails)` for consistent error construction.
+
+---
+
+# 🗄️ 4. Frontend State Management — Redux Toolkit (`src/app/redux/`)
+
+The frontend uses **Redux Toolkit** for centralized, predictable, and persistent state management across the application.
+
+### 4.1 Store Architecture (`store.ts`)
+
+```
+Redux Store (configureStore)
+├── auth     → AuthSlice    (User session, JWT token, login state)
+├── cart     → CartSlice    (Shopping cart items, quantities, totals)
+└── wishlist → WishlistSlice (Saved/favorite products)
+```
+
+* **Store Factory:** `makeStore()` function creates isolated store instances (compatible with Next.js App Router SSR).
+* **Type-Safe Hooks:** Custom `useAppDispatch()` and `useAppSelector()` hooks with full TypeScript inference (`hooks.ts`).
+* **Provider:** `StoreProvider.tsx` wraps the application with `<Provider>` using `useRef` to ensure single store instance across re-renders.
+
+---
+
+### 4.2 Auth Slice (`slices/authslice.ts`)
+
+* **State:** `user` (User object), `token` (JWT string), `isAuthenticated` (boolean), `isLoading` (boolean).
+* **Persistence:** Reads from `localStorage` keys (`authToken`, `token`, `authUser`, `currentUser`) on initialization.
+* **Actions:**
+  | Action | Description |
+  | :--- | :--- |
+  | `setCredentials({ user, token })` | Stores user session in Redux state and syncs to `localStorage` (dual keys: `authToken`/`token` and `authUser`/`currentUser` for backward compatibility) |
+  | `logout()` | Clears Redux state and removes all auth-related `localStorage` keys |
+* **User Interface:** `{ id, name, email, role }` — parsed from backend's `fullName`/`name` field with fallback handling.
+
+---
+
+### 4.3 Cart Slice (`slices/cartslice.ts`)
+
+* **State:** `items` (CartItem[]), `totalQuantity` (number), `totalAmount` (number).
+* **Persistence:** Auto-syncs to `localStorage` key `cart_items` on every mutation.
+* **Auto-Calculation:** `totalQuantity` and `totalAmount` are recalculated after every add/remove/update operation.
+* **Actions:**
+  | Action | Description |
+  | :--- | :--- |
+  | `addToCart(item)` | Adds item to cart. If item already exists (by `id`), increments quantity instead of duplicating |
+  | `removeFromCart(id)` | Removes item by ID |
+  | `updateQuantity({ id, quantity })` | Sets specific quantity. Auto-removes item if quantity ≤ 0 |
+  | `clearCart()` | Empties entire cart and clears `localStorage` |
+* **CartItem Interface:** `{ id, name, price, image?, quantity, stock? }`
+
+---
+
+### 4.4 Wishlist Slice (`slices/wishlistslice.ts`)
+
+* **State:** `items` (WishlistItem[]).
+* **Persistence:** Auto-syncs to `localStorage` key `wishlist_items` on every mutation.
+* **Actions:**
+  | Action | Description |
+  | :--- | :--- |
+  | `toggleWishlist(item)` | Toggle behavior — adds if not present, removes if already wishlisted |
+  | `removeFromWishlist(id)` | Explicitly removes item by ID |
+  | `clearWishlist()` | Empties entire wishlist and clears `localStorage` |
+* **WishlistItem Interface:** `{ id, name, price, image? }`
+

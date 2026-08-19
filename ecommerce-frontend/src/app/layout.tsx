@@ -1,5 +1,6 @@
 import MainLayout from "./Components/Layout/MainLayout";
 import "./globals.css";
+import StoreProvider from "./redux/StoreProvider";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -15,7 +16,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="flex flex-col min-h-screen">
-        <MainLayout>{children}</MainLayout>
+        <StoreProvider>
+          <MainLayout>{children}</MainLayout>
+        </StoreProvider>
       </body>
     </html>
   );

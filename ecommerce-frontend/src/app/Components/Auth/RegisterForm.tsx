@@ -6,6 +6,8 @@ import { registerApi, googleLoginApi, setAuthSession } from "@/app/libs/authApi"
 import Link from "next/link";
 import { RegisterFormData, AuthFormErrors } from "@/app/types/auth";
 import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from "@react-oauth/google";
+import { useAppDispatch } from "@/app/redux/hooks";
+import { setCredentials } from "@/app/redux/slices/authslice";
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState<RegisterFormData>({
@@ -21,6 +23,7 @@ export default function RegisterForm() {
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const validate = (): boolean => {
     const newErrors: AuthFormErrors = {};
@@ -71,13 +74,23 @@ export default function RegisterForm() {
       // 2. Save JWT Token & User Data in LocalStorage
       setAuthSession(response);
 
-      // 3. Display success badge in form theme color
+      // 3. Update Redux Global State
+      dispatch(setCredentials({
+        user: {
+          name: response.fullName,
+          email: response.email,
+          role: response.role,
+        },
+        token: response.token,
+      }));
+
+      // 4. Display success badge in form theme color
       setSuccessMessage(`Account created successfully! Welcome, ${response.fullName}. Redirecting...`);
 
-      // 4. Redirect after short delay
+      // 5. Redirect to Home page after short delay
       setTimeout(() => {
         router.push("/");
-      }, 1200);
+      }, 1000);
     } catch (err: any) {
       setErrors({ general: err.message || "Failed to register account." });
     } finally {
@@ -103,11 +116,21 @@ export default function RegisterForm() {
       // Save session
       setAuthSession(response);
 
+      // Update Redux Global State
+      dispatch(setCredentials({
+        user: {
+          name: response.fullName,
+          email: response.email,
+          role: response.role,
+        },
+        token: response.token,
+      }));
+
       setSuccessMessage(`Account created / signed in successfully! Welcome, ${response.fullName}. Redirecting...`);
 
       setTimeout(() => {
         router.push("/");
-      }, 1200);
+      }, 1000);
     } catch (err: any) {
       setErrors({ general: err.message || "Google registration failed. Please try again." });
     } finally {

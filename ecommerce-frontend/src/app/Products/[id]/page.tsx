@@ -2,10 +2,14 @@
 
 import { use, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import productsData from "@/app/data/products.json";
 import ProductGrid from "@/app/Components/Products/ProductGrid";
 import Newsletter from "@/app/Components/Layout/Newsletter";
 import { Product } from "@/app/types/product";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import { addToCart } from "@/app/redux/slices/cartslice";
+import { toggleWishlist } from "@/app/redux/slices/wishlistslice";
 
 interface ProductDetailsProps {
   params: Promise<{ id: string }>;
@@ -14,10 +18,84 @@ interface ProductDetailsProps {
 export default function ProductDetailsPage({ params }: ProductDetailsProps) {
   const resolvedParams = use(params);
   const productId = resolvedParams.id;
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const wishlistItems = useAppSelector((state) => state.wishlist.items);
+
   const product = (productsData as Product[]).find((p) => p.id === productId);
 
   const [quantity, setQuantity] = useState(1);
-  const [selectedSize, setSelectedSize] = useState("XL");
+  const [selectedSize, setSelectedSize] = useState("L");
+  const [selectedColor, setSelectedColor] = useState("Emerald");
+  const [activeTab, setActiveTab] = useState<"desc" | "specs" | "reviews">("desc");
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Gallery Images (uses product image + variants)
+  const galleryImages = product
+    ? [
+        product.image,
+        "/img/products/f2.jpg",
+        "/img/products/f3.jpg",
+        "/img/products/f4.jpg",
+      ]
+    : [];
+  const [activeImage, setActiveImage] = useState(product?.image || "");
+
+  const isWishlisted = product
+    ? wishlistItems.some((item) => String(item.id) === String(product.id))
+    : false;
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 2800);
+  };
+
+  const handleAddToCart = () => {
+    if (!product) return;
+    dispatch(
+      addToCart({
+        id: product.id,
+        name: `${product.title} (${selectedSize}, ${selectedColor})`,
+        price: product.price,
+        image: activeImage || product.image,
+        quantity: quantity,
+      })
+    );
+    showToast(`🛒 "${product.title}" (${quantity}x) added to cart!`);
+  };
+
+  const handleBuyNow = () => {
+    if (!product) return;
+    dispatch(
+      addToCart({
+        id: product.id,
+        name: `${product.title} (${selectedSize}, ${selectedColor})`,
+        price: product.price,
+        image: activeImage || product.image,
+        quantity: quantity,
+      })
+    );
+    router.push("/cart");
+  };
+
+  const handleToggleWishlist = () => {
+    if (!product) return;
+    dispatch(
+      toggleWishlist({
+        id: product.id,
+        name: product.title,
+        price: product.price,
+        image: product.image,
+      })
+    );
+    showToast(
+      isWishlisted
+        ? `💔 Removed from Wishlist`
+        : `❤️ Added to Wishlist!`
+    );
+  };
 
   const relatedProducts = (productsData as Product[])
     .filter((p) => p.id !== productId)
@@ -25,76 +103,335 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
 
   if (!product) {
     return (
-      <div className="section-p1 text-center py-20">
-        <h2 className="text-2xl font-bold mb-4">Product Not Found</h2>
-        <p className="mb-6 text-gray-600">The product you are looking for does not exist.</p>
-        <Link href="/Products" className="bg-[#088178] text-white px-6 py-3 rounded-md font-semibold">
+      <div className="section-p1 text-center py-20" style={{ textAlign: "center", padding: "80px 20px" }}>
+        <h2 style={{ fontSize: "28px", fontWeight: "800", marginBottom: "12px", color: "#222" }}>Product Not Found</h2>
+        <p style={{ color: "#666", marginBottom: "24px" }}>The product you are looking for does not exist or has been removed.</p>
+        <Link
+          href="/shop"
+          style={{
+            backgroundColor: "#088178",
+            color: "#fff",
+            padding: "12px 28px",
+            borderRadius: "8px",
+            fontWeight: "700",
+            textDecoration: "none",
+            display: "inline-block",
+          }}
+        >
           Back to Shop
         </Link>
       </div>
     );
   }
 
+  const originalPrice = Math.round(product.price * 1.25);
+  const savings = originalPrice - product.price;
+
+  const colors = [
+    { name: "Emerald", hex: "#088178" },
+    { name: "Navy", hex: "#1e3a8a" },
+    { name: "Charcoal", hex: "#374151" },
+    { name: "Sand", hex: "#d97706" },
+  ];
+
   return (
     <div>
-      <section id="prodetails" className="section-p1 flex flex-col md:flex-row gap-10 mt-6">
-        <div className="single-pro-image w-full md:w-1/2">
-          <img
-            src={product.image}
-            alt={product.title}
-            className="w-full rounded-2xl border border-gray-200"
-          />
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="toast show" style={{ zIndex: 9999 }}>
+          <i className="fas fa-check-circle" style={{ color: "#2ecc71", fontSize: "18px" }}></i>
+          <span style={{ fontWeight: "600", fontSize: "14px" }}>{toastMessage}</span>
+        </div>
+      )}
+
+      {/* Main Single Product Details Section */}
+      <section
+        id="prodetails"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "flex-start",
+          gap: "40px",
+          maxWidth: "1200px",
+          margin: "30px auto",
+          padding: "0 24px",
+          boxSizing: "border-box",
+        }}
+      >
+        {/* Left: Interactive Image Gallery */}
+        <div
+          className="single-pro-image"
+          style={{
+            width: "460px",
+            maxWidth: "100%",
+            flexShrink: 0,
+          }}
+        >
+          <div
+            className="main-img-wrap"
+            style={{
+              position: "relative",
+              width: "100%",
+              height: "460px",
+              maxHeight: "460px",
+              borderRadius: "20px",
+              overflow: "hidden",
+              backgroundColor: "#f8faf9",
+              border: "1px solid #e1eee5",
+              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.04)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <img
+              src={activeImage || product.image}
+              alt={product.title}
+              id="MainImg"
+              style={{
+                width: "100%",
+                height: "100%",
+                maxHeight: "460px",
+                objectFit: "cover",
+                display: "block",
+              }}
+            />
+            <span className="badge-discount">SAVE ${(savings).toFixed(0)}</span>
+            <button
+              type="button"
+              className="wishlist-badge-btn"
+              onClick={handleToggleWishlist}
+              title={isWishlisted ? "Remove from Wishlist" : "Save to Wishlist"}
+            >
+              <i
+                className={isWishlisted ? "fas fa-heart" : "far fa-heart"}
+                style={{ color: isWishlisted ? "#e74c3c" : "#555", fontSize: "18px" }}
+              ></i>
+            </button>
+          </div>
+
+          {/* 4 Thumbnails */}
+          <div className="small-img-group">
+            {galleryImages.map((imgSrc, idx) => (
+              <div
+                key={idx}
+                className={`small-img-col ${(activeImage || product.image) === imgSrc ? "active" : ""}`}
+                onClick={() => setActiveImage(imgSrc)}
+                style={{
+                  height: "90px",
+                  borderRadius: "10px",
+                  overflow: "hidden",
+                }}
+              >
+                <img
+                  src={imgSrc}
+                  alt={`Thumbnail ${idx + 1}`}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    display: "block",
+                  }}
+                />
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="single-pro-details w-full md:w-1/2 flex flex-col justify-start">
-          <h6 className="text-gray-500 text-sm font-semibold uppercase tracking-wider mb-2">
-            Home / {product.brand}
-          </h6>
-          <h4 className="text-2xl font-bold text-gray-900 mb-2">{product.title}</h4>
-          <h2 className="text-3xl font-bold text-[#088178] mb-4">${product.price}</h2>
-
-          <div className="mb-4">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Select Size</label>
-            <select
-              value={selectedSize}
-              onChange={(e) => setSelectedSize(e.target.value)}
-              className="border border-gray-300 rounded-md p-2 w-48 text-sm focus:outline-none"
-            >
-              <option value="S">Small</option>
-              <option value="M">Medium</option>
-              <option value="L">Large</option>
-              <option value="XL">XL</option>
-              <option value="XXL">XXL</option>
-            </select>
+        {/* Right: Product Details & Controls */}
+        <div className="single-pro-details">
+          {/* Breadcrumbs */}
+          <div className="pro-breadcrumbs">
+            <Link href="/">Home</Link> / <Link href="/shop">Shop</Link> / <span>{product.brand}</span>
           </div>
 
-          <div className="flex items-center gap-4 mb-6">
-            <input
-              type="number"
-              min="1"
-              value={quantity}
-              onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-              className="border border-gray-300 rounded-md p-2 w-20 text-center text-sm focus:outline-none"
-            />
-            <Link
-              href="/cart"
-              className="bg-[#088178] text-white px-8 py-3 rounded-md font-bold text-sm hover:bg-[#06645e] transition"
-            >
-              Add To Cart
-            </Link>
+          {/* Brand Tag */}
+          <span className="pro-brand-tag">{product.brand}</span>
+
+          {/* Title */}
+          <h1 className="pro-title">{product.title}</h1>
+
+          {/* Ratings & Stock */}
+          <div className="pro-rating-row">
+            <div className="pro-stars">
+              {Array.from({ length: product.rating || 5 }).map((_, i) => (
+                <i key={i} className="fas fa-star" style={{ marginRight: "2px" }}></i>
+              ))}
+            </div>
+            <span className="pro-reviews-count">(142 Customer Reviews)</span>
+            <span className="pro-stock-badge">
+              <i className="fas fa-check" style={{ marginRight: "4px" }}></i> In Stock (Fast Delivery)
+            </span>
           </div>
 
-          <h4 className="text-lg font-bold text-gray-900 mb-2">Product Details</h4>
-          <p className="text-gray-600 text-sm leading-relaxed mb-4">
-            The {product.title} by {product.brand} is crafted from 100% premium quality fabric, designed to offer supreme comfort, durability, and modern urban style. Perfect for casual wear and daily adventures.
-          </p>
+          {/* Price Box */}
+          <div className="pro-price-box">
+            <span className="pro-price">${product.price.toFixed(2)}</span>
+            <span className="pro-old-price">${originalPrice.toFixed(2)}</span>
+            <span className="pro-save-tag">20% OFF</span>
+          </div>
+
+          {/* Size Selector Chips */}
+          <div style={{ marginBottom: "18px" }}>
+            <div className="variant-label">
+              <span>Select Size: <strong>{selectedSize}</strong></span>
+              <a href="#" onClick={(e) => { e.preventDefault(); alert("Standard US Sizing. True to size fit."); }} style={{ color: "#088178", fontSize: "12px", textDecoration: "underline" }}>
+                Size Guide
+              </a>
+            </div>
+            <div className="size-options">
+              {["S", "M", "L", "XL", "XXL"].map((sz) => (
+                <button
+                  key={sz}
+                  type="button"
+                  className={`size-btn ${selectedSize === sz ? "active" : ""}`}
+                  onClick={() => setSelectedSize(sz)}
+                >
+                  {sz}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Color Selector */}
+          <div style={{ marginBottom: "22px" }}>
+            <div className="variant-label">
+              <span>Select Color: <strong>{selectedColor}</strong></span>
+            </div>
+            <div className="color-options">
+              {colors.map((c) => (
+                <div
+                  key={c.name}
+                  className={`color-swatch ${selectedColor === c.name ? "active" : ""}`}
+                  style={{ backgroundColor: c.hex }}
+                  onClick={() => setSelectedColor(c.name)}
+                  title={c.name}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Quantity & Action Buttons */}
+          <div className="qty-actions-row">
+            <div className="qty-stepper">
+              <button
+                type="button"
+                onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+              >
+                -
+              </button>
+              <input
+                type="text"
+                readOnly
+                value={quantity}
+              />
+              <button
+                type="button"
+                onClick={() => setQuantity((prev) => prev + 1)}
+              >
+                +
+              </button>
+            </div>
+
+            <button
+              type="button"
+              className="btn-add-cart"
+              onClick={handleAddToCart}
+            >
+              <i className="fas fa-shopping-bag"></i> Add To Cart
+            </button>
+
+            <button
+              type="button"
+              className="btn-buy-now"
+              onClick={handleBuyNow}
+            >
+              <i className="fas fa-bolt"></i> Buy Now
+            </button>
+          </div>
+
+          {/* Perks Row */}
+          <div className="perks-box">
+            <div className="perk-item">
+              <i className="fas fa-shipping-fast"></i>
+              <span>Free Shipping on orders $50+</span>
+            </div>
+            <div className="perk-item">
+              <i className="fas fa-undo"></i>
+              <span>30-Day Hassle-Free Returns</span>
+            </div>
+            <div className="perk-item">
+              <i className="fas fa-shield-alt"></i>
+              <span>100% Cotton & Authentic</span>
+            </div>
+            <div className="perk-item">
+              <i className="fas fa-lock"></i>
+              <span>Secure Encrypted Payment</span>
+            </div>
+          </div>
+
+          {/* Tabbed Product Details */}
+          <div>
+            <div className="tabs-header">
+              <button
+                type="button"
+                className={`tab-btn ${activeTab === "desc" ? "active" : ""}`}
+                onClick={() => setActiveTab("desc")}
+              >
+                Product Details
+              </button>
+              <button
+                type="button"
+                className={`tab-btn ${activeTab === "specs" ? "active" : ""}`}
+                onClick={() => setActiveTab("specs")}
+              >
+                Specifications
+              </button>
+              <button
+                type="button"
+                className={`tab-btn ${activeTab === "reviews" ? "active" : ""}`}
+                onClick={() => setActiveTab("reviews")}
+              >
+                Reviews (142)
+              </button>
+            </div>
+
+            <div className="tab-content">
+              {activeTab === "desc" && (
+                <p>
+                  The <strong>{product.title}</strong> by <strong>{product.brand}</strong> delivers top-tier street styling and premium everyday comfort. Built with ultra-soft combed cotton, reinforced double-stitched hems, and breathable micro-fibers, this item keeps its shape and vibrant colors wash after wash.
+                </p>
+              )}
+              {activeTab === "specs" && (
+                <ul style={{ paddingLeft: "20px", margin: "10px 0" }}>
+                  <li><strong>Material:</strong> 100% Pure Organic Ringspun Cotton (190 GSM)</li>
+                  <li><strong>Fit Type:</strong> Regular Modern Fit</li>
+                  <li><strong>Care:</strong> Machine wash cold, tumble dry low, do not bleach</li>
+                  <li><strong>Origin:</strong> Designed in London, Imported</li>
+                </ul>
+              )}
+              {activeTab === "reviews" && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  <div style={{ backgroundColor: "#f8faf9", padding: "12px", borderRadius: "10px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
+                      <strong style={{ fontSize: "13px" }}>Alex R. ⭐⭐⭐⭐⭐</strong>
+                      <span style={{ fontSize: "11px", color: "#999" }}>2 days ago</span>
+                    </div>
+                    <p style={{ margin: 0, fontSize: "12px", color: "#555" }}>
+                      "Amazing quality fabric! The fit is accurate and it feels super soft. Definitely ordering more colors."
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Featured / Related Products */}
+      {/* Related Products Section */}
       <section id="product1" className="section-p1">
-        <h2>Featured Products</h2>
-        <p>Summer Collection New Modern Design</p>
+        <h2>You Might Also Like</h2>
+        <p>Similar products recommended for your style</p>
         <ProductGrid products={relatedProducts} />
       </section>
 

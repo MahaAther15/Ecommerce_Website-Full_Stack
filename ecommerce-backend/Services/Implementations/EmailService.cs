@@ -22,16 +22,18 @@ namespace ecommerce_backend.Services.Implementations
         {
             var smtpSettings = _configuration.GetSection("SmtpSettings");
             var frontendUrl = _configuration["FrontendUrl"] ?? "http://localhost:3000";
+            var senderEmail = smtpSettings["SenderEmail"] ?? "no-reply@carastore.com";
+            var senderName = smtpSettings["SenderName"] ?? "Cara Store";
+            var host = smtpSettings["Host"] ?? "smtp.gmail.com";
+            var port = int.TryParse(smtpSettings["Port"], out var parsedPort) ? parsedPort : 587;
+            var password = smtpSettings["Password"] ?? string.Empty;
 
             // 1. Password Reset Link create karein (Frontend page ka address with query param)
             string resetLink = $"{frontendUrl}/reset-password?token={resetToken}";
 
             // 2. Email message body banayein (HTML Styled)
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress(
-                smtpSettings["SenderName"] ?? "Cara Store",
-                smtpSettings["SenderEmail"]
-            ));
+            message.From.Add(new MailboxAddress(senderName, senderEmail));
             message.To.Add(new MailboxAddress("", toEmail));
             message.Subject = "Reset Your Password - Cara Store";
 
@@ -69,15 +71,15 @@ namespace ecommerce_backend.Services.Implementations
             {
                 // Connect to Gmail SMTP (Port 587 with StartTls)
                 await client.ConnectAsync(
-                    smtpSettings["Host"],
-                    int.Parse(smtpSettings["Port"] ?? "587"),
+                    host,
+                    port,
                     SecureSocketOptions.StartTls
                 );
 
                 // Authenticate with App Password
                 await client.AuthenticateAsync(
-                    smtpSettings["SenderEmail"],
-                    smtpSettings["Password"]
+                    senderEmail,
+                    password
                 );
 
                 // Send email

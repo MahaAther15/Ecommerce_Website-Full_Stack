@@ -15,11 +15,19 @@ export interface AuthResponse {
 export function setAuthSession(data: AuthResponse) {
   if (typeof window !== "undefined") {
     localStorage.setItem("authToken", data.token);
+    localStorage.setItem("token", data.token);
     if (data.refreshToken) {
       localStorage.setItem("refreshToken", data.refreshToken);
     }
     localStorage.setItem("authUser", JSON.stringify({
       fullName: data.fullName,
+      name: data.fullName,
+      email: data.email,
+      role: data.role,
+    }));
+    localStorage.setItem("currentUser", JSON.stringify({
+      fullName: data.fullName,
+      name: data.fullName,
       email: data.email,
       role: data.role,
     }));
@@ -28,7 +36,7 @@ export function setAuthSession(data: AuthResponse) {
 
 export function getAuthToken(): string | null {
   if (typeof window !== "undefined") {
-    return localStorage.getItem("authToken");
+    return localStorage.getItem("authToken") || localStorage.getItem("token");
   }
   return null;
 }
@@ -42,10 +50,15 @@ export function getRefreshToken(): string | null {
 
 export function getAuthUser(): { fullName: string; email: string; role: string } | null {
   if (typeof window !== "undefined") {
-    const userStr = localStorage.getItem("authUser");
+    const userStr = localStorage.getItem("authUser") || localStorage.getItem("currentUser");
     if (userStr) {
       try {
-        return JSON.parse(userStr);
+        const parsed = JSON.parse(userStr);
+        return {
+          fullName: parsed.fullName || parsed.name || "User",
+          email: parsed.email || "",
+          role: parsed.role || "User",
+        };
       } catch {
         return null;
       }
@@ -57,8 +70,10 @@ export function getAuthUser(): { fullName: string; email: string; role: string }
 export function logout() {
   if (typeof window !== "undefined") {
     localStorage.removeItem("authToken");
+    localStorage.removeItem("token");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("authUser");
+    localStorage.removeItem("currentUser");
   }
 }
 

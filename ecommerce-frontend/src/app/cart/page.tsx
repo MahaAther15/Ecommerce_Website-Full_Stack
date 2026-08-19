@@ -1,52 +1,69 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import CartHero from "../Components/cart/CartHero";
 import CartTable from "../Components/cart/CartTable";
 import CouponSection from "../Components/cart/CouponSection";
 import CartSummary from "../Components/cart/CartSummary";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { removeFromCart, updateQuantity } from "../redux/slices/cartslice";
+
 import { CartItemType } from "../types/cart";
 
 export default function CartPage() {
-  const [cart, setCart] = useState<CartItemType[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const dispatch = useAppDispatch();
+  const { items } = useAppSelector((state) => state.cart);
 
   useEffect(() => {
-    const savedCart = JSON.parse(localStorage.getItem("cart") || "[]");
-    setCart(savedCart);
-    setIsLoaded(true);
+    setMounted(true);
   }, []);
 
-  const saveCart = (newCart: CartItemType[]) => {
-    setCart(newCart);
-    localStorage.setItem("cart", JSON.stringify(newCart));
-  };
+  // Adapt Redux cart items to CartItemType for CartTable & CartSummary
+  const cartItems: CartItemType[] = items.map((item) => ({
+    id: String(item.id),
+    image: item.image || "/img/products/f1.jpg",
+    name: item.name,
+    price: item.price,
+    quantity: item.quantity,
+  }));
 
   const handleRemoveFromCart = (index: number) => {
-    const updatedCart = [...cart];
-    updatedCart.splice(index, 1);
-    saveCart(updatedCart);
+    const itemToRemove = items[index];
+    if (itemToRemove) {
+      dispatch(removeFromCart(itemToRemove.id));
+    }
   };
 
   const handleUpdateQuantity = (index: number, quantity: number) => {
-    if (quantity > 0) {
-      const updatedCart = [...cart];
-      updatedCart[index] = { ...updatedCart[index], quantity };
-      saveCart(updatedCart);
+    const itemToUpdate = items[index];
+    if (itemToUpdate) {
+      dispatch(updateQuantity({ id: itemToUpdate.id, quantity }));
     }
   };
+
+  if (!mounted) {
+    return (
+      <div>
+        <CartHero />
+        <div style={{ textAlign: "center", padding: "50px 0" }}>
+          <p>Loading your cart...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
       <CartHero />
       <CartTable
-        cart={isLoaded ? cart : []}
+        cart={cartItems}
         onRemove={handleRemoveFromCart}
         onUpdateQuantity={handleUpdateQuantity}
       />
       <section id="cart-add" className="section-p1">
         <CouponSection />
-        <CartSummary cart={isLoaded ? cart : []} />
+        <CartSummary cart={cartItems} />
       </section>
     </div>
   );

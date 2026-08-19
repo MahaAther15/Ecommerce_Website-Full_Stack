@@ -5,23 +5,18 @@ import WishlistHero from "../Components/Wishlist/WishlistHero";
 import WishlistContainer from "../Components/Wishlist/WishlistContainer";
 import wishlistData from "@/app/data/wishlist.json";
 import { WishlistProduct } from "../types/wishlist";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { removeFromWishlist, clearWishlist } from "../redux/slices/wishlistslice";
 
 export default function WishlistPage() {
-  const [wishlistIds, setWishlistIds] = useState<number[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  const dispatch = useAppDispatch();
+  const wishlistItems = useAppSelector((state) => state.wishlist.items);
+
   useEffect(() => {
-    const saved = localStorage.getItem("wishlistItems");
-    if (saved) {
-      setWishlistIds(JSON.parse(saved));
-    } else {
-      // Default initial sample wishlist items (1, 2, 3) for demonstration
-      const initialIds = [1, 2, 3];
-      setWishlistIds(initialIds);
-      localStorage.setItem("wishlistItems", JSON.stringify(initialIds));
-    }
-    setIsLoaded(true);
+    setMounted(true);
   }, []);
 
   const showToast = (msg: string) => {
@@ -32,10 +27,7 @@ export default function WishlistPage() {
   };
 
   const handleRemove = (productId: number) => {
-    const updated = wishlistIds.filter((id) => id !== productId);
-    setWishlistIds(updated);
-    localStorage.setItem("wishlistItems", JSON.stringify(updated));
-
+    dispatch(removeFromWishlist(productId));
     const product = (wishlistData as WishlistProduct[]).find(
       (p) => p.id === productId
     );
@@ -43,19 +35,18 @@ export default function WishlistPage() {
   };
 
   const handleClearAll = () => {
-    if (wishlistIds.length === 0) {
+    if (wishlistItems.length === 0) {
       showToast("Your wishlist is already empty");
       return;
     }
     if (confirm("Are you sure you want to clear your entire wishlist?")) {
-      setWishlistIds([]);
-      localStorage.setItem("wishlistItems", JSON.stringify([]));
+      dispatch(clearWishlist());
       showToast("All items removed from wishlist");
     }
   };
 
   const wishlistProducts = (wishlistData as WishlistProduct[]).filter(
-    (product) => (isLoaded ? wishlistIds.includes(product.id) : false)
+    (product) => (mounted ? wishlistItems.some((item) => item.id === product.id) : false)
   );
 
   return (

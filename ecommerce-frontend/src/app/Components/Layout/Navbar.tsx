@@ -3,17 +3,21 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { getAuthUser } from "@/app/libs/authApi";
+import { useAppSelector } from "@/app/redux/hooks";
 
 export default function Navbar() {
   const pathname = usePathname();
-  const [authUser, setAuthUser] = useState<{ fullName: string; email: string; role: string } | null>(null);
+  const [mounted, setMounted] = useState(false);
 
-  // Check login status on component mount
   useEffect(() => {
-    const user = getAuthUser();
-    setAuthUser(user);
-  }, [pathname]); // pathname change hone par (login/logout ke baad) refresh ho
+    setMounted(true);
+  }, []);
+
+  // Redux Global State
+  const { totalQuantity } = useAppSelector((state) => state.cart);
+  const wishlistItems = useAppSelector((state) => state.wishlist.items);
+  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+  const isUserLoggedIn = mounted && isAuthenticated;
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -45,6 +49,18 @@ export default function Navbar() {
                   href={link.href}
                 >
                   {link.name}
+                  {link.href === "/wishlist" && wishlistItems.length > 0 && (
+                    <span style={{
+                      backgroundColor: "#088178",
+                      color: "#fff",
+                      borderRadius: "50%",
+                      padding: "2px 6px",
+                      fontSize: "11px",
+                      marginLeft: "4px"
+                    }}>
+                      {wishlistItems.length}
+                    </span>
+                  )}
                 </Link>
               </li>
             );
@@ -60,12 +76,28 @@ export default function Navbar() {
         <Link
           className={pathname === "/cart" ? "active" : ""}
           href="/cart"
+          style={{ position: "relative" }}
         >
           <i className="far fa-shopping-bag"></i>
+          {totalQuantity > 0 && (
+            <span style={{
+              position: "absolute",
+              top: "-8px",
+              right: "-10px",
+              backgroundColor: "#088178",
+              color: "#fff",
+              borderRadius: "50%",
+              padding: "2px 6px",
+              fontSize: "11px",
+              fontWeight: "bold"
+            }}>
+              {totalQuantity}
+            </span>
+          )}
         </Link>
         <Link
           className={
-            authUser
+            isUserLoggedIn
               ? pathname === "/profile"
                 ? "active"
                 : ""
@@ -73,22 +105,43 @@ export default function Navbar() {
               ? "active"
               : ""
           }
-          href={authUser ? "/profile" : "/login"}
-          title={authUser ? `Logged in as ${authUser.fullName}` : "Login / Register"}
+          href={isUserLoggedIn ? "/profile" : "/login"}
+          title={isUserLoggedIn ? `My Account (${user?.name || "User"})` : "Login / Register"}
         >
           <i
-            className="far fa-user"
-            style={{ color: authUser ? "#088178" : "inherit" }}
+            className={isUserLoggedIn ? "fas fa-user" : "far fa-user"}
+            style={{
+              color: isUserLoggedIn ? "#088178" : "#222",
+              fontSize: "17px",
+            }}
           ></i>
         </Link>
       </div>
 
       <div className="mobile">
-        <Link href="/cart">
+        <Link href="/cart" style={{ position: "relative" }}>
           <i className="far fa-shopping-bag"></i>
+          {totalQuantity > 0 && (
+            <span style={{
+              position: "absolute",
+              top: "-8px",
+              right: "-10px",
+              backgroundColor: "#088178",
+              color: "#fff",
+              borderRadius: "50%",
+              padding: "2px 6px",
+              fontSize: "11px",
+              fontWeight: "bold"
+            }}>
+              {totalQuantity}
+            </span>
+          )}
         </Link>
-        <Link href={authUser ? "/profile" : "/login"} style={{ marginLeft: "15px" }}>
-          <i className="far fa-user" style={{ color: authUser ? "#088178" : "inherit" }}></i>
+        <Link href={isUserLoggedIn ? "/profile" : "/login"} style={{ marginLeft: "15px" }}>
+          <i
+            className={isUserLoggedIn ? "fas fa-user" : "far fa-user"}
+            style={{ color: isUserLoggedIn ? "#088178" : "#222", fontSize: "17px" }}
+          ></i>
         </Link>
         <i id="bar" className="fas fa-outdent"></i>
       </div>
