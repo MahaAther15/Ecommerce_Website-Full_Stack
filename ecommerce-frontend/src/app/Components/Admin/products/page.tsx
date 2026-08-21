@@ -6,8 +6,6 @@ import { fetchProducts, addProduct, editProduct, removeProduct } from "@/app/red
 import { uploadProductImageApi } from "@/app/libs/productApi";
 import { Product } from "@/app/types/product";
 import { getCategoriesApi, Category } from "@/app/libs/categoryApi";
-
-
 export default function AdminProductsPage() {
     const dispatch = useAppDispatch();
     const { products, loading, totalItems } = useAppSelector((state) => state.product);

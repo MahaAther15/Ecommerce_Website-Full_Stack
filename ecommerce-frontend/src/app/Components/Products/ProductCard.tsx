@@ -27,6 +27,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     dispatch(
       addToCart({
         id: String(product.id),
+        productId: Number(product.id),
         name: product.title,
         price: product.price,
         image: product.imageUrl || (product as any).image || "",

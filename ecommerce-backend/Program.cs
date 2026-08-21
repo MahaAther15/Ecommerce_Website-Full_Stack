@@ -31,6 +31,13 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IBrandService, BrandService>();
+builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IAddressService, AddressService>();
+
+
 
 
 
@@ -59,7 +66,7 @@ builder.Services.AddHsts(options =>
     options.MaxAge = TimeSpan.FromDays(60); // Tell browser to remember HTTPS for 60 days
 });
 
-// Configure Rate Limiting (20 requests per minute per IP)
+// Configure Rate Limiting (100 requests per minute per IP)
 builder.Services.AddRateLimiter(options =>
 {
     // Customize the 429 response when limit is exceeded
@@ -72,14 +79,14 @@ builder.Services.AddRateLimiter(options =>
         var response = new
         {
             success = false,
-            message = "Too many requests. You are allowed only 20 requests per minute. Please try again later.",
+            message = "Too many requests. You are allowed only 100 requests per minute. Please try again later.",
             statusCode = 429
         };
         
         await context.HttpContext.Response.WriteAsJsonAsync(response, cancellationToken: token);
     };
 
-    // Global IP-based Fixed Window Rate Limiter (20 req / 1 min)
+    // Global IP-based Fixed Window Rate Limiter (100 req / 1 min)
     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
     {
         // Get client IP address (from ForwardedHeaders)
@@ -90,7 +97,7 @@ builder.Services.AddRateLimiter(options =>
             factory: partition => new FixedWindowRateLimiterOptions
             {
                 AutoReplenishment = true,
-                PermitLimit = 20,                          // 20 requests
+                PermitLimit = 100,                         // 100 requests
                 Window = TimeSpan.FromMinutes(1),          // per 1 minute
                 QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
                 QueueLimit = 0                             // Reject immediately when limit reached
@@ -116,8 +123,9 @@ builder.Host.UseSerilog();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-
-
+builder.Services.AddScoped<IBrandRepository, BrandRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
 // 4. Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -225,6 +233,22 @@ app.UseAuthorization();
 
 // Middleware 15 ==> Map Controllers
 app.MapControllers();
+
+// Auto-seed Admin User if not already present
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<AppDbContext>();
+        var passwordHasher = services.GetRequiredService<IPasswordHasher>();
+        await DbSeeder.SeedAdminUserAsync(context, passwordHasher);
+    }
+    catch (Exception ex)
+    {
+        Log.Error(ex, "An error occurred during database seeding of admin user.");
+    }
+}
 
 // Middleware 16 ==> Run
 app.Run();

@@ -1,7 +1,9 @@
+// ecommerce-frontend/src/app/Components/cart/CartSummary.tsx
 "use client";
 
 import { useRouter } from "next/navigation";
 import { CartItemType } from "@/app/types/cart";
+import { useAppSelector } from "@/app/redux/hooks";
 
 interface CartSummaryProps {
   cart: CartItemType[];
@@ -9,6 +11,7 @@ interface CartSummaryProps {
 
 export default function CartSummary({ cart }: CartSummaryProps) {
   const router = useRouter();
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
 
   const subtotal = cart.reduce(
     (acc, item) => acc + item.price * item.quantity,
@@ -16,19 +19,20 @@ export default function CartSummary({ cart }: CartSummaryProps) {
   );
 
   const handleCheckout = () => {
-    const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
-
-    if (!currentUser) {
-      alert("Please login to proceed to checkout!");
+    // 1. Check if user is logged in
+    if (!isAuthenticated) {
+      alert("Please login first to proceed to checkout!");
       router.push("/login");
       return;
     }
 
+    // 2. Check if cart has items
     if (cart.length === 0) {
       alert("Your cart is empty!");
       return;
     }
 
+    // 3. Navigate directly to Payment page
     router.push("/payment");
   };
 

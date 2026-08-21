@@ -3,13 +3,11 @@
 import { use, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import ProductGrid from "@/app/Components/Products/ProductGrid";
 import Newsletter from "@/app/Components/Layout/Newsletter";
-import { Product } from "@/app/types/product";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { addToCart } from "@/app/redux/slices/cartslice";
 import { toggleWishlist } from "@/app/redux/slices/wishlistslice";
-import { fetchProductById, fetchProducts } from "@/app/redux/slices/productSlice";
+import { fetchProductById } from "@/app/redux/slices/productSlice";
 
 interface ProductDetailsProps {
   params: Promise<{ id: string }>;
@@ -21,7 +19,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const wishlistItems = useAppSelector((state) => state.wishlist.items);
-  const { selectedProduct: product, products: allProducts, loading, error } = useAppSelector(
+  const { selectedProduct: product, loading, error } = useAppSelector(
     (state) => state.product
   );
 
@@ -34,9 +32,6 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
   useEffect(() => {
     if (productId) {
       dispatch(fetchProductById(productId));
-      if (!allProducts || allProducts.length === 0) {
-        dispatch(fetchProducts({ pageSize: 8 }));
-      }
     }
   }, [dispatch, productId]);
 
@@ -48,16 +43,6 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
       setActiveImage(product.imageUrl || (product as any).image || "/img/products/f1.jpg");
     }
   }, [product]);
-
-  // Gallery Images (uses product image + default angles)
-  const galleryImages = product
-    ? [
-        productImage,
-        "/img/products/f2.jpg",
-        "/img/products/f3.jpg",
-        "/img/products/f4.jpg",
-      ]
-    : [];
 
   const isWishlisted = product
     ? wishlistItems.some((item) => String(item.id) === String(product.id))
@@ -75,6 +60,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
     dispatch(
       addToCart({
         id: String(product.id),
+        productId: Number(product.id),
         name: `${product.title} (${selectedSize}, ${selectedColor})`,
         price: product.price,
         image: activeImage || productImage,
@@ -89,6 +75,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
     dispatch(
       addToCart({
         id: String(product.id),
+        productId: Number(product.id),
         name: `${product.title} (${selectedSize}, ${selectedColor})`,
         price: product.price,
         image: activeImage || productImage,
@@ -114,10 +101,6 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
         : `❤️ Added to Wishlist!`
     );
   };
-
-  const relatedProducts = allProducts
-    .filter((p) => p.id !== productId)
-    .slice(0, 4);
 
   if (loading) {
     return (
@@ -235,33 +218,6 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
                 style={{ color: isWishlisted ? "#e74c3c" : "#555", fontSize: "18px" }}
               ></i>
             </button>
-          </div>
-
-          {/* 4 Thumbnails */}
-          <div className="small-img-group">
-            {galleryImages.map((imgSrc, idx) => (
-              <div
-                key={idx}
-                className={`small-img-col ${(activeImage || product.image) === imgSrc ? "active" : ""}`}
-                onClick={() => setActiveImage(imgSrc)}
-                style={{
-                  height: "90px",
-                  borderRadius: "10px",
-                  overflow: "hidden",
-                }}
-              >
-                <img
-                  src={imgSrc}
-                  alt={`Thumbnail ${idx + 1}`}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    display: "block",
-                  }}
-                />
-              </div>
-            ))}
           </div>
         </div>
 
@@ -453,13 +409,6 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Related Products Section */}
-      <section id="product1" className="section-p1">
-        <h2>You Might Also Like</h2>
-        <p>Similar products recommended for your style</p>
-        <ProductGrid products={relatedProducts} />
       </section>
 
       <Newsletter />

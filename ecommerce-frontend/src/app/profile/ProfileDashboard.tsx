@@ -4,14 +4,33 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getUserProfileApi, updateUserProfileApi, deleteUserAccountApi } from "@/app/libs/userApi";
+import {
+  getUserAddressesApi,
+  createAddressApi,
+  updateAddressApi,
+  deleteAddressApi,
+  setDefaultAddressApi,
+  AddressDto,
+  CreateAddressDto,
+} from "@/app/libs/addressApi";
 import { logout } from "@/app/libs/authApi";
 import { UserProfile, UpdateProfileData } from "@/app/types/user";
-import { useAppDispatch } from "@/app/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { logout as reduxLogout } from "@/app/redux/slices/authslice";
+import { fetchMyOrders } from "@/app/redux/slices/orderSlice";
+
+const ORDER_STATUS_CFG: Record<string, { color: string; bg: string; icon: string }> = {
+  Pending:   { color: "#d97706", bg: "#fef3c7", icon: "fas fa-clock" },
+  Confirmed: { color: "#2563eb", bg: "#dbeafe", icon: "fas fa-check-circle" },
+  Shipped:   { color: "#7c3aed", bg: "#ede9fe", icon: "fas fa-shipping-fast" },
+  Delivered: { color: "#16a34a", bg: "#dcfce7", icon: "fas fa-box-open" },
+  Cancelled: { color: "#dc2626", bg: "#fee2e2", icon: "fas fa-times-circle" },
+};
 
 export default function ProfileDashboard() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { myOrders = [], loading: ordersLoading = false } = useAppSelector((state) => state.order) ?? {};
   const [activeTab, setActiveTab] = useState<"dashboard" | "profile" | "address" | "orders" | "settings">("dashboard");
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -24,6 +43,25 @@ export default function ProfileDashboard() {
     postalCode: "",
     country: "",
   });
+
+  // 📍 Address Management States
+  const [addresses, setAddresses] = useState<AddressDto[]>([]);
+  const [addressLoading, setAddressLoading] = useState<boolean>(false);
+  const [showAddressModal, setShowAddressModal] = useState<boolean>(false);
+  const [editingAddressId, setEditingAddressId] = useState<number | null>(null);
+  const [addressFormData, setAddressFormData] = useState<CreateAddressDto>({
+    fullName: "",
+    phoneNumber: "",
+    streetAddress: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    country: "Pakistan",
+    addressType: "Home",
+    isDefault: false,
+  });
+  const [addressSaving, setAddressSaving] = useState<boolean>(false);
+  const [addressModalError, setAddressModalError] = useState<string | null>(null);
 
   const [loading, setLoading] = useState<boolean>(true);
   const [saving, setSaving] = useState<boolean>(false);
@@ -94,6 +132,111 @@ export default function ProfileDashboard() {
     }
     fetchProfile();
   }, []);
+
+  // Fetch orders when the orders tab is opened
+  useEffect(() => {
+    if (activeTab === "orders") {
+      dispatch(fetchMyOrders());
+    }
+  }, [activeTab]);
+
+  // 📍 Fetch addresses from backend
+  const fetchAddresses = async () => {
+    try {
+      setAddressLoading(true);
+      const data = await getUserAddressesApi();
+      setAddresses(data);
+    } catch (err: any) {
+      console.error("Failed to fetch addresses:", err);
+    } finally {
+      setAddressLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "address" || activeTab === "dashboard") {
+      fetchAddresses();
+    }
+  }, [activeTab]);
+
+  const handleOpenAddAddress = () => {
+    setEditingAddressId(null);
+    setAddressFormData({
+      fullName: profile?.fullName || "",
+      phoneNumber: profile?.phoneNumber || "",
+      streetAddress: "",
+      city: profile?.city || "",
+      state: profile?.state || "",
+      postalCode: profile?.postalCode || "",
+      country: "Pakistan",
+      addressType: "Home",
+      isDefault: addresses.length === 0,
+    });
+    setAddressModalError(null);
+    setShowAddressModal(true);
+  };
+
+  const handleOpenEditAddress = (addr: AddressDto) => {
+    setEditingAddressId(addr.id);
+    setAddressFormData({
+      fullName: addr.fullName,
+      phoneNumber: addr.phoneNumber,
+      streetAddress: addr.streetAddress,
+      city: addr.city,
+      state: addr.state || "",
+      postalCode: addr.postalCode || "",
+      country: addr.country || "Pakistan",
+      addressType: (addr.addressType as any) || "Home",
+      isDefault: addr.isDefault,
+    });
+    setAddressModalError(null);
+    setShowAddressModal(true);
+  };
+
+  const handleSaveAddress = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAddressSaving(true);
+    setAddressModalError(null);
+    try {
+      if (editingAddressId) {
+        await updateAddressApi(editingAddressId, addressFormData);
+        setSuccessMessage("Address updated successfully!");
+      } else {
+        await createAddressApi(addressFormData);
+        setSuccessMessage("New address added successfully!");
+      }
+      setShowAddressModal(false);
+      await fetchAddresses();
+    } catch (err: any) {
+      setAddressModalError(err.message || "Failed to save address.");
+    } finally {
+      setAddressSaving(false);
+    }
+  };
+
+  const handleDeleteAddress = async (id: number) => {
+    if (confirm("Are you sure you want to delete this address?")) {
+      try {
+        await deleteAddressApi(id);
+        setAddresses((prev) => prev.filter((a) => a.id !== id));
+        setSuccessMessage("Address deleted successfully!");
+      } catch (err: any) {
+        setErrorMessage(err.message || "Failed to delete address.");
+      }
+    }
+  };
+
+  const handleSetDefaultAddress = async (id: number) => {
+    try {
+      await setDefaultAddressApi(id);
+      setAddresses((prev) =>
+        prev.map((a) => ({ ...a, isDefault: a.id === id }))
+      );
+      setSuccessMessage("Default shipping address updated!");
+    } catch (err: any) {
+      setErrorMessage(err.message || "Failed to set default address.");
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -626,64 +769,253 @@ export default function ProfileDashboard() {
               </div>
             )}
 
-            {/* ═══ EDIT SHIPPING ADDRESS TAB ═══ */}
+            {/* ═══ SAVED ADDRESSES TAB ═══ */}
             {activeTab === "address" && (
               <div style={{ backgroundColor: "#fff", border: "1px solid #f0ebe6", padding: "28px", borderRadius: "16px" }}>
-                <h3 style={{ margin: "0 0 4px 0", fontSize: "18px", fontWeight: "800", color: "#1a1a1a" }}>Default Shipping Address</h3>
-                <p style={{ fontSize: "12px", color: "#888", marginBottom: "24px" }}>This address will be auto-filled at checkout for shipments.</p>
-
-                <form onSubmit={handleSubmit}>
-                  <div style={{ marginBottom: "18px" }}>
-                    <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#444", marginBottom: "6px" }}>Street Address</label>
-                    <input type="text" name="address" placeholder="House/Apartment #, Street, Area" value={formData.address} onChange={handleChange}
-                      style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e5e0db", outline: "none", fontSize: "13px", backgroundColor: "#faf8f5" }}
-                    />
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "12px" }}>
+                  <div>
+                    <h3 style={{ margin: "0 0 4px 0", fontSize: "18px", fontWeight: "800", color: "#1a1a1a" }}>My Saved Addresses</h3>
+                    <p style={{ fontSize: "12px", color: "#888", margin: 0 }}>Manage your delivery addresses for quick and seamless checkout.</p>
                   </div>
-
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "18px", marginBottom: "18px" }}>
-                    <div>
-                      <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#444", marginBottom: "6px" }}>City</label>
-                      <input type="text" name="city" placeholder="e.g. Lahore, Karachi" value={formData.city} onChange={handleChange}
-                        style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e5e0db", outline: "none", fontSize: "13px", backgroundColor: "#faf8f5" }}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#444", marginBottom: "6px" }}>State / Province</label>
-                      <input type="text" name="state" placeholder="e.g. Punjab, Sindh" value={formData.state} onChange={handleChange}
-                        style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e5e0db", outline: "none", fontSize: "13px", backgroundColor: "#faf8f5" }}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#444", marginBottom: "6px" }}>Postal / Zip Code</label>
-                      <input type="text" name="postalCode" placeholder="54000" value={formData.postalCode} onChange={handleChange}
-                        style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e5e0db", outline: "none", fontSize: "13px", backgroundColor: "#faf8f5" }}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#444", marginBottom: "6px" }}>Country</label>
-                      <input type="text" name="country" placeholder="Pakistan" value={formData.country} onChange={handleChange}
-                        style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e5e0db", outline: "none", fontSize: "13px", backgroundColor: "#faf8f5" }}
-                      />
-                    </div>
-                  </div>
-                  <button type="submit" disabled={saving}
-                    style={{ padding: "10px 24px", backgroundColor: "#088178", color: "#fff", border: "none", borderRadius: "10px", fontWeight: "700", fontSize: "13px", cursor: saving ? "not-allowed" : "pointer" }}
+                  <button
+                    onClick={handleOpenAddAddress}
+                    style={{
+                      backgroundColor: "#088178",
+                      color: "#fff",
+                      border: "none",
+                      padding: "10px 18px",
+                      borderRadius: "10px",
+                      fontWeight: "700",
+                      fontSize: "13px",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
                   >
-                    {saving ? "Saving..." : "Save Shipping Address"}
+                    <i className="fas fa-plus"></i> Add New Address
                   </button>
-                </form>
+                </div>
+
+                {addressLoading && (
+                  <div style={{ padding: "40px 0", textAlign: "center", color: "#9ca3af" }}>
+                    <i className="fas fa-spinner fa-spin" style={{ fontSize: "24px", marginBottom: "10px", display: "block" }}></i>
+                    Loading your saved addresses...
+                  </div>
+                )}
+
+                {!addressLoading && addresses.length === 0 && (
+                  <div style={{ padding: "48px 20px", textAlign: "center", border: "2px dashed #f0ebe6", borderRadius: "14px", backgroundColor: "#faf8f5" }}>
+                    <div style={{ fontSize: "36px", marginBottom: "10px" }}>📍</div>
+                    <h4 style={{ margin: "0 0 6px 0", fontSize: "16px", fontWeight: "700", color: "#374151" }}>No Saved Addresses Yet</h4>
+                    <p style={{ margin: "0 0 18px 0", fontSize: "13px", color: "#6b7280" }}>
+                      Add your home or office address to enable 1-click checkout.
+                    </p>
+                    <button
+                      onClick={handleOpenAddAddress}
+                      style={{
+                        backgroundColor: "#088178",
+                        color: "#fff",
+                        border: "none",
+                        padding: "10px 20px",
+                        borderRadius: "10px",
+                        fontWeight: "700",
+                        fontSize: "13px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      + Add Your First Address
+                    </button>
+                  </div>
+                )}
+
+                {!addressLoading && addresses.length > 0 && (
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "16px" }}>
+                    {addresses.map((addr) => (
+                      <div
+                        key={addr.id}
+                        style={{
+                          border: addr.isDefault ? "2px solid #088178" : "1px solid #e5e7eb",
+                          borderRadius: "14px",
+                          padding: "18px",
+                          backgroundColor: addr.isDefault ? "#f0fdfa" : "#ffffff",
+                          position: "relative",
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                          boxShadow: "0 2px 6px rgba(0,0,0,0.03)",
+                        }}
+                      >
+                        <div>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+                            <span
+                              style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "6px",
+                                padding: "4px 10px",
+                                borderRadius: "20px",
+                                fontSize: "11px",
+                                fontWeight: "700",
+                                backgroundColor: addr.addressType === "Office" ? "#ede9fe" : "#fef3c7",
+                                color: addr.addressType === "Office" ? "#6d28d9" : "#b45309",
+                              }}
+                            >
+                              <i className={addr.addressType === "Office" ? "fas fa-building" : "fas fa-home"}></i>
+                              {addr.addressType}
+                            </span>
+
+                            {addr.isDefault && (
+                              <span
+                                style={{
+                                  backgroundColor: "#088178",
+                                  color: "#ffffff",
+                                  fontSize: "10px",
+                                  fontWeight: "800",
+                                  padding: "3px 8px",
+                                  borderRadius: "12px",
+                                  textTransform: "uppercase",
+                                }}
+                              >
+                                ★ Default
+                              </span>
+                            )}
+                          </div>
+
+                          <h4 style={{ margin: "0 0 4px 0", fontSize: "15px", fontWeight: "800", color: "#1f2937" }}>
+                            {addr.fullName}
+                          </h4>
+                          <div style={{ fontSize: "12px", color: "#088178", fontWeight: "600", marginBottom: "8px" }}>
+                            <i className="fas fa-phone-alt" style={{ marginRight: "6px" }}></i>
+                            {addr.phoneNumber}
+                          </div>
+
+                          <p style={{ margin: "0 0 14px 0", fontSize: "13px", color: "#4b5563", lineHeight: "1.5" }}>
+                            {addr.streetAddress}, {addr.city}
+                            {addr.state ? `, ${addr.state}` : ""}
+                            {addr.postalCode ? ` - ${addr.postalCode}` : ""}, {addr.country}
+                          </p>
+                        </div>
+
+                        {/* Actions */}
+                        <div style={{ borderTop: "1px solid #f3f4f6", paddingTop: "12px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                          {!addr.isDefault ? (
+                            <button
+                              onClick={() => handleSetDefaultAddress(addr.id)}
+                              style={{
+                                background: "none",
+                                border: "none",
+                                color: "#088178",
+                                fontSize: "12px",
+                                fontWeight: "700",
+                                cursor: "pointer",
+                                padding: 0,
+                              }}
+                            >
+                              Set as Default
+                            </button>
+                          ) : (
+                            <span style={{ fontSize: "11px", color: "#16a34a", fontWeight: "600" }}>
+                              <i className="fas fa-check" style={{ marginRight: "4px" }}></i> Active Default
+                            </span>
+                          )}
+
+                          <div style={{ display: "flex", gap: "8px" }}>
+                            <button
+                              onClick={() => handleOpenEditAddress(addr)}
+                              style={{
+                                background: "#f3f4f6",
+                                border: "none",
+                                borderRadius: "6px",
+                                padding: "6px 10px",
+                                fontSize: "12px",
+                                color: "#374151",
+                                cursor: "pointer",
+                                fontWeight: "600",
+                              }}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteAddress(addr.id)}
+                              style={{
+                                background: "#fee2e2",
+                                border: "none",
+                                borderRadius: "6px",
+                                padding: "6px 10px",
+                                fontSize: "12px",
+                                color: "#dc2626",
+                                cursor: "pointer",
+                                fontWeight: "600",
+                              }}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
             {/* ═══ ORDERS TAB ═══ */}
             {activeTab === "orders" && (
-              <div style={{ backgroundColor: "#fff", border: "1px solid #f0ebe6", padding: "30px", borderRadius: "16px", textAlign: "center" }}>
-                <i className="fas fa-box-open" style={{ fontSize: "44px", color: "#ddd", marginBottom: "12px" }}></i>
-                <h3 style={{ margin: "0 0 6px 0", color: "#1a1a1a", fontSize: "17px" }}>No Orders Yet</h3>
-                <p style={{ fontSize: "13px", color: "#999", marginBottom: "18px" }}>Start shopping to track your order history here.</p>
-                <Link href="/shop" style={{ backgroundColor: "#088178", color: "#fff", padding: "10px 22px", borderRadius: "10px", textDecoration: "none", fontWeight: "700", fontSize: "13px" }}>
-                  Browse Products
-                </Link>
+              <div style={{ backgroundColor: "#fff", border: "1px solid #f0ebe6", borderRadius: "16px", overflow: "hidden" }}>
+                <div style={{ padding: "20px 24px", borderBottom: "1px solid #f0ebe6", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: "17px", fontWeight: "800", color: "#1a1a1a" }}>Order History</h3>
+                    <p style={{ margin: "2px 0 0 0", fontSize: "12px", color: "#999" }}>All your past purchases</p>
+                  </div>
+                  <Link href="/orders" style={{ backgroundColor: "#088178", color: "#fff", padding: "8px 16px", borderRadius: "8px", textDecoration: "none", fontWeight: "700", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px" }}>
+                    <i className="fas fa-external-link-alt" /> View All
+                  </Link>
+                </div>
+
+                {ordersLoading && (
+                  <div style={{ padding: "40px", textAlign: "center", color: "#9ca3af" }}>
+                    <i className="fas fa-spinner fa-spin" style={{ fontSize: "22px", marginBottom: "10px", display: "block" }} />
+                    Loading orders...
+                  </div>
+                )}
+
+                {!ordersLoading && myOrders.length === 0 && (
+                  <div style={{ padding: "40px", textAlign: "center" }}>
+                    <i className="fas fa-box-open" style={{ fontSize: "40px", color: "#e5e7eb", marginBottom: "12px", display: "block" }} />
+                    <p style={{ fontSize: "14px", color: "#999", marginBottom: "16px" }}>No orders yet. Start shopping!</p>
+                    <Link href="/shop" style={{ backgroundColor: "#088178", color: "#fff", padding: "9px 20px", borderRadius: "8px", textDecoration: "none", fontWeight: "700", fontSize: "13px" }}>
+                      Browse Products
+                    </Link>
+                  </div>
+                )}
+
+                {!ordersLoading && myOrders.slice(0, 5).map((order) => {
+                  const cfg = ORDER_STATUS_CFG[order.status] ?? { color: "#6b7280", bg: "#f3f4f6", icon: "fas fa-circle" };
+                  const date = new Date(order.createdAt).toLocaleDateString("en-PK", { month: "short", day: "numeric", year: "numeric" });
+                  return (
+                    <div key={order.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 24px", borderBottom: "1px solid #f9f7f5", flexWrap: "wrap", gap: "10px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+                        <div style={{ backgroundColor: "#f0fdf4", borderRadius: "10px", padding: "9px 11px" }}>
+                          <i className="fas fa-receipt" style={{ color: "#088178", fontSize: "16px" }} />
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: "800", color: "#111", fontSize: "14px" }}>Order #{order.id}</div>
+                          <div style={{ fontSize: "11px", color: "#9ca3af", marginTop: "2px" }}>{date} &middot; {order.orderItems.length} item{order.orderItems.length !== 1 ? "s" : ""}</div>
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <span style={{ backgroundColor: cfg.bg, color: cfg.color, padding: "4px 12px", borderRadius: "999px", fontWeight: "700", fontSize: "11px", display: "inline-flex", alignItems: "center", gap: "5px" }}>
+                          <i className={cfg.icon} />{order.status}
+                        </span>
+                        <span style={{ fontWeight: "800", color: "#088178", fontSize: "13px" }}>Rs. {order.finalAmount.toLocaleString()}</span>
+                        <Link href={`/orders/${order.id}`} style={{ backgroundColor: "#f3f4f6", color: "#374151", padding: "6px 12px", borderRadius: "7px", textDecoration: "none", fontWeight: "700", fontSize: "11px" }}>
+                          View
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
 
@@ -965,6 +1297,208 @@ export default function ProfileDashboard() {
                 {deleteLoading ? "Deleting Account..." : "I understand, delete my account"}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* 📍 ADD / EDIT ADDRESS MODAL */}
+      {showAddressModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+            padding: "20px",
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "#ffffff",
+              borderRadius: "18px",
+              padding: "28px",
+              width: "100%",
+              maxWidth: "540px",
+              maxHeight: "90vh",
+              overflowY: "auto",
+              boxShadow: "0 20px 40px rgba(0,0,0,0.15)",
+              animation: "fadeIn 0.2s ease",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px" }}>
+              <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "800", color: "#1f2937" }}>
+                {editingAddressId ? "Edit Shipping Address" : "Add New Shipping Address"}
+              </h3>
+              <button
+                onClick={() => setShowAddressModal(false)}
+                style={{ background: "none", border: "none", fontSize: "18px", cursor: "pointer", color: "#9ca3af" }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {addressModalError && (
+              <div style={{ backgroundColor: "#fee2e2", border: "1px solid #f87171", color: "#b91c1c", padding: "10px 14px", borderRadius: "8px", fontSize: "12px", marginBottom: "16px" }}>
+                {addressModalError}
+              </div>
+            )}
+
+            <form onSubmit={handleSaveAddress}>
+              {/* Address Type Selector */}
+              <div style={{ marginBottom: "16px" }}>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "6px" }}>
+                  Address Type
+                </label>
+                <div style={{ display: "flex", gap: "10px" }}>
+                  {(["Home", "Office", "Other"] as const).map((type) => (
+                    <button
+                      key={type}
+                      type="button"
+                      onClick={() => setAddressFormData((prev) => ({ ...prev, addressType: type }))}
+                      style={{
+                        flex: 1,
+                        padding: "8px 12px",
+                        borderRadius: "8px",
+                        border: addressFormData.addressType === type ? "2px solid #088178" : "1px solid #d1d5db",
+                        backgroundColor: addressFormData.addressType === type ? "#f0fdfa" : "#fff",
+                        color: addressFormData.addressType === type ? "#088178" : "#4b5563",
+                        fontWeight: "700",
+                        fontSize: "12px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <i className={type === "Home" ? "fas fa-home" : type === "Office" ? "fas fa-building" : "fas fa-map-pin"} style={{ marginRight: "6px" }}></i>
+                      {type}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Full Name & Phone */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "14px" }}>
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Receiver Full Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={addressFormData.fullName}
+                    onChange={(e) => setAddressFormData((prev) => ({ ...prev, fullName: e.target.value }))}
+                    placeholder="e.g. John Doe"
+                    style={{ width: "100%", padding: "9px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none", boxSizing: "border-box" }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Phone Number *</label>
+                  <input
+                    type="text"
+                    required
+                    value={addressFormData.phoneNumber}
+                    onChange={(e) => setAddressFormData((prev) => ({ ...prev, phoneNumber: e.target.value }))}
+                    placeholder="03001234567"
+                    style={{ width: "100%", padding: "9px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none", boxSizing: "border-box" }}
+                  />
+                </div>
+              </div>
+
+              {/* Street Address */}
+              <div style={{ marginBottom: "14px" }}>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Street Address *</label>
+                <input
+                  type="text"
+                  required
+                  value={addressFormData.streetAddress}
+                  onChange={(e) => setAddressFormData((prev) => ({ ...prev, streetAddress: e.target.value }))}
+                  placeholder="House #, Street, Area / Sector"
+                  style={{ width: "100%", padding: "9px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none", boxSizing: "border-box" }}
+                />
+              </div>
+
+              {/* City & State */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "14px" }}>
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>City *</label>
+                  <input
+                    type="text"
+                    required
+                    value={addressFormData.city}
+                    onChange={(e) => setAddressFormData((prev) => ({ ...prev, city: e.target.value }))}
+                    placeholder="e.g. Lahore"
+                    style={{ width: "100%", padding: "9px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none", boxSizing: "border-box" }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>State / Province</label>
+                  <input
+                    type="text"
+                    value={addressFormData.state || ""}
+                    onChange={(e) => setAddressFormData((prev) => ({ ...prev, state: e.target.value }))}
+                    placeholder="e.g. Punjab"
+                    style={{ width: "100%", padding: "9px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none", boxSizing: "border-box" }}
+                  />
+                </div>
+              </div>
+
+              {/* Postal Code & Country */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "18px" }}>
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Postal Code</label>
+                  <input
+                    type="text"
+                    value={addressFormData.postalCode || ""}
+                    onChange={(e) => setAddressFormData((prev) => ({ ...prev, postalCode: e.target.value }))}
+                    placeholder="54000"
+                    style={{ width: "100%", padding: "9px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none", boxSizing: "border-box" }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Country</label>
+                  <input
+                    type="text"
+                    disabled
+                    value={addressFormData.country}
+                    style={{ width: "100%", padding: "9px 12px", borderRadius: "8px", border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", color: "#6b7280", fontSize: "13px", boxSizing: "border-box" }}
+                  />
+                </div>
+              </div>
+
+              {/* Is Default Checkbox */}
+              <div style={{ marginBottom: "22px", display: "flex", alignItems: "center", gap: "8px" }}>
+                <input
+                  type="checkbox"
+                  id="modalIsDefault"
+                  checked={addressFormData.isDefault}
+                  onChange={(e) => setAddressFormData((prev) => ({ ...prev, isDefault: e.target.checked }))}
+                  style={{ width: "16px", height: "16px", accentColor: "#088178", cursor: "pointer" }}
+                />
+                <label htmlFor="modalIsDefault" style={{ fontSize: "13px", color: "#374151", cursor: "pointer", fontWeight: "600" }}>
+                  Set as my default shipping address
+                </label>
+              </div>
+
+              {/* Action Buttons */}
+              <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
+                <button
+                  type="button"
+                  onClick={() => setShowAddressModal(false)}
+                  style={{ padding: "10px 18px", borderRadius: "8px", border: "1px solid #d1d5db", backgroundColor: "#fff", color: "#4b5563", fontSize: "13px", fontWeight: "700", cursor: "pointer" }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={addressSaving}
+                  style={{ padding: "10px 22px", borderRadius: "8px", border: "none", backgroundColor: "#088178", color: "#fff", fontSize: "13px", fontWeight: "700", cursor: addressSaving ? "not-allowed" : "pointer" }}
+                >
+                  {addressSaving ? "Saving..." : editingAddressId ? "Update Address" : "Save Address"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

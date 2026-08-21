@@ -98,6 +98,34 @@ export default function AdminLayout({
                             <i className="fas fa-tags"></i>
                             Categories
                         </Link>
+                        <Link href="/admin/brands" style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "12px",
+                            padding: "12px 16px",
+                            borderRadius: "8px",
+                            color: "#d1d5db",
+                            textDecoration: "none",
+                            fontWeight: "600",
+                            fontSize: "14px"
+                        }}>
+                            <i className="fas fa-certificate"></i> Brands
+                        </Link>
+
+                        <Link href="/admin/settings" style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "12px",
+                            padding: "12px 16px",
+                            borderRadius: "8px",
+                            color: "#d1d5db",
+                            textDecoration: "none",
+                            fontWeight: "600",
+                            fontSize: "14px"
+                        }}>
+                            <i className="fas fa-cog"></i> Settings
+                        </Link>
+
 
                         {/* View Live Store */}
                         <Link

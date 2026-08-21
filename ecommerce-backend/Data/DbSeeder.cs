@@ -70,26 +70,25 @@ namespace ecommerce_backend.Data
             await context.SaveChangesAsync();
         }
         public static async Task SeedAdminUserAsync(AppDbContext context, IPasswordHasher passwordHasher)
-{
-    string adminEmail = "admin@ecommerce.com";
-
-    // Check karein agar admin pehle se mojood nahi hai
-    if (!await context.Users.AnyAsync(u => u.Email == adminEmail))
-    {
-        var adminUser = new User
         {
-            FullName = "Super Admin",
-            Email = adminEmail,
-            PasswordHash = passwordHasher.HashPassword("Admin@12345"), // 👈 Admin Password yahan decide hoga
-            Role = "Admin", // 👈 Role must be "Admin"
-            AuthProvider = "Local",
-            CreatedAt = DateTime.UtcNow
-        };
+            string adminEmail = "admin@ecommerce.com";
 
-        await context.Users.AddAsync(adminUser);
-        await context.SaveChangesAsync();
-    }
-}
+            // Check karein agar admin pehle se mojood nahi hai
+            if (!await context.Users.AnyAsync(u => u.Email == adminEmail))
+            {
+                var adminUser = new User
+                {
+                    FullName = "Super Admin",
+                    Email = adminEmail,
+                    PasswordHash = passwordHasher.HashPassword("Admin@12345"),
+                    Role = "Admin",
+                    AuthProvider = "Local",
+                    CreatedAt = DateTime.UtcNow
+                };
 
+                await context.Users.AddAsync(adminUser);
+                await context.SaveChangesAsync();
+            }
+        }
     }
 }
