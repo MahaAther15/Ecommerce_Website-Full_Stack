@@ -1,15 +1,15 @@
 "use client";
 
-import { use, useState } from "react";
+import { use, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import productsData from "@/app/data/products.json";
 import ProductGrid from "@/app/Components/Products/ProductGrid";
 import Newsletter from "@/app/Components/Layout/Newsletter";
 import { Product } from "@/app/types/product";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { addToCart } from "@/app/redux/slices/cartslice";
 import { toggleWishlist } from "@/app/redux/slices/wishlistslice";
+import { fetchProductById, fetchProducts } from "@/app/redux/slices/productSlice";
 
 interface ProductDetailsProps {
   params: Promise<{ id: string }>;
@@ -17,12 +17,13 @@ interface ProductDetailsProps {
 
 export default function ProductDetailsPage({ params }: ProductDetailsProps) {
   const resolvedParams = use(params);
-  const productId = resolvedParams.id;
+  const productId = Number(resolvedParams.id);
   const router = useRouter();
   const dispatch = useAppDispatch();
   const wishlistItems = useAppSelector((state) => state.wishlist.items);
-
-  const product = (productsData as Product[]).find((p) => p.id === productId);
+  const { selectedProduct: product, products: allProducts, loading, error } = useAppSelector(
+    (state) => state.product
+  );
 
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("L");
@@ -30,16 +31,33 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
   const [activeTab, setActiveTab] = useState<"desc" | "specs" | "reviews">("desc");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Gallery Images (uses product image + variants)
+  useEffect(() => {
+    if (productId) {
+      dispatch(fetchProductById(productId));
+      if (!allProducts || allProducts.length === 0) {
+        dispatch(fetchProducts({ pageSize: 8 }));
+      }
+    }
+  }, [dispatch, productId]);
+
+  const productImage = product?.imageUrl || (product as any)?.image || "/img/products/f1.jpg";
+  const [activeImage, setActiveImage] = useState<string>("");
+
+  useEffect(() => {
+    if (product) {
+      setActiveImage(product.imageUrl || (product as any).image || "/img/products/f1.jpg");
+    }
+  }, [product]);
+
+  // Gallery Images (uses product image + default angles)
   const galleryImages = product
     ? [
-        product.image,
+        productImage,
         "/img/products/f2.jpg",
         "/img/products/f3.jpg",
         "/img/products/f4.jpg",
       ]
     : [];
-  const [activeImage, setActiveImage] = useState(product?.image || "");
 
   const isWishlisted = product
     ? wishlistItems.some((item) => String(item.id) === String(product.id))
@@ -56,10 +74,10 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
     if (!product) return;
     dispatch(
       addToCart({
-        id: product.id,
+        id: String(product.id),
         name: `${product.title} (${selectedSize}, ${selectedColor})`,
         price: product.price,
-        image: activeImage || product.image,
+        image: activeImage || productImage,
         quantity: quantity,
       })
     );
@@ -70,10 +88,10 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
     if (!product) return;
     dispatch(
       addToCart({
-        id: product.id,
+        id: String(product.id),
         name: `${product.title} (${selectedSize}, ${selectedColor})`,
         price: product.price,
-        image: activeImage || product.image,
+        image: activeImage || productImage,
         quantity: quantity,
       })
     );
@@ -84,10 +102,10 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
     if (!product) return;
     dispatch(
       toggleWishlist({
-        id: product.id,
+        id: String(product.id),
         name: product.title,
         price: product.price,
-        image: product.image,
+        image: productImage,
       })
     );
     showToast(
@@ -97,17 +115,26 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
     );
   };
 
-  const relatedProducts = (productsData as Product[])
+  const relatedProducts = allProducts
     .filter((p) => p.id !== productId)
     .slice(0, 4);
 
-  if (!product) {
+  if (loading) {
+    return (
+      <div className="section-p1 text-center py-24" style={{ textAlign: "center", padding: "100px 20px" }}>
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-solid border-teal-600 border-r-transparent mb-4"></div>
+        <h3 className="text-xl font-semibold text-gray-600">Loading Product Details...</h3>
+      </div>
+    );
+  }
+
+  if (error || !product) {
     return (
       <div className="section-p1 text-center py-20" style={{ textAlign: "center", padding: "80px 20px" }}>
         <h2 style={{ fontSize: "28px", fontWeight: "800", marginBottom: "12px", color: "#222" }}>Product Not Found</h2>
-        <p style={{ color: "#666", marginBottom: "24px" }}>The product you are looking for does not exist or has been removed.</p>
+        <p style={{ color: "#666", marginBottom: "24px" }}>{error || "The product you are looking for does not exist or has been removed."}</p>
         <Link
-          href="/shop"
+          href="/Products"
           style={{
             backgroundColor: "#088178",
             color: "#fff",
@@ -124,7 +151,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
     );
   }
 
-  const originalPrice = Math.round(product.price * 1.25);
+  const originalPrice = product.originalPrice || Math.round(product.price * 1.25);
   const savings = originalPrice - product.price;
 
   const colors = [

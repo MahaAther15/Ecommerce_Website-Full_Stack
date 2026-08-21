@@ -18,6 +18,7 @@ export default function Navbar() {
   const wishlistItems = useAppSelector((state) => state.wishlist.items);
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
   const isUserLoggedIn = mounted && isAuthenticated;
+  const isAdmin = isUserLoggedIn && user?.role?.toLowerCase() === "admin";
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -49,7 +50,7 @@ export default function Navbar() {
                   href={link.href}
                 >
                   {link.name}
-                  {link.href === "/wishlist" && wishlistItems.length > 0 && (
+                  {mounted && link.href === "/wishlist" && wishlistItems.length > 0 && (
                     <span style={{
                       backgroundColor: "#088178",
                       color: "#fff",
@@ -73,13 +74,36 @@ export default function Navbar() {
 
       {/* RIGHT: Cart + User Icons */}
       <div className="nav-icons">
+        {/* ⚡ Admin Panel Badge (Only visible to Admin) */}
+        {isAdmin && (
+          <Link
+            href="/admin/products"
+            style={{
+              backgroundColor: "#e74c3c",
+              color: "#fff",
+              padding: "5px 12px",
+              borderRadius: "20px",
+              fontSize: "12px",
+              fontWeight: "700",
+              textDecoration: "none",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "5px",
+              boxShadow: "0 2px 6px rgba(231,76,60,0.3)"
+            }}
+            title="Admin Management Dashboard"
+          >
+            <i className="fas fa-shield-alt"></i> Admin Panel
+          </Link>
+        )}
+
         <Link
           className={pathname === "/cart" ? "active" : ""}
           href="/cart"
           style={{ position: "relative" }}
         >
           <i className="far fa-shopping-bag"></i>
-          {totalQuantity > 0 && (
+          {mounted && totalQuantity > 0 && (
             <span style={{
               position: "absolute",
               top: "-8px",
@@ -118,10 +142,10 @@ export default function Navbar() {
         </Link>
       </div>
 
-      <div className="mobile">
+      <div className="mobile" style={{ display: "none" }}>
         <Link href="/cart" style={{ position: "relative" }}>
           <i className="far fa-shopping-bag"></i>
-          {totalQuantity > 0 && (
+          {mounted && totalQuantity > 0 && (
             <span style={{
               position: "absolute",
               top: "-8px",
@@ -137,7 +161,7 @@ export default function Navbar() {
             </span>
           )}
         </Link>
-        <Link href={isUserLoggedIn ? "/profile" : "/login"} style={{ marginLeft: "15px" }}>
+        <Link href={isUserLoggedIn ? "/profile" : "/login"} style={{ marginLeft: "10px" }}>
           <i
             className={isUserLoggedIn ? "fas fa-user" : "far fa-user"}
             style={{ color: isUserLoggedIn ? "#088178" : "#222", fontSize: "17px" }}

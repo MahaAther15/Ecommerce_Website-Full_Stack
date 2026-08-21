@@ -1,105 +1,113 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import productsData from "@/app/data/products.json";
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import { fetchProducts, fetchCategories, setFilters } from "@/app/redux/slices/productSlice";
 import ProductGrid from "@/app/Components/Products/ProductGrid";
 import ProductFilters from "@/app/Components/Products/ProductFilters";
 import ProductSort from "@/app/Components/Products/ProductSort";
 import Newsletter from "@/app/Components/Layout/Newsletter";
-import { Product } from "@/app/types/product";
 
 export default function ProductsPage() {
-  const [products] = useState<Product[]>(productsData as Product[]);
-  const [selectedBrand, setSelectedBrand] = useState<string>("All");
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [sortBy, setSortBy] = useState<string>("default");
+  const dispatch = useAppDispatch();
+  const { products, loading, error, filters, totalPages, categories } = useAppSelector(
+    (state) => state.product
+  );
 
-  // Get unique brands for filter dropdown
-  const brands = useMemo(() => {
-    const brandSet = new Set(products.map((p) => p.brand));
-    return Array.from(brandSet);
-  }, [products]);
+  // Initial categories fetch
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
-  // Filter and sort products
-  const filteredAndSortedProducts = useMemo(() => {
-    let result = [...products];
+  // Fetch products whenever filters change
+  useEffect(() => {
+    dispatch(fetchProducts(filters));
+  }, [dispatch, filters]);
 
-    // Filter by Brand
-    if (selectedBrand !== "All") {
-      result = result.filter(
-        (p) => p.brand.toLowerCase() === selectedBrand.toLowerCase()
-      );
-    }
+  const handleBrandChange = (brand: string) => {
+    dispatch(setFilters({ brand, pageNumber: 1 }));
+  };
 
-    // Filter by Search Query
-    if (searchQuery.trim() !== "") {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(
-        (p) =>
-          p.title.toLowerCase().includes(query) ||
-          p.brand.toLowerCase().includes(query)
-      );
-    }
+  const handleSearchChange = (search: string) => {
+    dispatch(setFilters({ search, pageNumber: 1 }));
+  };
 
-    // Sort Products
-    if (sortBy === "price-low-high") {
-      result.sort((a, b) => a.price - b.price);
-    } else if (sortBy === "price-high-low") {
-      result.sort((a, b) => b.price - a.price);
-    } else if (sortBy === "title-az") {
-      result.sort((a, b) => a.title.localeCompare(b.title));
-    }
+  const handleSortChange = (sortBy: string) => {
+    dispatch(setFilters({ sortBy, pageNumber: 1 }));
+  };
 
-    return result;
-  }, [products, selectedBrand, searchQuery, sortBy]);
+  const handlePageChange = (page: number) => {
+    dispatch(setFilters({ pageNumber: page }));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const brandsList = ["All", "Adidas", "Nike", "H&M", "Uniqlo", "Ralph Lauren", "Zara"];
 
   return (
     <div>
       {/* Hero / Page Header section */}
       <section id="page-header">
         <h2>#StayHome</h2>
-        <p>Save more with coupons & upto 70% off</p>
+        <p>Save more with coupons & up to 70% off</p>
       </section>
 
       {/* Filter and Sort Controls */}
       <section className="section-p1 !py-6">
         <div id="shop-filter-bar">
           <ProductFilters
-            selectedBrand={selectedBrand}
-            onBrandChange={setSelectedBrand}
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            brands={brands}
+            selectedBrand={filters.brand || "All"}
+            onBrandChange={handleBrandChange}
+            searchQuery={filters.search || ""}
+            onSearchChange={handleSearchChange}
+            brands={brandsList}
           />
 
           <div className="filter-group">
             <div className="filter-item">
               <label>Filter by Brand:</label>
               <select
-                value={selectedBrand}
-                onChange={(e) => setSelectedBrand(e.target.value)}
+                value={filters.brand || "All"}
+                onChange={(e) => handleBrandChange(e.target.value)}
                 className="filter-select"
               >
-                <option value="All">All Brands</option>
-                {brands.map((brand) => (
+                {brandsList.map((brand) => (
                   <option key={brand} value={brand}>
-                    {brand}
+                    {brand === "All" ? "All Brands" : brand}
                   </option>
                 ))}
               </select>
             </div>
 
-            <ProductSort sortBy={sortBy} onSortChange={setSortBy} />
+            <ProductSort
+              sortBy={filters.sortBy || "default"}
+              onSortChange={handleSortChange}
+            />
           </div>
         </div>
       </section>
 
       {/* Product List Section */}
       <section id="product1" className="section-p1">
-        {filteredAndSortedProducts.length > 0 ? (
-          <ProductGrid products={filteredAndSortedProducts} />
+        {loading ? (
+          <div className="text-center py-16">
+            <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-solid border-teal-600 border-r-transparent align-[-0.125em] mb-4"></div>
+            <p className="text-lg font-medium text-gray-600">Loading products from server...</p>
+          </div>
+        ) : error ? (
+          <div className="text-center py-16">
+            <i className="fas fa-exclamation-circle text-4xl text-red-500 mb-3"></i>
+            <p className="text-lg font-semibold text-red-600">{error}</p>
+            <button
+              onClick={() => dispatch(fetchProducts(filters))}
+              className="mt-4 px-6 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        ) : products && products.length > 0 ? (
+          <ProductGrid products={products} />
         ) : (
-          <div className="text-center py-10">
+          <div className="text-center py-16">
             <h3 className="text-xl font-semibold text-gray-600">
               No products found matching your criteria.
             </h3>
@@ -108,18 +116,23 @@ export default function ProductsPage() {
       </section>
 
       {/* Pagination Section */}
-      <section id="pagination" className="section-p1">
-        <a href="#" className="active">
-          1
-        </a>
-        <a href="#">2</a>
-        <a href="#">
-          <i className="fal fa-long-arrow-alt-right"></i>
-        </a>
-      </section>
+      {totalPages > 1 && (
+        <section id="pagination" className="section-p1">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => handlePageChange(page)}
+              className={filters.pageNumber === page ? "active" : ""}
+            >
+              {page}
+            </button>
+          ))}
+        </section>
+      )}
 
       {/* Newsletter Section */}
       <Newsletter />
     </div>
   );
 }
+

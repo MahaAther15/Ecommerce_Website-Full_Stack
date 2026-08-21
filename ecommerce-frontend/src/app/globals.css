@@ -295,7 +295,11 @@ button.white {
 
 #product1 .pro img {
   width: 100%;
+  height: 260px;
+  object-fit: cover;
   border-radius: 20px;
+  background-color: #f8faf9;
+  display: block;
 }
 
 #product1 .pro .des {
@@ -1807,7 +1811,7 @@ footer .copyright {
   color: #1a1a1a;
 }
 
-#form-details form > div {
+#form-details form>div {
   width: 100%;
 }
 
@@ -2575,7 +2579,7 @@ footer .copyright {
 
 #prodetails .perks-box {
   display: grid;
-  grid-templateColumns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
   padding: 18px;
   background-color: #f8faf9;
@@ -2644,15 +2648,19 @@ footer .copyright {
     padding: 20px 20px;
     gap: 30px;
   }
+
   #prodetails .single-pro-image {
     width: 100%;
   }
+
   #prodetails .main-img-wrap img {
     height: 400px;
   }
+
   #prodetails .single-pro-details {
     width: 100%;
   }
+
   #prodetails .qty-actions-row {
     flex-wrap: wrap;
   }

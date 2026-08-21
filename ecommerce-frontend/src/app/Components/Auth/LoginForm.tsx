@@ -76,11 +76,20 @@ export default function LoginForm() {
       }));
 
       // 4. Display success badge in form theme color
-      setSuccessMessage(`Login completely successful! Welcome back, ${response.fullName}. Redirecting...`);
+      const isAdmin = response.role?.toLowerCase() === "admin";
+      setSuccessMessage(
+        isAdmin
+          ? `Welcome Admin, ${response.fullName}! Redirecting to Admin Dashboard...`
+          : `Login completely successful! Welcome back, ${response.fullName}. Redirecting...`
+      );
 
-      // 5. Redirect to Home page after short delay
+      // 5. Smart Role-based Redirection
       setTimeout(() => {
-        router.push("/");
+        if (isAdmin) {
+          router.push("/admin/products");
+        } else {
+          router.push("/");
+        }
       }, 1000);
     } catch (err: any) {
       setErrors({ general: err.message || "Failed to login." });
@@ -117,10 +126,19 @@ export default function LoginForm() {
         token: response.token,
       }));
 
-      setSuccessMessage(`Google sign in successful! Welcome, ${response.fullName}. Redirecting...`);
+      const isGoogleAdmin = response.role?.toLowerCase() === "admin";
+      setSuccessMessage(
+        isGoogleAdmin
+          ? `Welcome Admin, ${response.fullName}! Redirecting to Admin Dashboard...`
+          : `Google sign in successful! Welcome, ${response.fullName}. Redirecting...`
+      );
 
       setTimeout(() => {
-        router.push("/");
+        if (isGoogleAdmin) {
+          router.push("/admin/products");
+        } else {
+          router.push("/");
+        }
       }, 1000);
     } catch (err: any) {
       setErrors({ general: err.message || "Google authentication failed. Please try again." });

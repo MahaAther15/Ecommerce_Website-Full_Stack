@@ -26,18 +26,24 @@ export default function ProductCard({ product }: ProductCardProps) {
     e.stopPropagation();
     dispatch(
       addToCart({
-        id: product.id,
+        id: String(product.id),
         name: product.title,
         price: product.price,
-        image: product.image,
+        image: product.imageUrl || (product as any).image || "",
         quantity: 1,
       })
     );
   };
 
+  const imageSrc = product.imageUrl || (product as any).image || "/img/products/f1.jpg";
+
   return (
     <div className="pro" onClick={handleCardClick}>
-      <img src={product.image} alt={product.title} />
+      <img
+        src={imageSrc}
+        alt={product.title}
+        style={{ width: "100%", height: "260px", objectFit: "cover", borderRadius: "20px" }}
+      />
       <div className="des">
         <span>{product.brand}</span>
         <h5>{product.title}</h5>

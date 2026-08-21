@@ -1,10 +1,34 @@
 export interface Product {
-  id: string;
-  brand: string;
+  id: number;
   title: string;
-  image: string;
-  rating: number;
+  brand: string;
+  description: string;
   price: number;
+  originalPrice?: number;
+  category: string;
+  imageUrl: string;
+  stockQuantity: number;
+  rating: number;
+  reviewCount: number;
+  isFeatured: boolean;
+  inStock: boolean;
+}
+
+export interface PagedResult<T> {
+  items: T[];
+  totalItems: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export interface ProductFilterParams {
+  search?: string;
   category?: string;
-  description?: string;
+  brand?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  sortBy?: string;
+  pageNumber?: number;
+  pageSize?: number;
 }

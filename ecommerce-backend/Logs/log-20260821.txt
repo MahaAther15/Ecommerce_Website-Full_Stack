@@ -1,0 +1,154 @@
+2026-08-21 00:11:56.360 +05:00 [INF] Application is shutting down...
+2026-08-21 00:13:29.119 +05:00 [INF] Executed DbCommand (152ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-08-21 00:13:29.505 +05:00 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2026-08-21 00:13:30.474 +05:00 [INF] Executed DbCommand (913ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
+SELECT @result
+2026-08-21 00:13:30.936 +05:00 [INF] Executed DbCommand (212ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+BEGIN
+    CREATE TABLE [__EFMigrationsHistory] (
+        [MigrationId] nvarchar(150) NOT NULL,
+        [ProductVersion] nvarchar(32) NOT NULL,
+        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+    );
+END;
+2026-08-21 00:13:30.957 +05:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-08-21 00:13:30.962 +05:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-08-21 00:13:31.115 +05:00 [INF] Executed DbCommand (145ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2026-08-21 00:13:31.147 +05:00 [INF] Applying migration '20260820191304_AddCategoryTable'.
+2026-08-21 00:13:31.714 +05:00 [INF] Executed DbCommand (540ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE [Categories] (
+    [Id] int NOT NULL IDENTITY,
+    [Name] nvarchar(100) NOT NULL,
+    [Slug] nvarchar(120) NOT NULL,
+    [Description] nvarchar(500) NULL,
+    [ImageUrl] nvarchar(max) NULL,
+    [IsActive] bit NOT NULL,
+    [CreatedAt] datetime2 NOT NULL,
+    [UpdatedAt] datetime2 NULL,
+    CONSTRAINT [PK_Categories] PRIMARY KEY ([Id])
+);
+2026-08-21 00:13:31.818 +05:00 [INF] Executed DbCommand (99ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260820191304_AddCategoryTable', N'10.0.11');
+2026-08-21 00:13:31.984 +05:00 [INF] Executed DbCommand (115ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_releaseapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session';
+SELECT @result
+2026-08-21 00:18:06.841 +05:00 [INF] Executed DbCommand (44ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-08-21 00:18:06.983 +05:00 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2026-08-21 00:18:07.174 +05:00 [INF] Executed DbCommand (183ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
+SELECT @result
+2026-08-21 00:18:07.472 +05:00 [INF] Executed DbCommand (42ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+BEGIN
+    CREATE TABLE [__EFMigrationsHistory] (
+        [MigrationId] nvarchar(150) NOT NULL,
+        [ProductVersion] nvarchar(32) NOT NULL,
+        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+    );
+END;
+2026-08-21 00:18:07.508 +05:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-08-21 00:18:07.516 +05:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-08-21 00:18:07.554 +05:00 [INF] Executed DbCommand (27ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2026-08-21 00:18:07.581 +05:00 [INF] No migrations were applied. The database is already up to date.
+2026-08-21 00:18:07.641 +05:00 [INF] Executed DbCommand (56ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_releaseapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session';
+SELECT @result
+2026-08-21 00:31:40.792 +05:00 [INF] Executed DbCommand (175ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM [Products] AS [p]) THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END
+2026-08-21 00:31:41.148 +05:00 [INF] Executed DbCommand (92ms) [Parameters=[@adminEmail='?' (Size = 150)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM [Users] AS [u]
+        WHERE [u].[Email] = @adminEmail) THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END
+2026-08-21 00:31:41.284 +05:00 [INF] User profile is available. Using 'C:\Users\hp\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-08-21 00:31:41.368 +05:00 [WRN] The WebRootPath was not found: E:\Ecommerce(Full Stack)\ecommerce-backend\wwwroot. Static files may be unavailable.
+2026-08-21 00:31:41.407 +05:00 [INF] Now listening on: http://localhost:5024
+2026-08-21 00:31:41.411 +05:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-21 00:31:41.413 +05:00 [INF] Hosting environment: Development
+2026-08-21 00:31:41.415 +05:00 [INF] Content root path: E:\Ecommerce(Full Stack)\ecommerce-backend
+2026-08-21 00:32:40.113 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/category - null null
+2026-08-21 00:32:40.113 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/category - null null
+2026-08-21 00:32:40.184 +05:00 [INF] CORS policy execution successful.
+2026-08-21 00:32:40.184 +05:00 [INF] CORS policy execution successful.
+2026-08-21 00:32:40.660 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.CategoryController.GetAll (ecommerce-backend)'
+2026-08-21 00:32:40.660 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.CategoryController.GetAll (ecommerce-backend)'
+2026-08-21 00:32:40.684 +05:00 [INF] Route matched with {action = "GetAll", controller = "Category"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll() on controller ecommerce_backend.Controllers.CategoryController (ecommerce-backend).
+2026-08-21 00:32:40.684 +05:00 [INF] Route matched with {action = "GetAll", controller = "Category"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll() on controller ecommerce_backend.Controllers.CategoryController (ecommerce-backend).
+2026-08-21 00:32:41.149 +05:00 [INF] Executed DbCommand (197ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [c].[Id], [c].[CreatedAt], [c].[Description], [c].[ImageUrl], [c].[IsActive], [c].[Name], [c].[Slug], [c].[UpdatedAt]
+FROM [Categories] AS [c]
+WHERE [c].[IsActive] = CAST(1 AS bit)
+ORDER BY [c].[Name]
+2026-08-21 00:32:41.149 +05:00 [INF] Executed DbCommand (168ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [c].[Id], [c].[CreatedAt], [c].[Description], [c].[ImageUrl], [c].[IsActive], [c].[Name], [c].[Slug], [c].[UpdatedAt]
+FROM [Categories] AS [c]
+WHERE [c].[IsActive] = CAST(1 AS bit)
+ORDER BY [c].[Name]
+2026-08-21 00:32:41.203 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[System.Collections.Generic.List`1[[ecommerce_backend.Dtos.Category.CategoryDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-08-21 00:32:41.203 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[System.Collections.Generic.List`1[[ecommerce_backend.Dtos.Category.CategoryDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-08-21 00:32:41.282 +05:00 [INF] Executed action ecommerce_backend.Controllers.CategoryController.GetAll (ecommerce-backend) in 585.929ms
+2026-08-21 00:32:41.282 +05:00 [INF] Executed action ecommerce_backend.Controllers.CategoryController.GetAll (ecommerce-backend) in 589.6628ms
+2026-08-21 00:32:41.286 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.CategoryController.GetAll (ecommerce-backend)'
+2026-08-21 00:32:41.286 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.CategoryController.GetAll (ecommerce-backend)'
+2026-08-21 00:32:41.295 +05:00 [INF] HTTP GET /api/category responded 200 in 1155ms [IP: ::1, User: Anonymous]
+2026-08-21 00:32:41.295 +05:00 [INF] HTTP GET /api/category responded 200 in 1155ms [IP: ::1, User: Anonymous]
+2026-08-21 00:32:41.314 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/category - 200 null application/json; charset=utf-8 1202.0612ms
+2026-08-21 00:32:41.314 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/category - 200 null application/json; charset=utf-8 1202.0605ms
+2026-08-21 00:34:22.514 +05:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5024/api/category - null null
+2026-08-21 00:34:22.523 +05:00 [INF] CORS policy execution successful.
+2026-08-21 00:34:22.527 +05:00 [INF] HTTP OPTIONS /api/category responded 204 in 7ms [IP: ::1, User: Anonymous]
+2026-08-21 00:34:22.533 +05:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5024/api/category - 204 null null 19.8862ms
+2026-08-21 00:34:22.537 +05:00 [INF] Request starting HTTP/1.1 POST http://localhost:5024/api/category - application/json 85
+2026-08-21 00:34:22.548 +05:00 [INF] CORS policy execution successful.
+2026-08-21 00:34:22.846 +05:00 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '8/20/2026 6:25:07 PM', Current time (UTC): '8/20/2026 7:34:22 PM'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2026-08-21 00:34:22.930 +05:00 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '8/20/2026 6:25:07 PM', Current time (UTC): '8/20/2026 7:34:22 PM'.
+2026-08-21 00:34:22.964 +05:00 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (Admin)
+2026-08-21 00:34:23.004 +05:00 [INF] AuthenticationScheme: Bearer was challenged.
+2026-08-21 00:34:23.016 +05:00 [WRN] HTTP POST /api/category responded 401 in 468ms [IP: ::1, User: Anonymous]
+2026-08-21 00:34:23.029 +05:00 [INF] Request finished HTTP/1.1 POST http://localhost:5024/api/category - 401 0 null 491.6996ms
+2026-08-21 00:34:23.062 +05:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5024/api/auth/refresh-token - null null
+2026-08-21 00:34:23.074 +05:00 [INF] CORS policy execution successful.
+2026-08-21 00:34:23.080 +05:00 [INF] HTTP OPTIONS /api/auth/refresh-token responded 204 in 5ms [IP: ::1, User: Anonymous]
+2026-08-21 00:34:23.092 +05:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5024/api/auth/refresh-token - 204 null null 29.9291ms
+2026-08-21 00:34:23.096 +05:00 [INF] Request starting HTTP/1.1 POST http://localhost:5024/api/auth/refresh-token - application/json 451
+2026-08-21 00:34:23.131 +05:00 [INF] CORS policy execution successful.
+2026-08-21 00:34:23.137 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.AuthController.RefreshToken (ecommerce-backend)'
+2026-08-21 00:34:23.185 +05:00 [INF] Route matched with {action = "RefreshToken", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] RefreshToken(ecommerce_backend.Dtos.RefreshTokenRequestDto) on controller ecommerce_backend.Controllers.AuthController (ecommerce-backend).
+2026-08-21 00:34:23.271 +05:00 [INF] Executing BadRequestObjectResult, writing value of type 'Microsoft.AspNetCore.Mvc.ValidationProblemDetails'.
+2026-08-21 00:34:23.330 +05:00 [INF] Executed action ecommerce_backend.Controllers.AuthController.RefreshToken (ecommerce-backend) in 137.2093ms
+2026-08-21 00:34:23.333 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.AuthController.RefreshToken (ecommerce-backend)'
+2026-08-21 00:34:23.337 +05:00 [WRN] HTTP POST /api/auth/refresh-token responded 400 in 214ms [IP: ::1, User: Anonymous]
+2026-08-21 00:34:23.343 +05:00 [INF] Request finished HTTP/1.1 POST http://localhost:5024/api/auth/refresh-token - 400 null application/problem+json; charset=utf-8 247.2613ms

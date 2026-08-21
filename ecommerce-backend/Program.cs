@@ -28,6 +28,12 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IPhotoService, PhotoService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+
+
 
 // Configure Forwarded Headers Options
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
@@ -108,6 +114,9 @@ builder.Host.UseSerilog();
 
 // 3. Register Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
 
 
 // 4. Configure JWT Authentication
@@ -156,6 +165,20 @@ builder.Services.AddResponseCompression(options =>
 });
 
 var app = builder.Build();
+
+// Seed Database
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var photoService = scope.ServiceProvider.GetRequiredService<IPhotoService>();
+    var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+    
+    // Frontend images folder path
+    var imagesPath = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", "ecommerce-frontend", "public", "img", "products"));
+    
+    await DbSeeder.SeedProductsAsync(context, photoService, imagesPath);
+    await DbSeeder.SeedAdminUserAsync(context, passwordHasher);
+}
 
 // Middleware 1 ==> Catch all exception errors from backend and give controlled error page to frontend
 app.UseGlobalExceptionHandling();

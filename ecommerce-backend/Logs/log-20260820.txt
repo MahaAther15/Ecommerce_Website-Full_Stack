@@ -1,0 +1,1071 @@
+2026-08-20 16:49:57.314 +05:00 [INF] Executed DbCommand (48ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-08-20 16:49:57.724 +05:00 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2026-08-20 16:49:59.062 +05:00 [INF] Executed DbCommand (1,038ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
+SELECT @result
+2026-08-20 16:49:59.509 +05:00 [INF] Executed DbCommand (168ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+BEGIN
+    CREATE TABLE [__EFMigrationsHistory] (
+        [MigrationId] nvarchar(150) NOT NULL,
+        [ProductVersion] nvarchar(32) NOT NULL,
+        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+    );
+END;
+2026-08-20 16:49:59.531 +05:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-08-20 16:49:59.576 +05:00 [INF] Executed DbCommand (31ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-08-20 16:50:00.480 +05:00 [INF] Executed DbCommand (897ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2026-08-20 16:50:00.507 +05:00 [INF] Applying migration '20260820114859_AddProductTable'.
+2026-08-20 16:50:01.953 +05:00 [INF] Executed DbCommand (1,414ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE [Products] (
+    [Id] int NOT NULL IDENTITY,
+    [Title] nvarchar(150) NOT NULL,
+    [Brand] nvarchar(100) NOT NULL,
+    [Description] nvarchar(1000) NOT NULL,
+    [Price] decimal(18,2) NOT NULL,
+    [OriginalPrice] decimal(18,2) NULL,
+    [Category] nvarchar(100) NOT NULL,
+    [ImageUrl] nvarchar(max) NOT NULL,
+    [StockQuantity] int NOT NULL,
+    [Rating] float NOT NULL,
+    [ReviewCount] int NOT NULL,
+    [IsFeatured] bit NOT NULL,
+    [IsActive] bit NOT NULL,
+    [CreatedAt] datetime2 NOT NULL,
+    [UpdatedAt] datetime2 NULL,
+    CONSTRAINT [PK_Products] PRIMARY KEY ([Id])
+);
+2026-08-20 16:50:02.068 +05:00 [INF] Executed DbCommand (100ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260820114859_AddProductTable', N'10.0.11');
+2026-08-20 16:50:02.217 +05:00 [INF] Executed DbCommand (123ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+DECLARE @result int;
+EXEC @result = sp_releaseapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session';
+SELECT @result
+2026-08-20 17:24:00.446 +05:00 [INF] Executed DbCommand (857ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM [Products] AS [p]) THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END
+2026-08-20 17:24:31.081 +05:00 [INF] Executed DbCommand (2,941ms) [Parameters=[@p0='?' (Size = 100), @p1='?' (Size = 100), @p2='?' (DbType = DateTime2), @p3='?' (Size = 1000), @p4='?' (Size = 4000), @p5='?' (DbType = Boolean), @p6='?' (DbType = Boolean), @p7='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p8='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p9='?' (DbType = Double), @p10='?' (DbType = Int32), @p11='?' (DbType = Int32), @p12='?' (Size = 150), @p13='?' (DbType = DateTime2), @p14='?' (Size = 100), @p15='?' (Size = 100), @p16='?' (DbType = DateTime2), @p17='?' (Size = 1000), @p18='?' (Size = 4000), @p19='?' (DbType = Boolean), @p20='?' (DbType = Boolean), @p21='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p22='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p23='?' (DbType = Double), @p24='?' (DbType = Int32), @p25='?' (DbType = Int32), @p26='?' (Size = 150), @p27='?' (DbType = DateTime2), @p28='?' (Size = 100), @p29='?' (Size = 100), @p30='?' (DbType = DateTime2), @p31='?' (Size = 1000), @p32='?' (Size = 4000), @p33='?' (DbType = Boolean), @p34='?' (DbType = Boolean), @p35='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p36='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p37='?' (DbType = Double), @p38='?' (DbType = Int32), @p39='?' (DbType = Int32), @p40='?' (Size = 150), @p41='?' (DbType = DateTime2), @p42='?' (Size = 100), @p43='?' (Size = 100), @p44='?' (DbType = DateTime2), @p45='?' (Size = 1000), @p46='?' (Size = 4000), @p47='?' (DbType = Boolean), @p48='?' (DbType = Boolean), @p49='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p50='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p51='?' (DbType = Double), @p52='?' (DbType = Int32), @p53='?' (DbType = Int32), @p54='?' (Size = 150), @p55='?' (DbType = DateTime2), @p56='?' (Size = 100), @p57='?' (Size = 100), @p58='?' (DbType = DateTime2), @p59='?' (Size = 1000), @p60='?' (Size = 4000), @p61='?' (DbType = Boolean), @p62='?' (DbType = Boolean), @p63='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p64='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p65='?' (DbType = Double), @p66='?' (DbType = Int32), @p67='?' (DbType = Int32), @p68='?' (Size = 150), @p69='?' (DbType = DateTime2), @p70='?' (Size = 100), @p71='?' (Size = 100), @p72='?' (DbType = DateTime2), @p73='?' (Size = 1000), @p74='?' (Size = 4000), @p75='?' (DbType = Boolean), @p76='?' (DbType = Boolean), @p77='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p78='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p79='?' (DbType = Double), @p80='?' (DbType = Int32), @p81='?' (DbType = Int32), @p82='?' (Size = 150), @p83='?' (DbType = DateTime2), @p84='?' (Size = 100), @p85='?' (Size = 100), @p86='?' (DbType = DateTime2), @p87='?' (Size = 1000), @p88='?' (Size = 4000), @p89='?' (DbType = Boolean), @p90='?' (DbType = Boolean), @p91='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p92='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p93='?' (DbType = Double), @p94='?' (DbType = Int32), @p95='?' (DbType = Int32), @p96='?' (Size = 150), @p97='?' (DbType = DateTime2), @p98='?' (Size = 100), @p99='?' (Size = 100), @p100='?' (DbType = DateTime2), @p101='?' (Size = 1000), @p102='?' (Size = 4000), @p103='?' (DbType = Boolean), @p104='?' (DbType = Boolean), @p105='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p106='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p107='?' (DbType = Double), @p108='?' (DbType = Int32), @p109='?' (DbType = Int32), @p110='?' (Size = 150), @p111='?' (DbType = DateTime2), @p112='?' (Size = 100), @p113='?' (Size = 100), @p114='?' (DbType = DateTime2), @p115='?' (Size = 1000), @p116='?' (Size = 4000), @p117='?' (DbType = Boolean), @p118='?' (DbType = Boolean), @p119='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p120='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p121='?' (DbType = Double), @p122='?' (DbType = Int32), @p123='?' (DbType = Int32), @p124='?' (Size = 150), @p125='?' (DbType = DateTime2), @p126='?' (Size = 100), @p127='?' (Size = 100), @p128='?' (DbType = DateTime2), @p129='?' (Size = 1000), @p130='?' (Size = 4000), @p131='?' (DbType = Boolean), @p132='?' (DbType = Boolean), @p133='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p134='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p135='?' (DbType = Double), @p136='?' (DbType = Int32), @p137='?' (DbType = Int32), @p138='?' (Size = 150), @p139='?' (DbType = DateTime2), @p140='?' (Size = 100), @p141='?' (Size = 100), @p142='?' (DbType = DateTime2), @p143='?' (Size = 1000), @p144='?' (Size = 4000), @p145='?' (DbType = Boolean), @p146='?' (DbType = Boolean), @p147='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p148='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p149='?' (DbType = Double), @p150='?' (DbType = Int32), @p151='?' (DbType = Int32), @p152='?' (Size = 150), @p153='?' (DbType = DateTime2), @p154='?' (Size = 100), @p155='?' (Size = 100), @p156='?' (DbType = DateTime2), @p157='?' (Size = 1000), @p158='?' (Size = 4000), @p159='?' (DbType = Boolean), @p160='?' (DbType = Boolean), @p161='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p162='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p163='?' (DbType = Double), @p164='?' (DbType = Int32), @p165='?' (DbType = Int32), @p166='?' (Size = 150), @p167='?' (DbType = DateTime2), @p168='?' (Size = 100), @p169='?' (Size = 100), @p170='?' (DbType = DateTime2), @p171='?' (Size = 1000), @p172='?' (Size = 4000), @p173='?' (DbType = Boolean), @p174='?' (DbType = Boolean), @p175='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p176='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p177='?' (DbType = Double), @p178='?' (DbType = Int32), @p179='?' (DbType = Int32), @p180='?' (Size = 150), @p181='?' (DbType = DateTime2), @p182='?' (Size = 100), @p183='?' (Size = 100), @p184='?' (DbType = DateTime2), @p185='?' (Size = 1000), @p186='?' (Size = 4000), @p187='?' (DbType = Boolean), @p188='?' (DbType = Boolean), @p189='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p190='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p191='?' (DbType = Double), @p192='?' (DbType = Int32), @p193='?' (DbType = Int32), @p194='?' (Size = 150), @p195='?' (DbType = DateTime2), @p196='?' (Size = 100), @p197='?' (Size = 100), @p198='?' (DbType = DateTime2), @p199='?' (Size = 1000), @p200='?' (Size = 4000), @p201='?' (DbType = Boolean), @p202='?' (DbType = Boolean), @p203='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p204='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p205='?' (DbType = Double), @p206='?' (DbType = Int32), @p207='?' (DbType = Int32), @p208='?' (Size = 150), @p209='?' (DbType = DateTime2), @p210='?' (Size = 100), @p211='?' (Size = 100), @p212='?' (DbType = DateTime2), @p213='?' (Size = 1000), @p214='?' (Size = 4000), @p215='?' (DbType = Boolean), @p216='?' (DbType = Boolean), @p217='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p218='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p219='?' (DbType = Double), @p220='?' (DbType = Int32), @p221='?' (DbType = Int32), @p222='?' (Size = 150), @p223='?' (DbType = DateTime2)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+MERGE [Products] USING (
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10, @p11, @p12, @p13, 0),
+(@p14, @p15, @p16, @p17, @p18, @p19, @p20, @p21, @p22, @p23, @p24, @p25, @p26, @p27, 1),
+(@p28, @p29, @p30, @p31, @p32, @p33, @p34, @p35, @p36, @p37, @p38, @p39, @p40, @p41, 2),
+(@p42, @p43, @p44, @p45, @p46, @p47, @p48, @p49, @p50, @p51, @p52, @p53, @p54, @p55, 3),
+(@p56, @p57, @p58, @p59, @p60, @p61, @p62, @p63, @p64, @p65, @p66, @p67, @p68, @p69, 4),
+(@p70, @p71, @p72, @p73, @p74, @p75, @p76, @p77, @p78, @p79, @p80, @p81, @p82, @p83, 5),
+(@p84, @p85, @p86, @p87, @p88, @p89, @p90, @p91, @p92, @p93, @p94, @p95, @p96, @p97, 6),
+(@p98, @p99, @p100, @p101, @p102, @p103, @p104, @p105, @p106, @p107, @p108, @p109, @p110, @p111, 7),
+(@p112, @p113, @p114, @p115, @p116, @p117, @p118, @p119, @p120, @p121, @p122, @p123, @p124, @p125, 8),
+(@p126, @p127, @p128, @p129, @p130, @p131, @p132, @p133, @p134, @p135, @p136, @p137, @p138, @p139, 9),
+(@p140, @p141, @p142, @p143, @p144, @p145, @p146, @p147, @p148, @p149, @p150, @p151, @p152, @p153, 10),
+(@p154, @p155, @p156, @p157, @p158, @p159, @p160, @p161, @p162, @p163, @p164, @p165, @p166, @p167, 11),
+(@p168, @p169, @p170, @p171, @p172, @p173, @p174, @p175, @p176, @p177, @p178, @p179, @p180, @p181, 12),
+(@p182, @p183, @p184, @p185, @p186, @p187, @p188, @p189, @p190, @p191, @p192, @p193, @p194, @p195, 13),
+(@p196, @p197, @p198, @p199, @p200, @p201, @p202, @p203, @p204, @p205, @p206, @p207, @p208, @p209, 14),
+(@p210, @p211, @p212, @p213, @p214, @p215, @p216, @p217, @p218, @p219, @p220, @p221, @p222, @p223, 15)) AS i ([Brand], [Category], [CreatedAt], [Description], [ImageUrl], [IsActive], [IsFeatured], [OriginalPrice], [Price], [Rating], [ReviewCount], [StockQuantity], [Title], [UpdatedAt], _Position) ON 1=0
+WHEN NOT MATCHED THEN
+INSERT ([Brand], [Category], [CreatedAt], [Description], [ImageUrl], [IsActive], [IsFeatured], [OriginalPrice], [Price], [Rating], [ReviewCount], [StockQuantity], [Title], [UpdatedAt])
+VALUES (i.[Brand], i.[Category], i.[CreatedAt], i.[Description], i.[ImageUrl], i.[IsActive], i.[IsFeatured], i.[OriginalPrice], i.[Price], i.[Rating], i.[ReviewCount], i.[StockQuantity], i.[Title], i.[UpdatedAt])
+OUTPUT INSERTED.[Id], i._Position;
+2026-08-20 17:24:32.630 +05:00 [INF] User profile is available. Using 'C:\Users\hp\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-08-20 17:24:34.704 +05:00 [WRN] The WebRootPath was not found: E:\Ecommerce(Full Stack)\ecommerce-backend\wwwroot. Static files may be unavailable.
+2026-08-20 17:24:34.945 +05:00 [INF] Now listening on: http://localhost:5024
+2026-08-20 17:24:34.950 +05:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-20 17:24:34.952 +05:00 [INF] Hosting environment: Development
+2026-08-20 17:24:34.954 +05:00 [INF] Content root path: E:\Ecommerce(Full Stack)\ecommerce-backend
+2026-08-20 22:25:06.972 +05:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5024/api/user/profile - null null
+2026-08-20 22:25:06.972 +05:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5024/api/user/profile - null null
+2026-08-20 22:25:07.708 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:25:07.708 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:25:07.730 +05:00 [INF] HTTP OPTIONS /api/user/profile responded 204 in 331ms [IP: ::1, User: Anonymous]
+2026-08-20 22:25:07.730 +05:00 [INF] HTTP OPTIONS /api/user/profile responded 204 in 333ms [IP: ::1, User: Anonymous]
+2026-08-20 22:25:07.761 +05:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5024/api/user/profile - 204 null null 877.6139ms
+2026-08-20 22:25:07.809 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/user/profile - application/json null
+2026-08-20 22:25:07.814 +05:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5024/api/user/profile - 204 null null 930.7441ms
+2026-08-20 22:25:07.845 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:25:17.005 +05:00 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '8/19/2026 3:49:15 PM', Current time (UTC): '8/20/2026 5:25:17 PM'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2026-08-20 22:25:17.073 +05:00 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '8/19/2026 3:49:15 PM', Current time (UTC): '8/20/2026 5:25:17 PM'.
+2026-08-20 22:25:17.091 +05:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2026-08-20 22:25:17.108 +05:00 [INF] AuthenticationScheme: Bearer was challenged.
+2026-08-20 22:25:17.113 +05:00 [WRN] HTTP GET /api/user/profile responded 401 in 9274ms [IP: ::1, User: Anonymous]
+2026-08-20 22:25:17.118 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/user/profile - 401 0 null 9309.1069ms
+2026-08-20 22:25:17.127 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/user/profile - application/json null
+2026-08-20 22:25:17.135 +05:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5024/api/auth/refresh-token - null null
+2026-08-20 22:25:17.137 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:25:17.139 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:25:17.141 +05:00 [INF] HTTP OPTIONS /api/auth/refresh-token responded 204 in 2ms [IP: ::1, User: Anonymous]
+2026-08-20 22:25:17.147 +05:00 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '8/19/2026 3:49:15 PM', Current time (UTC): '8/20/2026 5:25:17 PM'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2026-08-20 22:25:17.148 +05:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5024/api/auth/refresh-token - 204 null null 12.8303ms
+2026-08-20 22:25:17.154 +05:00 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '8/19/2026 3:49:15 PM', Current time (UTC): '8/20/2026 5:25:17 PM'.
+2026-08-20 22:25:17.155 +05:00 [INF] Request starting HTTP/1.1 POST http://localhost:5024/api/auth/refresh-token - application/json 456
+2026-08-20 22:25:17.164 +05:00 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2026-08-20 22:25:17.167 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:25:17.171 +05:00 [INF] AuthenticationScheme: Bearer was challenged.
+2026-08-20 22:25:17.173 +05:00 [WRN] HTTP GET /api/user/profile responded 401 in 36ms [IP: ::1, User: Anonymous]
+2026-08-20 22:25:17.178 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.AuthController.RefreshToken (ecommerce-backend)'
+2026-08-20 22:25:17.179 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/user/profile - 401 0 null 51.1608ms
+2026-08-20 22:25:17.190 +05:00 [INF] Request starting HTTP/1.1 POST http://localhost:5024/api/auth/refresh-token - application/json 456
+2026-08-20 22:25:17.195 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:25:17.198 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.AuthController.RefreshToken (ecommerce-backend)'
+2026-08-20 22:25:17.248 +05:00 [INF] Route matched with {action = "RefreshToken", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] RefreshToken(ecommerce_backend.Dtos.RefreshTokenRequestDto) on controller ecommerce_backend.Controllers.AuthController (ecommerce-backend).
+2026-08-20 22:25:17.248 +05:00 [INF] Route matched with {action = "RefreshToken", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] RefreshToken(ecommerce_backend.Dtos.RefreshTokenRequestDto) on controller ecommerce_backend.Controllers.AuthController (ecommerce-backend).
+2026-08-20 22:25:17.457 +05:00 [INF] Executing BadRequestObjectResult, writing value of type 'Microsoft.AspNetCore.Mvc.ValidationProblemDetails'.
+2026-08-20 22:25:17.457 +05:00 [INF] Executing BadRequestObjectResult, writing value of type 'Microsoft.AspNetCore.Mvc.ValidationProblemDetails'.
+2026-08-20 22:25:17.517 +05:00 [INF] Executed action ecommerce_backend.Controllers.AuthController.RefreshToken (ecommerce-backend) in 254.6232ms
+2026-08-20 22:25:17.517 +05:00 [INF] Executed action ecommerce_backend.Controllers.AuthController.RefreshToken (ecommerce-backend) in 258.5882ms
+2026-08-20 22:25:17.519 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.AuthController.RefreshToken (ecommerce-backend)'
+2026-08-20 22:25:17.520 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.AuthController.RefreshToken (ecommerce-backend)'
+2026-08-20 22:25:17.523 +05:00 [WRN] HTTP POST /api/auth/refresh-token responded 400 in 327ms [IP: ::1, User: Anonymous]
+2026-08-20 22:25:17.524 +05:00 [WRN] HTTP POST /api/auth/refresh-token responded 400 in 359ms [IP: ::1, User: Anonymous]
+2026-08-20 22:25:17.665 +05:00 [INF] Request finished HTTP/1.1 POST http://localhost:5024/api/auth/refresh-token - 400 null application/problem+json; charset=utf-8 509.0419ms
+2026-08-20 22:25:17.665 +05:00 [INF] Request finished HTTP/1.1 POST http://localhost:5024/api/auth/refresh-token - 400 null application/problem+json; charset=utf-8 474.2178ms
+2026-08-20 22:27:59.433 +05:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5024/api/auth/login - null null
+2026-08-20 22:27:59.445 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:27:59.446 +05:00 [INF] HTTP OPTIONS /api/auth/login responded 204 in 1ms [IP: ::1, User: Anonymous]
+2026-08-20 22:27:59.456 +05:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5024/api/auth/login - 204 null null 23.0457ms
+2026-08-20 22:27:59.459 +05:00 [INF] Request starting HTTP/1.1 POST http://localhost:5024/api/auth/login - application/json 56
+2026-08-20 22:27:59.469 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:27:59.470 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.AuthController.Login (ecommerce-backend)'
+2026-08-20 22:27:59.480 +05:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(ecommerce_backend.Dtos.LoginRequestDto) on controller ecommerce_backend.Controllers.AuthController (ecommerce-backend).
+2026-08-20 22:28:01.380 +05:00 [INF] Executed DbCommand (616ms) [Parameters=[@ToLower='?' (Size = 150)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[Id], [u].[Address], [u].[AuthProvider], [u].[City], [u].[Country], [u].[CreatedAt], [u].[Email], [u].[FullName], [u].[GoogleId], [u].[PasswordHash], [u].[PasswordResetToken], [u].[PhoneNumber], [u].[PostalCode], [u].[RefreshToken], [u].[RefreshTokenExpiryTime], [u].[ResetTokenExpiry], [u].[Role], [u].[State]
+FROM [Users] AS [u]
+WHERE LOWER([u].[Email]) = @ToLower
+2026-08-20 22:28:01.408 +05:00 [INF] Executing UnauthorizedObjectResult, writing value of type '<>f__AnonymousType0`1[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-08-20 22:28:01.449 +05:00 [INF] Executed action ecommerce_backend.Controllers.AuthController.Login (ecommerce-backend) in 1963.208ms
+2026-08-20 22:28:01.453 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.AuthController.Login (ecommerce-backend)'
+2026-08-20 22:28:01.458 +05:00 [WRN] HTTP POST /api/auth/login responded 401 in 1988ms [IP: ::1, User: Anonymous]
+2026-08-20 22:28:01.488 +05:00 [INF] Request finished HTTP/1.1 POST http://localhost:5024/api/auth/login - 401 null application/json; charset=utf-8 2029.0417ms
+2026-08-20 22:28:13.975 +05:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5024/api/auth/login - null null
+2026-08-20 22:28:13.980 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:28:13.981 +05:00 [INF] HTTP OPTIONS /api/auth/login responded 204 in 1ms [IP: ::1, User: Anonymous]
+2026-08-20 22:28:13.988 +05:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5024/api/auth/login - 204 null null 12.5583ms
+2026-08-20 22:28:13.993 +05:00 [INF] Request starting HTTP/1.1 POST http://localhost:5024/api/auth/login - application/json 56
+2026-08-20 22:28:13.999 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:28:14.001 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.AuthController.Login (ecommerce-backend)'
+2026-08-20 22:28:14.004 +05:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(ecommerce_backend.Dtos.LoginRequestDto) on controller ecommerce_backend.Controllers.AuthController (ecommerce-backend).
+2026-08-20 22:28:14.184 +05:00 [INF] Executed DbCommand (4ms) [Parameters=[@ToLower='?' (Size = 150)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[Id], [u].[Address], [u].[AuthProvider], [u].[City], [u].[Country], [u].[CreatedAt], [u].[Email], [u].[FullName], [u].[GoogleId], [u].[PasswordHash], [u].[PasswordResetToken], [u].[PhoneNumber], [u].[PostalCode], [u].[RefreshToken], [u].[RefreshTokenExpiryTime], [u].[ResetTokenExpiry], [u].[Role], [u].[State]
+FROM [Users] AS [u]
+WHERE LOWER([u].[Email]) = @ToLower
+2026-08-20 22:28:14.191 +05:00 [INF] Executing UnauthorizedObjectResult, writing value of type '<>f__AnonymousType0`1[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-08-20 22:28:14.194 +05:00 [INF] Executed action ecommerce_backend.Controllers.AuthController.Login (ecommerce-backend) in 186.2187ms
+2026-08-20 22:28:14.197 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.AuthController.Login (ecommerce-backend)'
+2026-08-20 22:28:14.200 +05:00 [WRN] HTTP POST /api/auth/login responded 401 in 200ms [IP: ::1, User: Anonymous]
+2026-08-20 22:28:14.204 +05:00 [INF] Request finished HTTP/1.1 POST http://localhost:5024/api/auth/login - 401 null application/json; charset=utf-8 210.0958ms
+2026-08-20 22:53:16.759 +05:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5024/api/auth/login - null null
+2026-08-20 22:53:16.778 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:53:16.780 +05:00 [INF] HTTP OPTIONS /api/auth/login responded 204 in 2ms [IP: ::1, User: Anonymous]
+2026-08-20 22:53:16.789 +05:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5024/api/auth/login - 204 null null 29.5027ms
+2026-08-20 22:53:16.791 +05:00 [INF] Request starting HTTP/1.1 POST http://localhost:5024/api/auth/login - application/json 54
+2026-08-20 22:53:16.799 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:53:16.803 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.AuthController.Login (ecommerce-backend)'
+2026-08-20 22:53:16.805 +05:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(ecommerce_backend.Dtos.LoginRequestDto) on controller ecommerce_backend.Controllers.AuthController (ecommerce-backend).
+2026-08-20 22:53:16.843 +05:00 [INF] Executed DbCommand (16ms) [Parameters=[@ToLower='?' (Size = 150)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[Id], [u].[Address], [u].[AuthProvider], [u].[City], [u].[Country], [u].[CreatedAt], [u].[Email], [u].[FullName], [u].[GoogleId], [u].[PasswordHash], [u].[PasswordResetToken], [u].[PhoneNumber], [u].[PostalCode], [u].[RefreshToken], [u].[RefreshTokenExpiryTime], [u].[ResetTokenExpiry], [u].[Role], [u].[State]
+FROM [Users] AS [u]
+WHERE LOWER([u].[Email]) = @ToLower
+2026-08-20 22:53:16.851 +05:00 [INF] Executing UnauthorizedObjectResult, writing value of type '<>f__AnonymousType0`1[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-08-20 22:53:16.856 +05:00 [INF] Executed action ecommerce_backend.Controllers.AuthController.Login (ecommerce-backend) in 47.6093ms
+2026-08-20 22:53:16.860 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.AuthController.Login (ecommerce-backend)'
+2026-08-20 22:53:16.863 +05:00 [WRN] HTTP POST /api/auth/login responded 401 in 64ms [IP: ::1, User: Anonymous]
+2026-08-20 22:53:16.868 +05:00 [INF] Request finished HTTP/1.1 POST http://localhost:5024/api/auth/login - 401 null application/json; charset=utf-8 77.3137ms
+2026-08-20 22:53:18.201 +05:00 [INF] Request starting HTTP/1.1 POST http://localhost:5024/api/auth/login - application/json 54
+2026-08-20 22:53:18.205 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:53:18.207 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.AuthController.Login (ecommerce-backend)'
+2026-08-20 22:53:18.208 +05:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(ecommerce_backend.Dtos.LoginRequestDto) on controller ecommerce_backend.Controllers.AuthController (ecommerce-backend).
+2026-08-20 22:53:18.374 +05:00 [INF] Executed DbCommand (162ms) [Parameters=[@ToLower='?' (Size = 150)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[Id], [u].[Address], [u].[AuthProvider], [u].[City], [u].[Country], [u].[CreatedAt], [u].[Email], [u].[FullName], [u].[GoogleId], [u].[PasswordHash], [u].[PasswordResetToken], [u].[PhoneNumber], [u].[PostalCode], [u].[RefreshToken], [u].[RefreshTokenExpiryTime], [u].[ResetTokenExpiry], [u].[Role], [u].[State]
+FROM [Users] AS [u]
+WHERE LOWER([u].[Email]) = @ToLower
+2026-08-20 22:53:18.381 +05:00 [INF] Executing UnauthorizedObjectResult, writing value of type '<>f__AnonymousType0`1[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-08-20 22:53:18.383 +05:00 [INF] Executed action ecommerce_backend.Controllers.AuthController.Login (ecommerce-backend) in 172.7334ms
+2026-08-20 22:53:18.387 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.AuthController.Login (ecommerce-backend)'
+2026-08-20 22:53:18.390 +05:00 [WRN] HTTP POST /api/auth/login responded 401 in 184ms [IP: ::1, User: Anonymous]
+2026-08-20 22:53:18.393 +05:00 [INF] Request finished HTTP/1.1 POST http://localhost:5024/api/auth/login - 401 null application/json; charset=utf-8 191.8482ms
+2026-08-20 22:54:00.156 +05:00 [INF] Application is shutting down...
+2026-08-20 22:54:41.633 +05:00 [INF] Executed DbCommand (360ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM [Products] AS [p]) THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END
+2026-08-20 22:54:42.837 +05:00 [INF] Executed DbCommand (876ms) [Parameters=[@adminEmail='?' (Size = 150)], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM [Users] AS [u]
+        WHERE [u].[Email] = @adminEmail) THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END
+2026-08-20 22:54:45.237 +05:00 [INF] Executed DbCommand (1,335ms) [Parameters=[@p0='?' (Size = 4000), @p1='?' (Size = 4000), @p2='?' (Size = 4000), @p3='?' (Size = 4000), @p4='?' (DbType = DateTime2), @p5='?' (Size = 150), @p6='?' (Size = 100), @p7='?' (Size = 4000), @p8='?' (Size = 4000), @p9='?' (Size = 4000), @p10='?' (Size = 4000), @p11='?' (Size = 4000), @p12='?' (Size = 4000), @p13='?' (DbType = DateTime2), @p14='?' (DbType = DateTime2), @p15='?' (Size = 4000), @p16='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Users] ([Address], [AuthProvider], [City], [Country], [CreatedAt], [Email], [FullName], [GoogleId], [PasswordHash], [PasswordResetToken], [PhoneNumber], [PostalCode], [RefreshToken], [RefreshTokenExpiryTime], [ResetTokenExpiry], [Role], [State])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10, @p11, @p12, @p13, @p14, @p15, @p16);
+2026-08-20 22:54:46.248 +05:00 [INF] User profile is available. Using 'C:\Users\hp\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-08-20 22:54:48.145 +05:00 [WRN] The WebRootPath was not found: E:\Ecommerce(Full Stack)\ecommerce-backend\wwwroot. Static files may be unavailable.
+2026-08-20 22:54:48.214 +05:00 [INF] Now listening on: http://localhost:5024
+2026-08-20 22:54:48.223 +05:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-20 22:54:48.234 +05:00 [INF] Hosting environment: Development
+2026-08-20 22:54:48.235 +05:00 [INF] Content root path: E:\Ecommerce(Full Stack)\ecommerce-backend
+2026-08-20 22:55:06.360 +05:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5024/api/auth/login - null null
+2026-08-20 22:55:06.429 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:55:06.433 +05:00 [INF] HTTP OPTIONS /api/auth/login responded 204 in 37ms [IP: ::1, User: Anonymous]
+2026-08-20 22:55:06.449 +05:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5024/api/auth/login - 204 null null 90.318ms
+2026-08-20 22:55:06.453 +05:00 [INF] Request starting HTTP/1.1 POST http://localhost:5024/api/auth/login - application/json 56
+2026-08-20 22:55:06.465 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:55:06.596 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.AuthController.Login (ecommerce-backend)'
+2026-08-20 22:55:06.626 +05:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(ecommerce_backend.Dtos.LoginRequestDto) on controller ecommerce_backend.Controllers.AuthController (ecommerce-backend).
+2026-08-20 22:55:06.953 +05:00 [INF] Executed DbCommand (118ms) [Parameters=[@ToLower='?' (Size = 150)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [u].[Id], [u].[Address], [u].[AuthProvider], [u].[City], [u].[Country], [u].[CreatedAt], [u].[Email], [u].[FullName], [u].[GoogleId], [u].[PasswordHash], [u].[PasswordResetToken], [u].[PhoneNumber], [u].[PostalCode], [u].[RefreshToken], [u].[RefreshTokenExpiryTime], [u].[ResetTokenExpiry], [u].[Role], [u].[State]
+FROM [Users] AS [u]
+WHERE LOWER([u].[Email]) = @ToLower
+2026-08-20 22:55:07.843 +05:00 [INF] Executed DbCommand (553ms) [Parameters=[@p17='?' (DbType = Int32), @p0='?' (Size = 4000), @p1='?' (Size = 4000), @p2='?' (Size = 4000), @p3='?' (Size = 4000), @p4='?' (DbType = DateTime2), @p5='?' (Size = 150), @p6='?' (Size = 100), @p7='?' (Size = 4000), @p8='?' (Size = 4000), @p9='?' (Size = 4000), @p10='?' (Size = 4000), @p11='?' (Size = 4000), @p12='?' (Size = 4000), @p13='?' (DbType = DateTime2), @p14='?' (DbType = DateTime2), @p15='?' (Size = 4000), @p16='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [Users] SET [Address] = @p0, [AuthProvider] = @p1, [City] = @p2, [Country] = @p3, [CreatedAt] = @p4, [Email] = @p5, [FullName] = @p6, [GoogleId] = @p7, [PasswordHash] = @p8, [PasswordResetToken] = @p9, [PhoneNumber] = @p10, [PostalCode] = @p11, [RefreshToken] = @p12, [RefreshTokenExpiryTime] = @p13, [ResetTokenExpiry] = @p14, [Role] = @p15, [State] = @p16
+OUTPUT 1
+WHERE [Id] = @p17;
+2026-08-20 22:55:07.873 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Dtos.AuthResponseDto'.
+2026-08-20 22:55:07.921 +05:00 [INF] Executed action ecommerce_backend.Controllers.AuthController.Login (ecommerce-backend) in 1282.1822ms
+2026-08-20 22:55:07.930 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.AuthController.Login (ecommerce-backend)'
+2026-08-20 22:55:07.940 +05:00 [INF] HTTP POST /api/auth/login responded 200 in 1479ms [IP: ::1, User: Anonymous]
+2026-08-20 22:55:07.957 +05:00 [INF] Request finished HTTP/1.1 POST http://localhost:5024/api/auth/login - 200 null application/json; charset=utf-8 1503.5677ms
+2026-08-20 22:56:07.485 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - null null
+2026-08-20 22:56:07.485 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - null null
+2026-08-20 22:56:07.492 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:56:07.495 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:56:07.500 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 22:56:07.500 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 22:56:07.525 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 22:56:07.525 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 22:56:08.971 +05:00 [INF] Executed DbCommand (478ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 22:56:09.471 +05:00 [INF] Executed DbCommand (1,462ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 22:56:09.539 +05:00 [INF] Executed DbCommand (385ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 22:56:09.539 +05:00 [INF] Executed DbCommand (57ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 22:56:09.598 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 22:56:09.598 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 22:56:09.652 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 2123.6142ms
+2026-08-20 22:56:09.655 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 2118.105ms
+2026-08-20 22:56:09.659 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 22:56:09.661 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 22:56:09.666 +05:00 [INF] HTTP GET /api/product responded 200 in 2174ms [IP: ::1, User: Anonymous]
+2026-08-20 22:56:09.667 +05:00 [INF] HTTP GET /api/product responded 200 in 2172ms [IP: ::1, User: Anonymous]
+2026-08-20 22:56:09.671 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - 200 null application/json; charset=utf-8 2185.6784ms
+2026-08-20 22:56:09.674 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - 200 null application/json; charset=utf-8 2188.4105ms
+2026-08-20 22:58:44.127 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product/categories - null null
+2026-08-20 22:58:44.131 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?sortBy=default&pageNumber=1&pageSize=12 - null null
+2026-08-20 22:58:44.136 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product/categories - null null
+2026-08-20 22:58:44.136 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?sortBy=default&pageNumber=1&pageSize=12 - null null
+2026-08-20 22:58:44.210 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:58:44.210 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:58:44.210 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:58:44.210 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:58:44.222 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 22:58:44.222 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend)'
+2026-08-20 22:58:44.222 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend)'
+2026-08-20 22:58:44.222 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 22:58:44.231 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 22:58:44.224 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 22:58:44.238 +05:00 [INF] Route matched with {action = "GetCategories", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCategories() on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 22:58:44.238 +05:00 [INF] Route matched with {action = "GetCategories", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCategories() on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 22:58:44.806 +05:00 [INF] Executed DbCommand (560ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 22:58:44.806 +05:00 [INF] Executed DbCommand (560ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 22:58:44.818 +05:00 [INF] Executed DbCommand (6ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 22:58:44.820 +05:00 [INF] Executed DbCommand (5ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 22:58:44.833 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 22:58:44.834 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 22:58:44.836 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 598.5681ms
+2026-08-20 22:58:44.839 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 604.957ms
+2026-08-20 22:58:44.840 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 22:58:44.842 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 22:58:44.844 +05:00 [INF] HTTP GET /api/product responded 200 in 634ms [IP: ::1, User: Anonymous]
+2026-08-20 22:58:44.846 +05:00 [INF] HTTP GET /api/product responded 200 in 636ms [IP: ::1, User: Anonymous]
+2026-08-20 22:58:44.849 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?sortBy=default&pageNumber=1&pageSize=12 - 200 null application/json; charset=utf-8 718.4585ms
+2026-08-20 22:58:44.852 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?sortBy=default&pageNumber=1&pageSize=12 - 200 null application/json; charset=utf-8 716.6157ms
+2026-08-20 22:58:45.018 +05:00 [INF] Executed DbCommand (501ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT DISTINCT [p].[Category]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 22:58:45.049 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-08-20 22:58:45.061 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend) in 819.1356ms
+2026-08-20 22:58:45.066 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend)'
+2026-08-20 22:58:45.069 +05:00 [INF] HTTP GET /api/product/categories responded 200 in 859ms [IP: ::1, User: Anonymous]
+2026-08-20 22:58:45.076 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product/categories - 200 null application/json; charset=utf-8 948.0902ms
+2026-08-20 22:58:47.196 +05:00 [INF] Executed DbCommand (2,645ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT DISTINCT [p].[Category]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 22:58:47.207 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-08-20 22:58:47.211 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend) in 2927.7099ms
+2026-08-20 22:58:47.213 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend)'
+2026-08-20 22:58:47.215 +05:00 [INF] HTTP GET /api/product/categories responded 200 in 3005ms [IP: ::1, User: Anonymous]
+2026-08-20 22:58:47.219 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product/categories - 200 null application/json; charset=utf-8 3083.1551ms
+2026-08-20 22:58:48.495 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - null null
+2026-08-20 22:58:48.495 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - null null
+2026-08-20 22:58:48.545 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:58:48.554 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 22:58:48.552 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:58:48.578 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 22:58:48.580 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 22:58:48.602 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 22:58:48.662 +05:00 [INF] Executed DbCommand (62ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 22:58:48.662 +05:00 [INF] Executed DbCommand (50ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 22:58:48.677 +05:00 [INF] Executed DbCommand (10ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 22:58:48.683 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 22:58:48.686 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 87.8511ms
+2026-08-20 22:58:48.688 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 22:58:48.696 +05:00 [INF] HTTP GET /api/product responded 200 in 151ms [IP: ::1, User: Anonymous]
+2026-08-20 22:58:48.697 +05:00 [INF] Executed DbCommand (27ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 22:58:48.700 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - 200 null application/json; charset=utf-8 204.7873ms
+2026-08-20 22:58:48.705 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 22:58:48.718 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 107.9061ms
+2026-08-20 22:58:48.721 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 22:58:48.725 +05:00 [INF] HTTP GET /api/product responded 200 in 170ms [IP: ::1, User: Anonymous]
+2026-08-20 22:58:48.737 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - 200 null application/json; charset=utf-8 241.8082ms
+2026-08-20 22:58:52.497 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product/categories - null null
+2026-08-20 22:58:52.498 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?sortBy=default&pageNumber=1&pageSize=12 - null null
+2026-08-20 22:58:52.498 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product/categories - null null
+2026-08-20 22:58:52.498 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?sortBy=default&pageNumber=1&pageSize=12 - null null
+2026-08-20 22:58:52.508 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:58:52.512 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:58:52.516 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:58:52.522 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:58:52.524 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend)'
+2026-08-20 22:58:52.526 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 22:58:52.527 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend)'
+2026-08-20 22:58:52.528 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 22:58:52.530 +05:00 [INF] Route matched with {action = "GetCategories", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCategories() on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 22:58:52.531 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 22:58:52.533 +05:00 [INF] Route matched with {action = "GetCategories", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCategories() on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 22:58:52.534 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 22:58:52.647 +05:00 [INF] Executed DbCommand (84ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 22:58:52.658 +05:00 [INF] Executed DbCommand (4ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 22:58:52.665 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 22:58:52.665 +05:00 [INF] Executed DbCommand (109ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 22:58:52.666 +05:00 [INF] Executed DbCommand (107ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT DISTINCT [p].[Category]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 22:58:52.673 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 110.4366ms
+2026-08-20 22:58:52.679 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 22:58:52.677 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-08-20 22:58:52.678 +05:00 [INF] Executed DbCommand (128ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT DISTINCT [p].[Category]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 22:58:52.676 +05:00 [INF] Executed DbCommand (1ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 22:58:52.682 +05:00 [INF] HTTP GET /api/product responded 200 in 159ms [IP: ::1, User: Anonymous]
+2026-08-20 22:58:52.691 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend) in 132.3866ms
+2026-08-20 22:58:52.692 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-08-20 22:58:52.695 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 22:58:52.698 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?sortBy=default&pageNumber=1&pageSize=12 - 200 null application/json; charset=utf-8 200.1947ms
+2026-08-20 22:58:52.701 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend)'
+2026-08-20 22:58:52.726 +05:00 [INF] HTTP GET /api/product/categories responded 200 in 210ms [IP: ::1, User: Anonymous]
+2026-08-20 22:58:52.714 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend) in 173.4242ms
+2026-08-20 22:58:52.713 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 157.8611ms
+2026-08-20 22:58:52.732 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product/categories - 200 null application/json; charset=utf-8 233.8183ms
+2026-08-20 22:58:52.735 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend)'
+2026-08-20 22:58:52.741 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 22:58:52.747 +05:00 [INF] HTTP GET /api/product/categories responded 200 in 241ms [IP: ::1, User: Anonymous]
+2026-08-20 22:58:52.748 +05:00 [INF] HTTP GET /api/product responded 200 in 235ms [IP: ::1, User: Anonymous]
+2026-08-20 22:58:52.752 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product/categories - 200 null application/json; charset=utf-8 254.5219ms
+2026-08-20 22:58:52.760 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?sortBy=default&pageNumber=1&pageSize=12 - 200 null application/json; charset=utf-8 262.8062ms
+2026-08-20 22:58:55.751 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - null null
+2026-08-20 22:58:55.752 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - null null
+2026-08-20 22:58:55.998 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:58:56.056 +05:00 [INF] CORS policy execution successful.
+2026-08-20 22:58:56.074 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 22:58:56.090 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 22:58:56.073 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 22:58:56.103 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 22:58:56.120 +05:00 [INF] Executed DbCommand (20ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 22:58:56.152 +05:00 [INF] Executed DbCommand (38ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 22:58:56.241 +05:00 [INF] Executed DbCommand (13ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 22:58:56.244 +05:00 [INF] Executed DbCommand (1ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 22:58:56.275 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 22:58:56.256 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 22:58:56.599 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 486.7178ms
+2026-08-20 22:58:56.627 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 22:58:56.607 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 508.9107ms
+2026-08-20 22:58:56.658 +05:00 [INF] HTTP GET /api/product responded 200 in 660ms [IP: ::1, User: Anonymous]
+2026-08-20 22:58:56.660 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 22:58:56.665 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - 200 null application/json; charset=utf-8 913.7479ms
+2026-08-20 22:58:56.670 +05:00 [INF] HTTP GET /api/product responded 200 in 614ms [IP: ::1, User: Anonymous]
+2026-08-20 22:58:56.678 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - 200 null application/json; charset=utf-8 926.3315ms
+2026-08-20 23:01:57.982 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?sortBy=default&pageNumber=1&pageSize=12 - null null
+2026-08-20 23:01:57.983 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product/categories - null null
+2026-08-20 23:01:57.983 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?sortBy=default&pageNumber=1&pageSize=12 - null null
+2026-08-20 23:01:57.989 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product/categories - null null
+2026-08-20 23:01:58.003 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:01:58.008 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:01:58.012 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:01:58.035 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:01:58.038 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:01:58.040 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend)'
+2026-08-20 23:01:58.049 +05:00 [INF] Route matched with {action = "GetCategories", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCategories() on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:01:58.042 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend)'
+2026-08-20 23:01:58.044 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:01:58.041 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:01:58.063 +05:00 [INF] Route matched with {action = "GetCategories", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCategories() on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:01:58.068 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:01:58.176 +05:00 [INF] Executed DbCommand (107ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:01:58.176 +05:00 [INF] Executed DbCommand (100ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT DISTINCT [p].[Category]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:01:58.176 +05:00 [INF] Executed DbCommand (114ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT DISTINCT [p].[Category]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:01:58.183 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-08-20 23:01:58.186 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-08-20 23:01:58.191 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend) in 116.7187ms
+2026-08-20 23:01:58.194 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend) in 133.6499ms
+2026-08-20 23:01:58.195 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend)'
+2026-08-20 23:01:58.197 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend)'
+2026-08-20 23:01:58.198 +05:00 [INF] HTTP GET /api/product/categories responded 200 in 163ms [IP: ::1, User: Anonymous]
+2026-08-20 23:01:58.200 +05:00 [INF] HTTP GET /api/product/categories responded 200 in 192ms [IP: ::1, User: Anonymous]
+2026-08-20 23:01:58.205 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product/categories - 200 null application/json; charset=utf-8 215.4342ms
+2026-08-20 23:01:58.207 +05:00 [INF] Executed DbCommand (26ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 23:01:58.208 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product/categories - 200 null application/json; charset=utf-8 225.44ms
+2026-08-20 23:01:58.216 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 23:01:58.225 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 158.3192ms
+2026-08-20 23:01:58.226 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:01:58.228 +05:00 [INF] HTTP GET /api/product responded 200 in 225ms [IP: ::1, User: Anonymous]
+2026-08-20 23:01:58.231 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?sortBy=default&pageNumber=1&pageSize=12 - 200 null application/json; charset=utf-8 248.6411ms
+2026-08-20 23:01:58.274 +05:00 [INF] Executed DbCommand (194ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:01:58.282 +05:00 [INF] Executed DbCommand (1ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 23:01:58.292 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 23:01:58.296 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 218.0064ms
+2026-08-20 23:01:58.298 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:01:58.300 +05:00 [INF] HTTP GET /api/product responded 200 in 288ms [IP: ::1, User: Anonymous]
+2026-08-20 23:01:58.307 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?sortBy=default&pageNumber=1&pageSize=12 - 200 null application/json; charset=utf-8 323.9813ms
+2026-08-20 23:04:10.128 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - null null
+2026-08-20 23:04:10.128 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - null null
+2026-08-20 23:04:10.135 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:04:10.137 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:04:10.140 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:04:10.139 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:04:10.144 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:04:10.145 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:04:10.332 +05:00 [INF] Executed DbCommand (180ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:04:10.348 +05:00 [INF] Executed DbCommand (193ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:04:10.350 +05:00 [INF] Executed DbCommand (13ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 23:04:10.357 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 23:04:10.361 +05:00 [INF] Executed DbCommand (6ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 23:04:10.362 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 213.6971ms
+2026-08-20 23:04:10.366 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 23:04:10.367 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:04:10.369 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 215.6774ms
+2026-08-20 23:04:10.370 +05:00 [INF] HTTP GET /api/product responded 200 in 232ms [IP: ::1, User: Anonymous]
+2026-08-20 23:04:10.372 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:04:10.377 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - 200 null application/json; charset=utf-8 248.8805ms
+2026-08-20 23:04:10.379 +05:00 [INF] HTTP GET /api/product responded 200 in 244ms [IP: ::1, User: Anonymous]
+2026-08-20 23:04:10.387 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - 200 null application/json; charset=utf-8 258.7113ms
+2026-08-20 23:04:36.989 +05:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5024/api/product/upload-image - null null
+2026-08-20 23:04:37.024 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:04:37.026 +05:00 [INF] HTTP OPTIONS /api/product/upload-image responded 204 in 1ms [IP: ::1, User: Anonymous]
+2026-08-20 23:04:37.028 +05:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5024/api/product/upload-image - 204 null null 39.2297ms
+2026-08-20 23:04:37.055 +05:00 [INF] Request starting HTTP/1.1 POST http://localhost:5024/api/product/upload-image - multipart/form-data; boundary=----WebKitFormBoundaryxL1NlBavWIDjfB5q 9685
+2026-08-20 23:04:37.069 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:04:37.257 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.UploadImage (ecommerce-backend)'
+2026-08-20 23:04:37.273 +05:00 [INF] Route matched with {action = "UploadImage", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] UploadImage(Microsoft.AspNetCore.Http.IFormFile, ecommerce_backend.Services.Interfaces.IPhotoService) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:04:37.311 +05:00 [INF] Executing BadRequestObjectResult, writing value of type '<>f__AnonymousType2`2[[System.Boolean, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-08-20 23:04:37.325 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.UploadImage (ecommerce-backend) in 47.8902ms
+2026-08-20 23:04:37.327 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.UploadImage (ecommerce-backend)'
+2026-08-20 23:04:37.330 +05:00 [WRN] HTTP POST /api/product/upload-image responded 400 in 260ms [IP: ::1, User: admin@ecommerce.com]
+2026-08-20 23:04:37.338 +05:00 [INF] Request finished HTTP/1.1 POST http://localhost:5024/api/product/upload-image - 400 null application/json; charset=utf-8 282.9526ms
+2026-08-20 23:06:39.892 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - null null
+2026-08-20 23:06:39.893 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - null null
+2026-08-20 23:06:39.907 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:06:39.909 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:06:39.910 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:06:39.923 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:06:39.925 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:06:39.926 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:06:40.279 +05:00 [INF] Executed DbCommand (341ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:06:40.279 +05:00 [INF] Executed DbCommand (343ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:06:40.304 +05:00 [INF] Executed DbCommand (17ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 23:06:40.305 +05:00 [INF] Executed DbCommand (13ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 23:06:40.335 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 23:06:40.342 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 23:06:40.352 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 415.1725ms
+2026-08-20 23:06:40.356 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 422.1016ms
+2026-08-20 23:06:40.358 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:06:40.360 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:06:40.368 +05:00 [INF] HTTP GET /api/product responded 200 in 458ms [IP: ::1, User: Anonymous]
+2026-08-20 23:06:40.370 +05:00 [INF] HTTP GET /api/product responded 200 in 463ms [IP: ::1, User: Anonymous]
+2026-08-20 23:06:40.374 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - 200 null application/json; charset=utf-8 480.4753ms
+2026-08-20 23:06:40.414 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - 200 null application/json; charset=utf-8 522.0856ms
+2026-08-20 23:06:51.033 +05:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5024/api/product/upload-image - null null
+2026-08-20 23:06:51.097 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:06:51.098 +05:00 [INF] HTTP OPTIONS /api/product/upload-image responded 204 in 1ms [IP: ::1, User: Anonymous]
+2026-08-20 23:06:51.311 +05:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5024/api/product/upload-image - 204 null null 278.1831ms
+2026-08-20 23:06:51.322 +05:00 [INF] Request starting HTTP/1.1 POST http://localhost:5024/api/product/upload-image - multipart/form-data; boundary=----WebKitFormBoundaryVZP8Khf1hm1a47fk 9685
+2026-08-20 23:06:51.329 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:06:51.336 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.UploadImage (ecommerce-backend)'
+2026-08-20 23:06:51.380 +05:00 [INF] Route matched with {action = "UploadImage", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] UploadImage(Microsoft.AspNetCore.Http.IFormFile, ecommerce_backend.Services.Interfaces.IPhotoService) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:06:51.389 +05:00 [INF] Executing BadRequestObjectResult, writing value of type '<>f__AnonymousType2`2[[System.Boolean, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-08-20 23:06:51.396 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.UploadImage (ecommerce-backend) in 10.485ms
+2026-08-20 23:06:51.399 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.UploadImage (ecommerce-backend)'
+2026-08-20 23:06:51.403 +05:00 [WRN] HTTP POST /api/product/upload-image responded 400 in 74ms [IP: ::1, User: admin@ecommerce.com]
+2026-08-20 23:06:51.408 +05:00 [INF] Request finished HTTP/1.1 POST http://localhost:5024/api/product/upload-image - 400 null application/json; charset=utf-8 85.9221ms
+2026-08-20 23:07:30.292 +05:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5024/api/product/upload-image - null null
+2026-08-20 23:07:30.339 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:07:30.341 +05:00 [INF] HTTP OPTIONS /api/product/upload-image responded 204 in 1ms [IP: ::1, User: Anonymous]
+2026-08-20 23:07:30.410 +05:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5024/api/product/upload-image - 204 null null 117.6141ms
+2026-08-20 23:07:30.420 +05:00 [INF] Request starting HTTP/1.1 POST http://localhost:5024/api/product/upload-image - multipart/form-data; boundary=----WebKitFormBoundary8rckYlXMnfXsQuZv 9637
+2026-08-20 23:07:30.424 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:07:30.443 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.UploadImage (ecommerce-backend)'
+2026-08-20 23:07:30.448 +05:00 [INF] Route matched with {action = "UploadImage", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] UploadImage(Microsoft.AspNetCore.Http.IFormFile, ecommerce_backend.Services.Interfaces.IPhotoService) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:07:30.452 +05:00 [INF] Executing BadRequestObjectResult, writing value of type '<>f__AnonymousType2`2[[System.Boolean, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-08-20 23:07:30.455 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.UploadImage (ecommerce-backend) in 3.2492ms
+2026-08-20 23:07:30.457 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.UploadImage (ecommerce-backend)'
+2026-08-20 23:07:30.458 +05:00 [WRN] HTTP POST /api/product/upload-image responded 400 in 34ms [IP: ::1, User: admin@ecommerce.com]
+2026-08-20 23:07:30.464 +05:00 [INF] Request finished HTTP/1.1 POST http://localhost:5024/api/product/upload-image - 400 null application/json; charset=utf-8 44.4425ms
+2026-08-20 23:10:59.078 +05:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5024/api/product/upload-image - null null
+2026-08-20 23:10:59.445 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:10:59.464 +05:00 [INF] HTTP OPTIONS /api/product/upload-image responded 204 in 19ms [IP: ::1, User: Anonymous]
+2026-08-20 23:10:59.566 +05:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5024/api/product/upload-image - 204 null null 488.82ms
+2026-08-20 23:10:59.627 +05:00 [INF] Request starting HTTP/1.1 POST http://localhost:5024/api/product/upload-image - multipart/form-data; boundary=----WebKitFormBoundaryAPWnll74Jk0gufVA 50501
+2026-08-20 23:10:59.664 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:10:59.720 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.UploadImage (ecommerce-backend)'
+2026-08-20 23:10:59.737 +05:00 [INF] Route matched with {action = "UploadImage", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] UploadImage(Microsoft.AspNetCore.Http.IFormFile, ecommerce_backend.Services.Interfaces.IPhotoService) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:11:11.873 +05:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType3`3[[System.Boolean, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-08-20 23:11:11.927 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.UploadImage (ecommerce-backend) in 12139.8409ms
+2026-08-20 23:11:11.930 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.UploadImage (ecommerce-backend)'
+2026-08-20 23:11:11.932 +05:00 [INF] HTTP POST /api/product/upload-image responded 200 in 12301ms [IP: ::1, User: admin@ecommerce.com]
+2026-08-20 23:11:11.937 +05:00 [INF] Request finished HTTP/1.1 POST http://localhost:5024/api/product/upload-image - 200 null application/json; charset=utf-8 12310.4645ms
+2026-08-20 23:11:12.137 +05:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5024/api/product - null null
+2026-08-20 23:11:12.158 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:11:12.165 +05:00 [INF] HTTP OPTIONS /api/product responded 204 in 8ms [IP: ::1, User: Anonymous]
+2026-08-20 23:11:12.170 +05:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5024/api/product - 204 null null 33.3499ms
+2026-08-20 23:11:12.173 +05:00 [INF] Request starting HTTP/1.1 POST http://localhost:5024/api/product - application/json 400
+2026-08-20 23:11:12.190 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:11:12.196 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.Create (ecommerce-backend)'
+2026-08-20 23:11:12.233 +05:00 [INF] Route matched with {action = "Create", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Create(ecommerce_backend.Dtos.Product.CreateProductDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:11:16.611 +05:00 [INF] Executed DbCommand (1,919ms) [Parameters=[@p0='?' (Size = 100), @p1='?' (Size = 100), @p2='?' (DbType = DateTime2), @p3='?' (Size = 1000), @p4='?' (Size = 4000), @p5='?' (DbType = Boolean), @p6='?' (DbType = Boolean), @p7='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p8='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p9='?' (DbType = Double), @p10='?' (DbType = Int32), @p11='?' (DbType = Int32), @p12='?' (Size = 150), @p13='?' (DbType = DateTime2)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Products] ([Brand], [Category], [CreatedAt], [Description], [ImageUrl], [IsActive], [IsFeatured], [OriginalPrice], [Price], [Rating], [ReviewCount], [StockQuantity], [Title], [UpdatedAt])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10, @p11, @p12, @p13);
+2026-08-20 23:11:16.639 +05:00 [INF] Executing CreatedAtActionResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 23:11:16.813 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.Create (ecommerce-backend) in 4574.2992ms
+2026-08-20 23:11:16.818 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.Create (ecommerce-backend)'
+2026-08-20 23:11:16.821 +05:00 [INF] HTTP POST /api/product responded 201 in 4640ms [IP: ::1, User: admin@ecommerce.com]
+2026-08-20 23:11:16.828 +05:00 [INF] Request finished HTTP/1.1 POST http://localhost:5024/api/product - 201 null application/json; charset=utf-8 4655.3506ms
+2026-08-20 23:11:47.874 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?sortBy=default&pageNumber=1&pageSize=12 - null null
+2026-08-20 23:11:47.875 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product/categories - null null
+2026-08-20 23:11:47.875 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?sortBy=default&pageNumber=1&pageSize=12 - null null
+2026-08-20 23:11:47.912 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product/categories - null null
+2026-08-20 23:11:47.932 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:11:47.932 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:11:47.934 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:11:47.934 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:11:47.961 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend)'
+2026-08-20 23:11:47.961 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend)'
+2026-08-20 23:11:47.965 +05:00 [INF] Route matched with {action = "GetCategories", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCategories() on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:11:47.966 +05:00 [INF] Route matched with {action = "GetCategories", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCategories() on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:11:48.013 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:11:48.024 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:11:48.424 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:11:48.472 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:11:49.501 +05:00 [INF] Executed DbCommand (891ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:11:49.501 +05:00 [INF] Executed DbCommand (719ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:11:49.795 +05:00 [INF] Executed DbCommand (281ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 23:11:49.801 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 23:11:49.810 +05:00 [INF] Executed DbCommand (297ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 23:11:49.888 +05:00 [INF] Executed DbCommand (1,238ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT DISTINCT [p].[Category]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:11:49.909 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 1880.8501ms
+2026-08-20 23:11:49.946 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 23:11:49.949 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-08-20 23:11:49.953 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:11:49.960 +05:00 [INF] HTTP GET /api/product responded 200 in 2048ms [IP: ::1, User: Anonymous]
+2026-08-20 23:11:49.966 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?sortBy=default&pageNumber=1&pageSize=12 - 200 null application/json; charset=utf-8 2091.2703ms
+2026-08-20 23:11:50.005 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 1519.8648ms
+2026-08-20 23:11:50.011 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend) in 1992.5288ms
+2026-08-20 23:11:50.013 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:11:50.018 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend)'
+2026-08-20 23:11:50.023 +05:00 [INF] HTTP GET /api/product/categories responded 200 in 2107ms [IP: ::1, User: Anonymous]
+2026-08-20 23:11:50.021 +05:00 [INF] HTTP GET /api/product responded 200 in 2109ms [IP: ::1, User: Anonymous]
+2026-08-20 23:11:50.029 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product/categories - 200 null application/json; charset=utf-8 2116.9001ms
+2026-08-20 23:11:50.033 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?sortBy=default&pageNumber=1&pageSize=12 - 200 null application/json; charset=utf-8 2158.9515ms
+2026-08-20 23:11:50.105 +05:00 [INF] Executed DbCommand (2,082ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT DISTINCT [p].[Category]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:11:50.113 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-08-20 23:11:50.117 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend) in 2095.4497ms
+2026-08-20 23:11:50.119 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend)'
+2026-08-20 23:11:50.121 +05:00 [INF] HTTP GET /api/product/categories responded 200 in 2208ms [IP: ::1, User: Anonymous]
+2026-08-20 23:11:50.124 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product/categories - 200 null application/json; charset=utf-8 2248.864ms
+2026-08-20 23:18:06.700 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?brand=Adidas&sortBy=default&pageNumber=1&pageSize=12 - null null
+2026-08-20 23:18:06.727 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:18:06.733 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:18:06.735 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:18:07.139 +05:00 [INF] Executed DbCommand (394ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:18:07.185 +05:00 [INF] Executed DbCommand (23ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 23:18:07.197 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 23:18:07.242 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 499.4943ms
+2026-08-20 23:18:07.250 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:18:07.253 +05:00 [INF] HTTP GET /api/product responded 200 in 525ms [IP: ::1, User: Anonymous]
+2026-08-20 23:18:07.262 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?brand=Adidas&sortBy=default&pageNumber=1&pageSize=12 - 200 null application/json; charset=utf-8 562.0191ms
+2026-08-20 23:18:15.824 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?brand=Zara&sortBy=default&pageNumber=1&pageSize=12 - null null
+2026-08-20 23:18:15.833 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:18:15.843 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:18:15.845 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:18:16.283 +05:00 [INF] Executed DbCommand (425ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:18:16.290 +05:00 [INF] Executed DbCommand (3ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 23:18:16.295 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 23:18:16.301 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 444.7473ms
+2026-08-20 23:18:16.303 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:18:16.305 +05:00 [INF] HTTP GET /api/product responded 200 in 472ms [IP: ::1, User: Anonymous]
+2026-08-20 23:18:16.310 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?brand=Zara&sortBy=default&pageNumber=1&pageSize=12 - 200 null application/json; charset=utf-8 485.8441ms
+2026-08-20 23:18:22.539 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product/17 - null null
+2026-08-20 23:18:22.544 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product/17 - null null
+2026-08-20 23:18:22.566 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:18:22.569 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:18:22.572 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetById (ecommerce-backend)'
+2026-08-20 23:18:22.575 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetById (ecommerce-backend)'
+2026-08-20 23:18:22.598 +05:00 [INF] Route matched with {action = "GetById", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetById(Int32) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:18:22.598 +05:00 [INF] Route matched with {action = "GetById", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetById(Int32) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:18:23.034 +05:00 [INF] Executed DbCommand (87ms) [Parameters=[@id='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[Id] = @id AND [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:18:23.053 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 23:18:23.071 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetById (ecommerce-backend) in 469.3318ms
+2026-08-20 23:18:23.081 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetById (ecommerce-backend)'
+2026-08-20 23:18:23.084 +05:00 [INF] HTTP GET /api/product/17 responded 200 in 518ms [IP: ::1, User: Anonymous]
+2026-08-20 23:18:23.088 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product/17 - 200 null application/json; charset=utf-8 549.3692ms
+2026-08-20 23:18:23.459 +05:00 [INF] Executed DbCommand (513ms) [Parameters=[@id='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[Id] = @id AND [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:18:23.474 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 23:18:23.478 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetById (ecommerce-backend) in 867.9104ms
+2026-08-20 23:18:23.482 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetById (ecommerce-backend)'
+2026-08-20 23:18:23.484 +05:00 [INF] HTTP GET /api/product/17 responded 200 in 915ms [IP: ::1, User: Anonymous]
+2026-08-20 23:18:23.487 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product/17 - 200 null application/json; charset=utf-8 943.0285ms
+2026-08-20 23:18:35.076 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - null null
+2026-08-20 23:18:35.077 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - null null
+2026-08-20 23:18:35.094 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:18:35.098 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:18:35.102 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:18:35.100 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:18:35.103 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:18:35.109 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:18:35.138 +05:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:18:35.140 +05:00 [INF] Executed DbCommand (15ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:18:35.157 +05:00 [INF] Executed DbCommand (13ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 23:18:35.160 +05:00 [INF] Executed DbCommand (2ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 23:18:35.168 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 23:18:35.171 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 23:18:35.176 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 55.4935ms
+2026-08-20 23:18:35.183 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:18:35.184 +05:00 [INF] HTTP GET /api/product responded 200 in 86ms [IP: ::1, User: Anonymous]
+2026-08-20 23:18:35.187 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 61.6601ms
+2026-08-20 23:18:35.188 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - 200 null application/json; charset=utf-8 111.5627ms
+2026-08-20 23:18:35.192 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:18:35.205 +05:00 [INF] HTTP GET /api/product responded 200 in 110ms [IP: ::1, User: Anonymous]
+2026-08-20 23:18:35.209 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - 200 null application/json; charset=utf-8 132.2275ms
+2026-08-20 23:19:23.528 +05:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5024/api/product/upload-image - null null
+2026-08-20 23:19:23.555 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:19:23.559 +05:00 [INF] HTTP OPTIONS /api/product/upload-image responded 204 in 4ms [IP: ::1, User: Anonymous]
+2026-08-20 23:19:23.564 +05:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5024/api/product/upload-image - 204 null null 35.571ms
+2026-08-20 23:19:23.570 +05:00 [INF] Request starting HTTP/1.1 POST http://localhost:5024/api/product/upload-image - multipart/form-data; boundary=----WebKitFormBoundarynHMPAVIqviQeAH8R 9629
+2026-08-20 23:19:23.577 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:19:23.579 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.UploadImage (ecommerce-backend)'
+2026-08-20 23:19:23.583 +05:00 [INF] Route matched with {action = "UploadImage", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] UploadImage(Microsoft.AspNetCore.Http.IFormFile, ecommerce_backend.Services.Interfaces.IPhotoService) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:19:25.841 +05:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType3`3[[System.Boolean, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-08-20 23:19:25.846 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.UploadImage (ecommerce-backend) in 2257.7224ms
+2026-08-20 23:19:25.850 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.UploadImage (ecommerce-backend)'
+2026-08-20 23:19:25.852 +05:00 [INF] HTTP POST /api/product/upload-image responded 200 in 2275ms [IP: ::1, User: admin@ecommerce.com]
+2026-08-20 23:19:25.855 +05:00 [INF] Request finished HTTP/1.1 POST http://localhost:5024/api/product/upload-image - 200 null application/json; charset=utf-8 2285.0038ms
+2026-08-20 23:19:44.390 +05:00 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5024/api/product - null null
+2026-08-20 23:19:44.398 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:19:44.405 +05:00 [INF] HTTP OPTIONS /api/product responded 204 in 7ms [IP: ::1, User: Anonymous]
+2026-08-20 23:19:44.412 +05:00 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5024/api/product - 204 null null 21.1752ms
+2026-08-20 23:19:44.414 +05:00 [INF] Request starting HTTP/1.1 POST http://localhost:5024/api/product - application/json 399
+2026-08-20 23:19:44.423 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:19:44.425 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.Create (ecommerce-backend)'
+2026-08-20 23:19:44.428 +05:00 [INF] Route matched with {action = "Create", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Create(ecommerce_backend.Dtos.Product.CreateProductDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:19:44.607 +05:00 [INF] Executed DbCommand (171ms) [Parameters=[@p0='?' (Size = 100), @p1='?' (Size = 100), @p2='?' (DbType = DateTime2), @p3='?' (Size = 1000), @p4='?' (Size = 4000), @p5='?' (DbType = Boolean), @p6='?' (DbType = Boolean), @p7='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p8='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p9='?' (DbType = Double), @p10='?' (DbType = Int32), @p11='?' (DbType = Int32), @p12='?' (Size = 150), @p13='?' (DbType = DateTime2)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [Products] ([Brand], [Category], [CreatedAt], [Description], [ImageUrl], [IsActive], [IsFeatured], [OriginalPrice], [Price], [Rating], [ReviewCount], [StockQuantity], [Title], [UpdatedAt])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10, @p11, @p12, @p13);
+2026-08-20 23:19:44.619 +05:00 [INF] Executing CreatedAtActionResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 23:19:44.625 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.Create (ecommerce-backend) in 193.3104ms
+2026-08-20 23:19:44.631 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.Create (ecommerce-backend)'
+2026-08-20 23:19:44.635 +05:00 [INF] HTTP POST /api/product responded 201 in 212ms [IP: ::1, User: admin@ecommerce.com]
+2026-08-20 23:19:44.653 +05:00 [INF] Request finished HTTP/1.1 POST http://localhost:5024/api/product - 201 null application/json; charset=utf-8 238.6028ms
+2026-08-20 23:22:35.439 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - null null
+2026-08-20 23:22:35.445 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - null null
+2026-08-20 23:22:35.450 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:22:35.455 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:22:35.457 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:22:35.459 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:22:35.462 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:22:35.464 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:22:35.874 +05:00 [INF] Executed DbCommand (400ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:22:35.874 +05:00 [INF] Executed DbCommand (403ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:22:35.899 +05:00 [INF] Executed DbCommand (15ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 23:22:35.927 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 23:22:35.962 +05:00 [INF] Executed DbCommand (59ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 23:22:35.981 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 508.6376ms
+2026-08-20 23:22:35.988 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 23:22:35.995 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:22:36.001 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 532.5636ms
+2026-08-20 23:22:36.004 +05:00 [INF] HTTP GET /api/product responded 200 in 549ms [IP: ::1, User: Anonymous]
+2026-08-20 23:22:36.015 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:22:36.030 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - 200 null application/json; charset=utf-8 584.3034ms
+2026-08-20 23:22:36.035 +05:00 [INF] HTTP GET /api/product responded 200 in 584ms [IP: ::1, User: Anonymous]
+2026-08-20 23:22:36.049 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - 200 null application/json; charset=utf-8 609.4056ms
+2026-08-20 23:24:41.470 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product/categories - null null
+2026-08-20 23:24:41.471 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?brand=Zara&sortBy=default&pageNumber=1&pageSize=12 - null null
+2026-08-20 23:24:41.472 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product/categories - null null
+2026-08-20 23:24:41.472 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?brand=Zara&sortBy=default&pageNumber=1&pageSize=12 - null null
+2026-08-20 23:24:41.498 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:24:41.484 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:24:41.503 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:24:41.482 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:24:41.500 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:24:41.492 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:24:41.511 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:24:41.513 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend)'
+2026-08-20 23:24:41.515 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:24:41.517 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend)'
+2026-08-20 23:24:41.540 +05:00 [INF] Route matched with {action = "GetCategories", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCategories() on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:24:41.525 +05:00 [INF] Route matched with {action = "GetCategories", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCategories() on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:24:41.659 +05:00 [INF] Executed DbCommand (118ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:24:41.660 +05:00 [INF] Executed DbCommand (119ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:24:41.810 +05:00 [INF] Executed DbCommand (81ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 23:24:41.817 +05:00 [INF] Executed DbCommand (1ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 23:24:41.828 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 23:24:41.835 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 23:24:41.842 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 319.2804ms
+2026-08-20 23:24:41.845 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 311.4885ms
+2026-08-20 23:24:41.848 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:24:41.851 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:24:41.857 +05:00 [INF] HTTP GET /api/product responded 200 in 372ms [IP: ::1, User: Anonymous]
+2026-08-20 23:24:41.860 +05:00 [INF] HTTP GET /api/product responded 200 in 361ms [IP: ::1, User: Anonymous]
+2026-08-20 23:24:41.865 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?brand=Zara&sortBy=default&pageNumber=1&pageSize=12 - 200 null application/json; charset=utf-8 393.8572ms
+2026-08-20 23:24:41.872 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?brand=Zara&sortBy=default&pageNumber=1&pageSize=12 - 200 null application/json; charset=utf-8 399.203ms
+2026-08-20 23:24:41.995 +05:00 [INF] Executed DbCommand (195ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT DISTINCT [p].[Category]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:24:42.023 +05:00 [INF] Executed DbCommand (16ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT DISTINCT [p].[Category]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:24:42.054 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-08-20 23:24:42.219 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[System.Collections.Generic.List`1[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-08-20 23:24:42.247 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend) in 672.9316ms
+2026-08-20 23:24:42.253 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend)'
+2026-08-20 23:24:42.229 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend) in 672.1109ms
+2026-08-20 23:24:42.259 +05:00 [INF] HTTP GET /api/product/categories responded 200 in 777ms [IP: ::1, User: Anonymous]
+2026-08-20 23:24:42.263 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetCategories (ecommerce-backend)'
+2026-08-20 23:24:42.270 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product/categories - 200 null application/json; charset=utf-8 799.5178ms
+2026-08-20 23:24:42.275 +05:00 [INF] HTTP GET /api/product/categories responded 200 in 783ms [IP: ::1, User: Anonymous]
+2026-08-20 23:24:42.314 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product/categories - 200 null application/json; charset=utf-8 841.9427ms
+2026-08-20 23:24:45.691 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?brand=Adidas&sortBy=default&pageNumber=1&pageSize=12 - null null
+2026-08-20 23:24:45.706 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:24:45.708 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:24:45.711 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:24:45.727 +05:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:24:45.737 +05:00 [INF] Executed DbCommand (1ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 23:24:45.746 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 23:24:45.752 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 28.4069ms
+2026-08-20 23:24:45.757 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:24:45.760 +05:00 [INF] HTTP GET /api/product responded 200 in 54ms [IP: ::1, User: Anonymous]
+2026-08-20 23:24:45.768 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?brand=Adidas&sortBy=default&pageNumber=1&pageSize=12 - 200 null application/json; charset=utf-8 77.1885ms
+2026-08-20 23:24:50.149 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - null null
+2026-08-20 23:24:50.152 +05:00 [INF] Request starting HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - null null
+2026-08-20 23:24:50.164 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:24:50.169 +05:00 [INF] CORS policy execution successful.
+2026-08-20 23:24:50.170 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:24:50.173 +05:00 [INF] Executing endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:24:50.176 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:24:50.183 +05:00 [INF] Route matched with {action = "GetAll", controller = "Product"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAll(ecommerce_backend.Dtos.Product.ProductFilterDto) on controller ecommerce_backend.Controllers.ProductController (ecommerce-backend).
+2026-08-20 23:24:50.191 +05:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:24:50.198 +05:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+2026-08-20 23:24:50.203 +05:00 [INF] Executed DbCommand (1ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 23:24:50.226 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 23:24:50.229 +05:00 [INF] Executed DbCommand (20ms) [Parameters=[@p='?' (DbType = Int32), @p1='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT [p].[Id], [p].[Brand], [p].[Category], [p].[CreatedAt], [p].[Description], [p].[ImageUrl], [p].[IsActive], [p].[IsFeatured], [p].[OriginalPrice], [p].[Price], [p].[Rating], [p].[ReviewCount], [p].[StockQuantity], [p].[Title], [p].[UpdatedAt]
+FROM [Products] AS [p]
+WHERE [p].[IsActive] = CAST(1 AS bit)
+ORDER BY [p].[Id] DESC
+OFFSET @p ROWS FETCH NEXT @p1 ROWS ONLY
+2026-08-20 23:24:50.235 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 46.5183ms
+2026-08-20 23:24:50.251 +05:00 [INF] Executing OkObjectResult, writing value of type 'ecommerce_backend.Models.common.ApiResponse`1[[ecommerce_backend.Dtos.Product.PagedResult`1[[ecommerce_backend.Dtos.Product.ProductDto, ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], ecommerce-backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-08-20 23:24:50.254 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:24:50.259 +05:00 [INF] Executed action ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend) in 63.6648ms
+2026-08-20 23:24:50.264 +05:00 [INF] HTTP GET /api/product responded 200 in 104ms [IP: ::1, User: Anonymous]
+2026-08-20 23:24:50.267 +05:00 [INF] Executed endpoint 'ecommerce_backend.Controllers.ProductController.GetAll (ecommerce-backend)'
+2026-08-20 23:24:50.278 +05:00 [INF] HTTP GET /api/product responded 200 in 109ms [IP: ::1, User: Anonymous]
+2026-08-20 23:24:50.273 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - 200 null application/json; charset=utf-8 124.2789ms
+2026-08-20 23:24:50.285 +05:00 [INF] Request finished HTTP/1.1 GET http://localhost:5024/api/product?pageSize=50 - 200 null application/json; charset=utf-8 132.9015ms

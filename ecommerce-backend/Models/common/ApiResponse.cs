@@ -1,6 +1,6 @@
-namespace ecommerce_backend.Models.Common
+namespace ecommerce_backend.Models.common
 {
-   public class ApiResponse<T>
+    public class ApiResponse<T>
     {
         public bool Success { get; set; }
         public string Message { get; set; } = string.Empty;
@@ -16,5 +16,24 @@ namespace ecommerce_backend.Models.Common
                 ErrorDetails = errorDetails
             };
         }
+        public static ApiResponse<T> SuccessResponse(T data, string message)
+{
+    return new ApiResponse<T>
+    {
+        Success = true,
+        Data = data,
+        Message = message
+    };
+}
+public static ApiResponse<T> ErrorResponse(string message, int statusCode = 500)
+{
+    return new ApiResponse<T>
+    {
+        Success = false,
+        Message = message,
+        Data = default,
+        ErrorDetails = $"Status Code: {statusCode}"
+    };
+    }
     }
 }   

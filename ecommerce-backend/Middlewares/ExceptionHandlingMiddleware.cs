@@ -1,6 +1,6 @@
 using System.Net;
 using System.Text.Json;
-using ecommerce_backend.Models.Common;
+using ecommerce_backend.Models.common;
 
 namespace ecommerce_backend.Middlewares
 {
