@@ -186,7 +186,8 @@ export default function AdminProductsPage() {
             </div>
 
             {/* Filter / Search Bar */}
-            <div style={{ marginBottom: "20px" }}>
+            <div style={{ marginBottom: "20px", position: "relative", maxWidth: "450px" }}>
+                <i className="fas fa-search" style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#9ca3af", fontSize: "14px" }} />
                 <input
                     type="text"
                     placeholder="Search by title, brand or category..."
@@ -194,13 +195,38 @@ export default function AdminProductsPage() {
                     onChange={(e) => setSearchTerm(e.target.value)}
                     style={{
                         width: "100%",
-                        maxWidth: "450px",
-                        padding: "10px 16px",
+                        padding: "10px 38px 10px 38px",
                         borderRadius: "8px",
                         border: "1px solid #d1d5db",
-                        outline: "none"
+                        outline: "none",
+                        fontSize: "13px",
+                        backgroundColor: "#fff"
                     }}
                 />
+                {searchTerm && (
+                    <button
+                        type="button"
+                        onClick={() => setSearchTerm("")}
+                        title="Clear search"
+                        style={{
+                            position: "absolute",
+                            right: "12px",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            background: "none",
+                            border: "none",
+                            color: "#9ca3af",
+                            cursor: "pointer",
+                            fontSize: "14px",
+                            padding: "4px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                        }}
+                    >
+                        ✕
+                    </button>
+                )}
             </div>
 
             {/* Products Table */}

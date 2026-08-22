@@ -86,6 +86,10 @@ namespace ecommerce_backend.Services.Implementations
 
             await _orderRepo.CreateOrderAsync(order);
 
+            // Assign sequential Order Number e.g. ORD-10001, ORD-10002
+            order.OrderNumber = $"ORD-{10000 + order.Id}";
+            await _orderRepo.UpdateOrderAsync(order);
+
             // 6. Cart clear karo
             await _cartRepo.ClearCartAsync(cart.Id);
 
@@ -176,6 +180,7 @@ namespace ecommerce_backend.Services.Implementations
             return new OrderDto
             {
                 Id = order.Id,
+                OrderNumber = !string.IsNullOrEmpty(order.OrderNumber) ? order.OrderNumber : $"ORD-{10000 + order.Id}",
                 UserId = order.UserId,
                 OrderItems = order.OrderItems.Select(i => new OrderItemDto
                 {

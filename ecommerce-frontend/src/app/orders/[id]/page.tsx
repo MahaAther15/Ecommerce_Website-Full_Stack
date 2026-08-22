@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
-import { fetchOrderById, cancelOrder, clearSelectedOrder } from "@/app/redux/slices/orderSlice";
+import { fetchOrderById, cancelOrder, clearSelectedOrder, fetchMyOrders } from "@/app/redux/slices/orderSlice";
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: string }> = {
-    Pending:   { label: "Pending",   color: "#d97706", bg: "#fef3c7", icon: "fas fa-clock" },
+    Pending: { label: "Pending", color: "#d97706", bg: "#fef3c7", icon: "fas fa-clock" },
     Confirmed: { label: "Confirmed", color: "#2563eb", bg: "#dbeafe", icon: "fas fa-check-circle" },
-    Shipped:   { label: "Shipped",   color: "#7c3aed", bg: "#ede9fe", icon: "fas fa-shipping-fast" },
+    Shipped: { label: "Shipped", color: "#7c3aed", bg: "#ede9fe", icon: "fas fa-shipping-fast" },
     Delivered: { label: "Delivered", color: "#16a34a", bg: "#dcfce7", icon: "fas fa-box-open" },
     Cancelled: { label: "Cancelled", color: "#dc2626", bg: "#fee2e2", icon: "fas fa-times-circle" },
 };
@@ -18,20 +18,29 @@ export default function OrderDetailPage() {
     const { id } = useParams<{ id: string }>();
     const router = useRouter();
     const dispatch = useAppDispatch();
-    const { selectedOrder, loading, error } = useAppSelector((state) => state.order);
+    const { selectedOrder, myOrders, loading, error } = useAppSelector((state) => state.order);
     const { isAuthenticated } = useAppSelector((state) => state.auth);
+
+    const [showCancelModal, setShowCancelModal] = useState(false);
+    const [cancelling, setCancelling] = useState(false);
 
     useEffect(() => {
         if (!isAuthenticated) { router.push("/login"); return; }
         if (id) dispatch(fetchOrderById(Number(id)));
+        if (myOrders.length === 0) dispatch(fetchMyOrders());
         return () => { dispatch(clearSelectedOrder()); };
     }, [id, isAuthenticated]);
 
-    const handleCancel = async () => {
+    const handleConfirmCancel = async () => {
         if (!selectedOrder) return;
-        if (!confirm("Are you sure you want to cancel this order?")) return;
-        await dispatch(cancelOrder(selectedOrder.id));
-        dispatch(fetchOrderById(selectedOrder.id));
+        setCancelling(true);
+        try {
+            await dispatch(cancelOrder(selectedOrder.id));
+            dispatch(fetchOrderById(selectedOrder.id));
+            setShowCancelModal(false);
+        } finally {
+            setCancelling(false);
+        }
     };
 
     const statusCfg = STATUS_CONFIG[selectedOrder?.status ?? ""] ?? {
@@ -60,6 +69,7 @@ export default function OrderDetailPage() {
 
     const order = selectedOrder;
     const orderDate = new Date(order.createdAt).toLocaleDateString("en-PK", { year: "numeric", month: "long", day: "numeric" });
+    const orderCode = order.orderNumber || `ORD-${10000 + order.id}`;
 
     return (
         <div style={{ maxWidth: "900px", margin: "40px auto", padding: "0 24px", fontFamily: "'Inter', system-ui, sans-serif" }}>
@@ -70,7 +80,7 @@ export default function OrderDetailPage() {
                     <Link href="/orders" style={{ color: "#088178", textDecoration: "none", fontSize: "13px", fontWeight: "600", display: "inline-flex", alignItems: "center", gap: "6px", marginBottom: "10px" }}>
                         <i className="fas fa-arrow-left" /> Back to Orders
                     </Link>
-                    <h1 style={{ fontSize: "24px", fontWeight: "800", color: "#1f2937", margin: 0 }}>Order #{order.id}</h1>
+                    <h1 style={{ fontSize: "24px", fontWeight: "800", color: "#1f2937", margin: 0 }}>Order #{orderCode}</h1>
                     <p style={{ color: "#6b7280", fontSize: "14px", margin: "4px 0 0 0" }}>Placed on {orderDate}</p>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -78,7 +88,7 @@ export default function OrderDetailPage() {
                         <i className={statusCfg.icon} />{statusCfg.label}
                     </span>
                     {order.status === "Pending" && (
-                        <button onClick={handleCancel} style={{ backgroundColor: "#fee2e2", color: "#dc2626", border: "1px solid #fca5a5", padding: "8px 18px", borderRadius: "999px", fontWeight: "700", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}>
+                        <button onClick={() => setShowCancelModal(true)} style={{ backgroundColor: "#fee2e2", color: "#dc2626", border: "1px solid #fca5a5", padding: "8px 18px", borderRadius: "999px", fontWeight: "700", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}>
                             <i className="fas fa-times" /> Cancel Order
                         </button>
                     )}
@@ -132,12 +142,44 @@ export default function OrderDetailPage() {
                                 </div>
                                 <div style={{ flex: 1 }}>
                                     <div style={{ fontWeight: "700", color: "#111827", fontSize: "14px" }}>{item.productTitle}</div>
-                                    <div style={{ color: "#6b7280", fontSize: "12px", marginTop: "2px" }}>Rs. {item.unitPrice.toLocaleString()} &times; {item.quantity}</div>
+                                    <div style={{ color: "#6b7280", fontSize: "12px", marginTop: "2px" }}>${item.unitPrice.toLocaleString()} &times; {item.quantity}</div>
                                 </div>
-                                <div style={{ fontWeight: "800", color: "#088178", fontSize: "15px" }}>Rs. {item.subTotal.toLocaleString()}</div>
+                                <div style={{ fontWeight: "800", color: "#088178", fontSize: "15px" }}>${item.subTotal.toLocaleString()}</div>
                             </div>
                         ))}
                     </div>
+
+                    {/* Rate & Review Banner for Delivered Orders */}
+                    {order.status === "Delivered" && (
+                        <div style={{ backgroundColor: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "16px", padding: "20px 24px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", flexWrap: "wrap", gap: "14px" }}>
+                            <div>
+                                <h4 style={{ margin: 0, color: "#166534", fontSize: "15px", fontWeight: "800", display: "flex", alignItems: "center", gap: "8px" }}>
+                                    <i className="fas fa-box-open" style={{ color: "#16a34a" }} /> Package Delivered! How was your purchase?
+                                </h4>
+                                <p style={{ margin: "4px 0 0 0", color: "#15803d", fontSize: "13px" }}>
+                                    Share your rating, written feedback, and real photos to help other shoppers.
+                                </p>
+                            </div>
+                            <Link
+                                href={`/orders/${order.id}/review`}
+                                style={{
+                                    backgroundColor: "#088178",
+                                    color: "#fff",
+                                    padding: "10px 20px",
+                                    borderRadius: "10px",
+                                    textDecoration: "none",
+                                    fontWeight: "700",
+                                    fontSize: "13px",
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: "8px",
+                                    boxShadow: "0 2px 8px rgba(8,129,120,0.25)",
+                                }}
+                            >
+                                <i className="fas fa-star" /> Rate & Review Items
+                            </Link>
+                        </div>
+                    )}
 
                     {/* Shipping Info */}
                     <div style={{ backgroundColor: "#fff", borderRadius: "16px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", padding: "20px 24px" }}>
@@ -170,18 +212,18 @@ export default function OrderDetailPage() {
                         </h3>
                         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                             <div style={{ display: "flex", justifyContent: "space-between", color: "#6b7280", fontSize: "14px" }}>
-                                <span>Subtotal</span><span>Rs. {order.totalAmount.toLocaleString()}</span>
+                                <span>Subtotal</span><span>${order.totalAmount.toLocaleString()}</span>
                             </div>
                             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px", color: order.shippingFee === 0 ? "#16a34a" : "#6b7280" }}>
-                                <span>Shipping</span><span>{order.shippingFee === 0 ? "FREE" : `Rs. ${order.shippingFee}`}</span>
+                                <span>Shipping</span><span>{order.shippingFee === 0 ? "FREE" : `$${order.shippingFee}`}</span>
                             </div>
                             {order.discount > 0 && (
                                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px", color: "#16a34a" }}>
-                                    <span>Discount</span><span>- Rs. {order.discount.toLocaleString()}</span>
+                                    <span>Discount</span><span>- ${order.discount.toLocaleString()}</span>
                                 </div>
                             )}
                             <div style={{ borderTop: "2px solid #e5e7eb", paddingTop: "12px", display: "flex", justifyContent: "space-between", fontWeight: "800", fontSize: "18px", color: "#088178" }}>
-                                <span>Total</span><span>Rs. {order.finalAmount.toLocaleString()}</span>
+                                <span>Total</span><span>${order.finalAmount.toLocaleString()}</span>
                             </div>
                         </div>
                         <div style={{ marginTop: "20px", backgroundColor: order.isPaid ? "#f0fdf4" : "#fffbeb", border: `1px solid ${order.isPaid ? "#bbf7d0" : "#fde68a"}`, borderRadius: "10px", padding: "12px 14px", display: "flex", alignItems: "center", gap: "8px" }}>
@@ -194,6 +236,128 @@ export default function OrderDetailPage() {
                     </div>
                 </div>
             </div>
+
+            {/* Custom Confirmation Modal Card */}
+            {showCancelModal && (
+                <div
+                    style={{
+                        position: "fixed",
+                        inset: 0,
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        backdropFilter: "blur(4px)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        zIndex: 9999,
+                        padding: "16px",
+                    }}
+                    onClick={() => !cancelling && setShowCancelModal(false)}
+                >
+                    <div
+                        style={{
+                            backgroundColor: "#ffffff",
+                            borderRadius: "20px",
+                            padding: "32px 28px",
+                            maxWidth: "420px",
+                            width: "100%",
+                            boxShadow: "0 25px 60px rgba(0, 0, 0, 0.2)",
+                            textAlign: "center",
+                            position: "relative",
+                            border: "1px solid #f3f4f6",
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Red Warning Icon */}
+                        <div
+                            style={{
+                                width: "60px",
+                                height: "60px",
+                                borderRadius: "50%",
+                                backgroundColor: "#fee2e2",
+                                color: "#dc2626",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "24px",
+                                margin: "0 auto 16px",
+                            }}
+                        >
+                            <i className="fas fa-exclamation-triangle"></i>
+                        </div>
+
+                        <h3 style={{ fontSize: "20px", fontWeight: "800", color: "#1f2937", margin: "0 0 8px 0" }}>
+                            Cancel Order #{orderCode}?
+                        </h3>
+                        <p style={{ fontSize: "14px", color: "#6b7280", margin: "0 0 24px 0", lineHeight: "1.5" }}>
+                            Are you sure you want to cancel this order? This action cannot be reversed.
+                        </p>
+
+                        <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
+                            <button
+                                type="button"
+                                disabled={cancelling}
+                                onClick={() => setShowCancelModal(false)}
+                                style={{
+                                    flex: 1,
+                                    padding: "11px 18px",
+                                    borderRadius: "10px",
+                                    border: "1px solid #e5e7eb",
+                                    backgroundColor: "#ffffff",
+                                    color: "#4b5563",
+                                    fontSize: "14px",
+                                    fontWeight: "700",
+                                    cursor: cancelling ? "not-allowed" : "pointer",
+                                }}
+                            >
+                                Keep Order
+                            </button>
+                            <button
+                                type="button"
+                                disabled={cancelling}
+                                onClick={handleConfirmCancel}
+                                style={{
+                                    flex: 1,
+                                    padding: "11px 18px",
+                                    borderRadius: "10px",
+                                    border: "none",
+                                    backgroundColor: "#dc2626",
+                                    color: "#ffffff",
+                                    fontSize: "14px",
+                                    fontWeight: "700",
+                                    cursor: cancelling ? "not-allowed" : "pointer",
+                                    boxShadow: "0 4px 14px rgba(220, 38, 38, 0.25)",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    gap: "8px",
+                                }}
+                            >
+                                {cancelling ? (
+                                    <>
+                                        <span
+                                            style={{
+                                                width: "16px",
+                                                height: "16px",
+                                                border: "2px solid #ffffff",
+                                                borderTopColor: "transparent",
+                                                borderRadius: "50%",
+                                                animation: "spin 0.8s linear infinite",
+                                                display: "inline-block",
+                                            }}
+                                        ></span>
+                                        <span>Cancelling...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <i className="fas fa-times"></i>
+                                        <span>Yes, Cancel</span>
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

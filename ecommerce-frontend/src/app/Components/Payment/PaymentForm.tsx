@@ -380,22 +380,24 @@ export default function PaymentForm({
                     marginBottom: "4px",
                   }}
                 >
-                  Country
+                  Country *
                 </label>
                 <input
                   type="text"
                   name="country"
                   value={form.country}
-                  disabled
+                  onChange={onInputChange}
+                  required
+                  placeholder="e.g. Pakistan"
                   style={{
                     width: "100%",
                     padding: "11px 14px",
-                    border: "1px solid #e5e7eb",
+                    border: "1px solid #d1d5db",
                     borderRadius: "8px",
                     fontSize: "14px",
-                    backgroundColor: "#f9fafb",
-                    color: "#6b7280",
+                    outline: "none",
                     boxSizing: "border-box",
+                    backgroundColor: "#ffffff",
                   }}
                 />
               </div>
@@ -487,7 +489,7 @@ export default function PaymentForm({
           ) : (
             <>
               <i className="fas fa-check-circle"></i>
-              <span>Confirm Order — Rs. {finalAmount.toLocaleString()}</span>
+              <span>Confirm Order — ${finalAmount.toLocaleString()}</span>
             </>
           )}
         </button>

@@ -76,7 +76,7 @@ export default function MyOrdersPage() {
                                             <i className="fas fa-receipt" style={{ color: "#088178", fontSize: "18px" }} />
                                         </div>
                                         <div>
-                                            <div style={{ fontWeight: "800", color: "#111827", fontSize: "15px" }}>Order #{order.id}</div>
+                                            <div style={{ fontWeight: "800", color: "#111827", fontSize: "15px" }}>Order #{order.orderNumber || `ORD-${10000 + order.id}`}</div>
                                             <div style={{ color: "#9ca3af", fontSize: "12px", marginTop: "2px" }}>{date} &middot; {order.orderItems.length} item{order.orderItems.length !== 1 ? "s" : ""}</div>
                                         </div>
                                     </div>
@@ -84,7 +84,7 @@ export default function MyOrdersPage() {
                                         <span style={{ backgroundColor: cfg.bg, color: cfg.color, padding: "5px 14px", borderRadius: "999px", fontWeight: "700", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px" }}>
                                             <i className={cfg.icon} />{order.status}
                                         </span>
-                                        <span style={{ fontWeight: "800", color: "#088178", fontSize: "15px" }}>Rs. {order.finalAmount.toLocaleString()}</span>
+                                        <span style={{ fontWeight: "800", color: "#088178", fontSize: "15px" }}>${order.finalAmount.toLocaleString()}</span>
                                     </div>
                                 </div>
 

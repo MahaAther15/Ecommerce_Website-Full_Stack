@@ -8,6 +8,7 @@ import { LoginFormData, AuthFormErrors } from "@/app/types/auth";
 import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { useAppDispatch } from "@/app/redux/hooks";
 import { setCredentials } from "@/app/redux/slices/authslice";
+import { fetchUserWishlist } from "@/app/redux/slices/wishlistslice";
 
 export default function LoginForm() {
   const [formData, setFormData] = useState<LoginFormData>({
@@ -75,6 +76,9 @@ export default function LoginForm() {
         token: response.token,
       }));
 
+      // Sync Wishlist from Database
+      dispatch(fetchUserWishlist());
+
       // 4. Display success badge in form theme color
       const isAdmin = response.role?.toLowerCase() === "admin";
       setSuccessMessage(
@@ -125,6 +129,9 @@ export default function LoginForm() {
         },
         token: response.token,
       }));
+
+      // Sync Wishlist from Database
+      dispatch(fetchUserWishlist());
 
       const isGoogleAdmin = response.role?.toLowerCase() === "admin";
       setSuccessMessage(

@@ -17,6 +17,7 @@ import { logout } from "@/app/libs/authApi";
 import { UserProfile, UpdateProfileData } from "@/app/types/user";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { logout as reduxLogout } from "@/app/redux/slices/authslice";
+import { resetWishlist } from "@/app/redux/slices/wishlistslice";
 import { fetchMyOrders } from "@/app/redux/slices/orderSlice";
 
 const ORDER_STATUS_CFG: Record<string, { color: string; bg: string; icon: string }> = {
@@ -30,6 +31,7 @@ const ORDER_STATUS_CFG: Record<string, { color: string; bg: string; icon: string
 export default function ProfileDashboard() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
   const { myOrders = [], loading: ordersLoading = false } = useAppSelector((state) => state.order) ?? {};
   const [activeTab, setActiveTab] = useState<"dashboard" | "profile" | "address" | "orders" | "settings">("dashboard");
 
@@ -109,11 +111,20 @@ export default function ProfileDashboard() {
   };
 
   useEffect(() => {
+    if (user?.role?.toLowerCase() === "admin") {
+      router.replace("/admin/products");
+      return;
+    }
+
     async function fetchProfile() {
       try {
         setLoading(true);
         setErrorMessage(null);
         const data = await getUserProfileApi();
+        if (data.role?.toLowerCase() === "admin") {
+          router.replace("/admin/products");
+          return;
+        }
         setProfile(data);
         setFormData({
           fullName: data.fullName || "",
@@ -131,7 +142,7 @@ export default function ProfileDashboard() {
       }
     }
     fetchProfile();
-  }, []);
+  }, [user, router]);
 
   // Fetch orders when the orders tab is opened
   useEffect(() => {
@@ -262,6 +273,7 @@ export default function ProfileDashboard() {
   const handleLogout = () => {
     logout();
     dispatch(reduxLogout());
+    dispatch(resetWishlist());
     router.push("/login");
   };
 
@@ -695,41 +707,6 @@ export default function ProfileDashboard() {
                     </div>
                   </div>
                 </div>
-
-                {/* Bottom Section: Stats Bar Chart (Matching mockup "Request statistic" bar graph) */}
-                <div style={{ backgroundColor: "#fff", borderRadius: "16px", padding: "20px", border: "1px solid #f0ebe6" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-                    <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "700", color: "#1a1a1a" }}>Account Activity</h4>
-                    <span style={{ fontSize: "11px", color: "#999", fontWeight: "600" }}>Last 6 months</span>
-                  </div>
-
-                  {/* Bar Chart SVG */}
-                  <div style={{ height: "120px", display: "flex", alignItems: "flex-end", gap: "10px", padding: "0 10px" }}>
-                    {["Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun"].map((month, i) => {
-                      const heights = [30, 50, 25, 70, 45, 60, 20];
-                      return (
-                        <div key={month} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
-                          <div style={{ display: "flex", gap: "3px", alignItems: "flex-end", height: "90px" }}>
-                            <div style={{
-                              width: "14px",
-                              height: `${heights[i]}%`,
-                              backgroundColor: "#088178",
-                              borderRadius: "4px 4px 0 0",
-                              transition: "height 0.3s ease",
-                            }}></div>
-                            <div style={{
-                              width: "14px",
-                              height: `${Math.max(10, heights[i] - 20)}%`,
-                              backgroundColor: "#e6f7f5",
-                              borderRadius: "4px 4px 0 0",
-                            }}></div>
-                          </div>
-                          <span style={{ fontSize: "10px", color: "#999", fontWeight: "600" }}>{month}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
               </>
             )}
 
@@ -993,6 +970,7 @@ export default function ProfileDashboard() {
                 {!ordersLoading && myOrders.slice(0, 5).map((order) => {
                   const cfg = ORDER_STATUS_CFG[order.status] ?? { color: "#6b7280", bg: "#f3f4f6", icon: "fas fa-circle" };
                   const date = new Date(order.createdAt).toLocaleDateString("en-PK", { month: "short", day: "numeric", year: "numeric" });
+                  const orderCode = order.orderNumber || `ORD-${10000 + order.id}`;
                   return (
                     <div key={order.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 24px", borderBottom: "1px solid #f9f7f5", flexWrap: "wrap", gap: "10px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
@@ -1000,7 +978,7 @@ export default function ProfileDashboard() {
                           <i className="fas fa-receipt" style={{ color: "#088178", fontSize: "16px" }} />
                         </div>
                         <div>
-                          <div style={{ fontWeight: "800", color: "#111", fontSize: "14px" }}>Order #{order.id}</div>
+                          <div style={{ fontWeight: "800", color: "#111", fontSize: "14px" }}>Order #{orderCode}</div>
                           <div style={{ fontSize: "11px", color: "#9ca3af", marginTop: "2px" }}>{date} &middot; {order.orderItems.length} item{order.orderItems.length !== 1 ? "s" : ""}</div>
                         </div>
                       </div>
@@ -1008,7 +986,7 @@ export default function ProfileDashboard() {
                         <span style={{ backgroundColor: cfg.bg, color: cfg.color, padding: "4px 12px", borderRadius: "999px", fontWeight: "700", fontSize: "11px", display: "inline-flex", alignItems: "center", gap: "5px" }}>
                           <i className={cfg.icon} />{order.status}
                         </span>
-                        <span style={{ fontWeight: "800", color: "#088178", fontSize: "13px" }}>Rs. {order.finalAmount.toLocaleString()}</span>
+                        <span style={{ fontWeight: "800", color: "#088178", fontSize: "13px" }}>${order.finalAmount.toLocaleString()}</span>
                         <Link href={`/orders/${order.id}`} style={{ backgroundColor: "#f3f4f6", color: "#374151", padding: "6px 12px", borderRadius: "7px", textDecoration: "none", fontWeight: "700", fontSize: "11px" }}>
                           View
                         </Link>
@@ -1457,12 +1435,14 @@ export default function ProfileDashboard() {
                   />
                 </div>
                 <div>
-                  <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Country</label>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Country *</label>
                   <input
                     type="text"
-                    disabled
+                    required
                     value={addressFormData.country}
-                    style={{ width: "100%", padding: "9px 12px", borderRadius: "8px", border: "1px solid #e5e7eb", backgroundColor: "#f9fafb", color: "#6b7280", fontSize: "13px", boxSizing: "border-box" }}
+                    onChange={(e) => setAddressFormData((prev) => ({ ...prev, country: e.target.value }))}
+                    placeholder="e.g. Pakistan"
+                    style={{ width: "100%", padding: "9px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none", boxSizing: "border-box" }}
                   />
                 </div>
               </div>

@@ -169,11 +169,6 @@ export default function CheckoutPage() {
                         </div>
                     </div>
                 </div>
-
-                <div style={{ marginTop: "16px", backgroundColor: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "10px", padding: "12px 16px", fontSize: "13px", color: "#166534" }}>
-                    <i className="fas fa-shield-alt" style={{ marginRight: "8px" }}></i>
-                    Orders above Rs. 2,000 get <strong>FREE shipping!</strong>
-                </div>
             </div>
         </div>
     );

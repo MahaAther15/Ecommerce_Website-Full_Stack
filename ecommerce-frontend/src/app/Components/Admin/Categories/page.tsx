@@ -5,6 +5,7 @@ import { getCategoriesApi, createCategoryApi, updateCategoryApi, deleteCategoryA
 
 export default function AdminCategoriesPage() {
     const [categories, setCategories] = useState<Category[]>([]);
+    const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCategory, setEditingCategory] = useState<Category | null>(null);
@@ -120,6 +121,50 @@ export default function AdminCategoriesPage() {
                 </button>
             </div>
 
+            {/* Search Bar */}
+            <div style={{ marginBottom: "20px", position: "relative", maxWidth: "450px" }}>
+                <i className="fas fa-search" style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#9ca3af", fontSize: "14px" }} />
+                <input
+                    type="text"
+                    placeholder="Search category by name, slug or description..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={{
+                        width: "100%",
+                        padding: "10px 38px 10px 38px",
+                        borderRadius: "8px",
+                        border: "1px solid #d1d5db",
+                        outline: "none",
+                        fontSize: "13px",
+                        backgroundColor: "#fff"
+                    }}
+                />
+                {searchTerm && (
+                    <button
+                        type="button"
+                        onClick={() => setSearchTerm("")}
+                        title="Clear search"
+                        style={{
+                            position: "absolute",
+                            right: "12px",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            background: "none",
+                            border: "none",
+                            color: "#9ca3af",
+                            cursor: "pointer",
+                            fontSize: "14px",
+                            padding: "4px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                        }}
+                    >
+                        ✕
+                    </button>
+                )}
+            </div>
+
             {/* Categories Table */}
             <div style={{ backgroundColor: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", overflow: "hidden" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
@@ -135,10 +180,20 @@ export default function AdminCategoriesPage() {
                     <tbody>
                         {loading ? (
                             <tr><td colSpan={5} style={{ textAlign: "center", padding: "40px" }}>Loading categories...</td></tr>
-                        ) : categories.length === 0 ? (
-                            <tr><td colSpan={5} style={{ textAlign: "center", padding: "40px" }}>No categories found. Click "Add New Category" to create one.</td></tr>
+                        ) : categories.filter((c) =>
+                            c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            c.slug.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            (c.description && c.description.toLowerCase().includes(searchTerm.toLowerCase()))
+                        ).length === 0 ? (
+                            <tr><td colSpan={5} style={{ textAlign: "center", padding: "40px" }}>No categories found matching your search.</td></tr>
                         ) : (
-                            categories.map((cat) => (
+                            categories
+                                .filter((c) =>
+                                    c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                    c.slug.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                    (c.description && c.description.toLowerCase().includes(searchTerm.toLowerCase()))
+                                )
+                                .map((cat) => (
                                 <tr key={cat.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
                                     <td style={{ padding: "14px 16px", color: "#6b7280" }}>#{cat.id}</td>
                                     <td style={{ padding: "14px 16px", fontWeight: "700", color: "#111827" }}>{cat.name}</td>

@@ -6,8 +6,9 @@ import { useRouter } from "next/navigation";
 import Newsletter from "@/app/Components/Layout/Newsletter";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { addToCart } from "@/app/redux/slices/cartslice";
-import { toggleWishlist } from "@/app/redux/slices/wishlistslice";
+import { toggleWishlistItem } from "@/app/redux/slices/wishlistslice";
 import { fetchProductById } from "@/app/redux/slices/productSlice";
+import { fetchProductReviews } from "@/app/redux/slices/reviewSlice";
 
 interface ProductDetailsProps {
   params: Promise<{ id: string }>;
@@ -20,8 +21,9 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
   const dispatch = useAppDispatch();
   const wishlistItems = useAppSelector((state) => state.wishlist.items);
   const { selectedProduct: product, loading, error } = useAppSelector(
-    (state) => state.product
+    (state) => state.product || {}
   );
+  const reviewSummary = useAppSelector((state) => state.review?.summary);
 
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("L");
@@ -32,6 +34,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
   useEffect(() => {
     if (productId) {
       dispatch(fetchProductById(productId));
+      dispatch(fetchProductReviews(productId));
     }
   }, [dispatch, productId]);
 
@@ -45,7 +48,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
   }, [product]);
 
   const isWishlisted = product
-    ? wishlistItems.some((item) => String(item.id) === String(product.id))
+    ? wishlistItems.some((item) => Number(item.productId || item.id) === Number(product.id))
     : false;
 
   const showToast = (msg: string) => {
@@ -87,14 +90,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
 
   const handleToggleWishlist = () => {
     if (!product) return;
-    dispatch(
-      toggleWishlist({
-        id: String(product.id),
-        name: product.title,
-        price: product.price,
-        image: productImage,
-      })
-    );
+    dispatch(toggleWishlistItem(Number(product.id)));
     showToast(
       isWishlisted
         ? `💔 Removed from Wishlist`
@@ -237,11 +233,20 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
           {/* Ratings & Stock */}
           <div className="pro-rating-row">
             <div className="pro-stars">
-              {Array.from({ length: product.rating || 5 }).map((_, i) => (
-                <i key={i} className="fas fa-star" style={{ marginRight: "2px" }}></i>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <i
+                  key={i}
+                  className="fas fa-star"
+                  style={{
+                    marginRight: "2px",
+                    color: i < Math.round(reviewSummary?.averageRating ?? product.rating ?? 5) ? "#f59e0b" : "#d1d5db"
+                  }}
+                />
               ))}
             </div>
-            <span className="pro-reviews-count">(142 Customer Reviews)</span>
+            <span className="pro-reviews-count">
+              ({reviewSummary?.totalReviews ?? product.reviewCount ?? 0} Customer Reviews)
+            </span>
             <span className="pro-stock-badge">
               <i className="fas fa-check" style={{ marginRight: "4px" }}></i> In Stock (Fast Delivery)
             </span>
@@ -375,7 +380,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
                 className={`tab-btn ${activeTab === "reviews" ? "active" : ""}`}
                 onClick={() => setActiveTab("reviews")}
               >
-                Reviews (142)
+                Reviews ({reviewSummary?.totalReviews ?? product.reviewCount ?? 0})
               </button>
             </div>
 
@@ -394,16 +399,92 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
                 </ul>
               )}
               {activeTab === "reviews" && (
-                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                  <div style={{ backgroundColor: "#f8faf9", padding: "12px", borderRadius: "10px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
-                      <strong style={{ fontSize: "13px" }}>Alex R. ⭐⭐⭐⭐⭐</strong>
-                      <span style={{ fontSize: "11px", color: "#999" }}>2 days ago</span>
+                <div>
+                  {/* Ratings Breakdown Header */}
+                  <div style={{ display: "grid", gridTemplateColumns: "180px 1fr", gap: "24px", backgroundColor: "#f8faf9", padding: "20px", borderRadius: "14px", marginBottom: "24px", alignItems: "center" }}>
+                    <div style={{ textAlign: "center", borderRight: "1px solid #e5e7eb", paddingRight: "16px" }}>
+                      <h2 style={{ fontSize: "36px", fontWeight: "900", color: "#111827", margin: 0 }}>
+                        {reviewSummary?.averageRating ? reviewSummary.averageRating.toFixed(1) : (product.rating ? product.rating.toFixed(1) : "0.0")}
+                      </h2>
+                      <div style={{ color: "#f59e0b", fontSize: "16px", margin: "4px 0" }}>
+                        {"★".repeat(Math.round(reviewSummary?.averageRating ?? product.rating ?? 0))}
+                        {"☆".repeat(5 - Math.round(reviewSummary?.averageRating ?? product.rating ?? 0))}
+                      </div>
+                      <p style={{ margin: 0, fontSize: "12px", color: "#6b7280" }}>
+                        Based on {reviewSummary?.totalReviews ?? product.reviewCount ?? 0} reviews
+                      </p>
                     </div>
-                    <p style={{ margin: 0, fontSize: "12px", color: "#555" }}>
-                      "Amazing quality fabric! The fit is accurate and it feels super soft. Definitely ordering more colors."
-                    </p>
+
+                    {/* Progress Bars for 5★ to 1★ */}
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px", justifyContent: "center" }}>
+                      {[5, 4, 3, 2, 1].map((stars) => {
+                        const count = reviewSummary?.starCounts?.[stars] || 0;
+                        const total = reviewSummary?.totalReviews || 0;
+                        const pct = total > 0 ? (count / total) * 100 : 0;
+                        return (
+                          <div key={stars} style={{ display: "flex", alignItems: "center", gap: "10px", fontSize: "12px" }}>
+                            <span style={{ width: "30px", fontWeight: "600", color: "#4b5563" }}>{stars} ★</span>
+                            <div style={{ flex: 1, height: "8px", backgroundColor: "#e5e7eb", borderRadius: "999px", overflow: "hidden" }}>
+                              <div style={{ width: `${pct}%`, height: "100%", backgroundColor: "#f59e0b", borderRadius: "999px" }} />
+                            </div>
+                            <span style={{ width: "24px", color: "#9ca3af", textAlign: "right" }}>{count}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
+
+                  {/* Customer Reviews List */}
+                  {reviewSummary?.reviews && reviewSummary.reviews.length > 0 ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                      {reviewSummary.reviews.map((rev) => (
+                        <div key={rev.id} style={{ borderBottom: "1px solid #f3f4f6", paddingBottom: "16px" }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px", flexWrap: "wrap", gap: "8px" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                              <strong style={{ fontSize: "14px", color: "#111827" }}>{rev.userName}</strong>
+                              {rev.isVerifiedPurchase && (
+                                <span style={{ backgroundColor: "#dcfce7", color: "#16a34a", fontSize: "11px", padding: "2px 6px", borderRadius: "4px", fontWeight: "700" }}>
+                                  ✓ Verified Buyer
+                                </span>
+                              )}
+                            </div>
+                            <span style={{ fontSize: "12px", color: "#9ca3af" }}>
+                              {new Date(rev.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
+                            </span>
+                          </div>
+
+                          {/* Stars & Title */}
+                          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
+                            <span style={{ color: "#f59e0b", fontSize: "13px" }}>
+                              {"★".repeat(rev.rating)}{"☆".repeat(5 - rev.rating)}
+                            </span>
+                            {rev.title && <strong style={{ fontSize: "13px", color: "#374151" }}>{rev.title}</strong>}
+                          </div>
+
+                          {/* Review Comment */}
+                          <p style={{ margin: "0 0 10px 0", fontSize: "13px", color: "#4b5563", lineHeight: 1.6 }}>
+                            {rev.comment}
+                          </p>
+
+                          {/* Customer Uploaded Photo Preview */}
+                          {rev.imageUrl && (
+                            <div
+                              style={{ width: "84px", height: "84px", borderRadius: "10px", overflow: "hidden", border: "1px solid #e5e7eb", cursor: "pointer" }}
+                              onClick={() => window.open(rev.imageUrl, "_blank")}
+                              title="Click to view full image"
+                            >
+                              <img src={rev.imageUrl} alt="Customer product upload" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div style={{ textAlign: "center", padding: "30px", color: "#9ca3af", fontSize: "14px" }}>
+                      <i className="fas fa-comment-alt" style={{ fontSize: "28px", color: "#d1d5db", display: "block", marginBottom: "8px" }} />
+                      No reviews yet for this product. Order now and be the first to leave a review!
+                    </div>
+                  )}
                 </div>
               )}
             </div>

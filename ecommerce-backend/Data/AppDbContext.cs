@@ -19,6 +19,10 @@ namespace ecommerce_backend.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Address> Addresses { get; set; }
+        public DbSet<Wishlist> Wishlists { get; set; }
+        public DbSet<WishlistItem> WishlistItems { get; set; }
+        public DbSet<InventoryLog> InventoryLogs { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
 
 
@@ -47,6 +51,37 @@ namespace ecommerce_backend.Data
 
                 entity.Property(u => u.Role)
                       .HasDefaultValue("Customer");
+            });
+            
+            // Ek product user ki wishlist me duplicate na ho
+            modelBuilder.Entity<WishlistItem>()
+            .HasIndex(w => new { w.WishlistId, w.ProductId })
+            .IsUnique(); 
+
+            // Order Number Index
+            modelBuilder.Entity<Order>()
+                .HasIndex(o => o.OrderNumber);
+
+            modelBuilder.Entity<InventoryLog>()
+                .HasIndex(log => log.ProductId);
+
+            // Review Table Constraints (Restrict cascade to avoid SQL Server cycles)
+            modelBuilder.Entity<Review>(entity =>
+            {
+                entity.HasOne(r => r.User)
+                      .WithMany()
+                      .HasForeignKey(r => r.UserId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(r => r.Order)
+                      .WithMany()
+                      .HasForeignKey(r => r.OrderId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(r => r.Product)
+                      .WithMany()
+                      .HasForeignKey(r => r.ProductId)
+                      .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

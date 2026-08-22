@@ -1,11 +1,19 @@
-export interface WishlistProduct {
+export interface WishlistItem {
   id: number;
-  name: string;
-  description: string;
-  category: string;
+  productId: number;
+  title: string;
+  name?: string; // UI compatibility
+  brand?: string;
   price: number;
-  originalPrice: number;
-  image: string;
-  stock: "in-stock" | "low-stock" | "out-of-stock";
-  discount: number;
+  imageUrl: string;
+  image?: string; // UI compatibility
+  stockQuantity?: number;
+  addedAt?: string;
+}
+
+export interface WishlistResponse {
+  id: number;
+  userId: number;
+  items: WishlistItem[];
+  totalItems: number;
 }

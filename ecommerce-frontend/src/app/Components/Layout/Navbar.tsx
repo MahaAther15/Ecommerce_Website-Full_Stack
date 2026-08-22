@@ -3,11 +3,13 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useAppSelector } from "@/app/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
+import { fetchUserWishlist } from "@/app/redux/slices/wishlistslice";
 
 export default function Navbar() {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     setMounted(true);
@@ -17,6 +19,11 @@ export default function Navbar() {
   const { totalQuantity } = useAppSelector((state) => state.cart);
   const wishlistItems = useAppSelector((state) => state.wishlist.items);
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchUserWishlist());
+    }
+  }, [isAuthenticated, dispatch]);
   const isUserLoggedIn = mounted && isAuthenticated;
   const isAdmin = isUserLoggedIn && user?.role?.toLowerCase() === "admin";
 
@@ -121,19 +128,23 @@ export default function Navbar() {
         </Link>
         <Link
           className={
-            isUserLoggedIn
+            isAdmin
+              ? pathname.startsWith("/admin")
+                ? "active"
+                : ""
+              : isUserLoggedIn
               ? pathname === "/profile"
                 ? "active"
                 : ""
               : pathname === "/login" || pathname === "/register"
-              ? "active"
-              : ""
+                ? "active"
+                : ""
           }
-          href={isUserLoggedIn ? "/profile" : "/login"}
-          title={isUserLoggedIn ? `My Account (${user?.name || "User"})` : "Login / Register"}
+          href={isAdmin ? "/admin/products" : isUserLoggedIn ? "/profile" : "/login"}
+          title={isAdmin ? `Admin Portal (${user?.name || "Admin"})` : isUserLoggedIn ? `My Account (${user?.name || "User"})` : "Login / Register"}
         >
           <i
-            className={isUserLoggedIn ? "fas fa-user" : "far fa-user"}
+            className={isAdmin ? "fas fa-user-shield" : isUserLoggedIn ? "fas fa-user" : "far fa-user"}
             style={{
               color: isUserLoggedIn ? "#088178" : "#222",
               fontSize: "17px",
@@ -161,9 +172,9 @@ export default function Navbar() {
             </span>
           )}
         </Link>
-        <Link href={isUserLoggedIn ? "/profile" : "/login"} style={{ marginLeft: "10px" }}>
+        <Link href={isAdmin ? "/admin/products" : isUserLoggedIn ? "/profile" : "/login"} style={{ marginLeft: "10px" }}>
           <i
-            className={isUserLoggedIn ? "fas fa-user" : "far fa-user"}
+            className={isAdmin ? "fas fa-user-shield" : isUserLoggedIn ? "fas fa-user" : "far fa-user"}
             style={{ color: isUserLoggedIn ? "#088178" : "#222", fontSize: "17px" }}
           ></i>
         </Link>

@@ -1,7 +1,24 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import AdminGuard from "@/app/Components/Admin/AdminGuard";
+import { logout } from "@/app/libs/authApi";
+import { useAppDispatch } from "@/app/redux/hooks";
+import { logout as reduxLogout } from "@/app/redux/slices/authslice";
+import { resetWishlist } from "@/app/redux/slices/wishlistslice";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+    const router = useRouter();
+    const dispatch = useAppDispatch();
+
+    const handleAdminLogout = () => {
+        logout();
+        dispatch(reduxLogout());
+        dispatch(resetWishlist());
+        router.push("/login");
+    };
+
     return (
         <AdminGuard>
             <div style={{
@@ -91,6 +108,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                 <i className="fas fa-certificate"></i> Brands
                             </Link>
 
+                            <Link href="/admin/inventory" style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "12px",
+                                padding: "12px 16px",
+                                borderRadius: "8px",
+                                color: "#d1d5db",
+                                textDecoration: "none",
+                                fontWeight: "600",
+                                fontSize: "14px"
+                            }}>
+                                <i className="fas fa-warehouse"></i> Inventory
+                            </Link>
+
                             <Link href="/admin/settings" style={{
                                 display: "flex",
                                 alignItems: "center",
@@ -108,7 +139,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     </div>
 
                     {/* Bottom Actions */}
-                    <div style={{ paddingTop: "16px", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
+                    <div style={{ paddingTop: "16px", borderTop: "1px solid rgba(255,255,255,0.1)", display: "flex", flexDirection: "column", gap: "8px" }}>
                         <Link href="/shop" style={{
                             display: "flex",
                             alignItems: "center",
@@ -122,6 +153,28 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         }}>
                             <i className="fas fa-external-link-alt"></i> View Live Store
                         </Link>
+
+                        <button
+                            onClick={handleAdminLogout}
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "10px",
+                                padding: "10px 14px",
+                                borderRadius: "8px",
+                                color: "#f87171",
+                                backgroundColor: "rgba(239, 68, 68, 0.1)",
+                                border: "none",
+                                fontSize: "13px",
+                                fontWeight: "600",
+                                cursor: "pointer",
+                                width: "100%",
+                                textAlign: "left",
+                                transition: "0.2s"
+                            }}
+                        >
+                            <i className="fas fa-sign-out-alt"></i> Logout
+                        </button>
                     </div>
                 </aside>
 

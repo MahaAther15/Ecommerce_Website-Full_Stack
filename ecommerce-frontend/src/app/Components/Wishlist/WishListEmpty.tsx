@@ -7,7 +7,7 @@ export default function WishListEmpty() {
 
   return (
     <div id="empty-wishlist" className="empty-wishlist">
-      <i className="far fa-heart-broken"></i>
+      <i className="far fa-heart-broken empty-wishlist-icon"></i>
       <h3>Your Wishlist is Empty</h3>
       <p>
         You haven't added any items to your wishlist yet. Start browsing our

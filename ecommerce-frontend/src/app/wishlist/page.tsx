@@ -3,9 +3,12 @@
 import { useState, useEffect } from "react";
 import WishlistHero from "../Components/Wishlist/WishlistHero";
 import WishlistContainer from "../Components/Wishlist/WishlistContainer";
-import { WishlistProduct } from "../types/wishlist";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { removeFromWishlist, clearWishlist } from "../redux/slices/wishlistslice";
+import {
+  fetchUserWishlist,
+  removeWishlistItem,
+  clearUserWishlist,
+} from "../redux/slices/wishlistslice";
 
 interface ToastState {
   message: string;
@@ -18,10 +21,14 @@ export default function WishlistPage() {
 
   const dispatch = useAppDispatch();
   const wishlistItems = useAppSelector((state) => state.wishlist.items);
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    if (isAuthenticated) {
+      dispatch(fetchUserWishlist());
+    }
+  }, [isAuthenticated, dispatch]);
 
   const showToastBadge = (message: string, type: "success" | "info" | "error" = "info") => {
     setToast({ message, type });
@@ -32,12 +39,13 @@ export default function WishlistPage() {
   };
 
   const handleRemove = (productId: number | string) => {
+    const targetId = Number(productId);
     const itemToRemove = wishlistItems.find(
-      (item) => String(item.id) === String(productId)
+      (item) => item.productId === targetId || item.id === targetId
     );
-    dispatch(removeFromWishlist(productId));
+    dispatch(removeWishlistItem(targetId));
     showToastBadge(
-      `"${itemToRemove ? itemToRemove.name : "Item"}" removed from wishlist`,
+      `"${itemToRemove?.title || itemToRemove?.name || "Item"}" removed from wishlist`,
       "info"
     );
   };
@@ -48,26 +56,24 @@ export default function WishlistPage() {
       return;
     }
 
-    // Direct clear without browser alert popup
-    dispatch(clearWishlist());
+    dispatch(clearUserWishlist());
     showToastBadge("All items successfully cleared from your wishlist!", "success");
   };
 
   // Map Redux wishlist items to WishlistProduct format
-  const wishlistProducts: WishlistProduct[] = mounted
+  const wishlistProducts = mounted
     ? wishlistItems.map((item) => {
-        const numericId =
-          typeof item.id === "number" ? item.id : parseInt(String(item.id), 10) || 1;
+        const prodId = item.productId || item.id;
         return {
-          id: numericId,
-          name: item.name,
-          category: "Fashion & Lifestyle",
+          id: typeof prodId === "number" ? prodId : parseInt(String(prodId), 10) || 1,
+          name: item.title || item.name || "Product",
+          category: item.brand || "Fashion & Lifestyle",
           description: "Premium quality item saved in your personal wishlist.",
           price: Number(item.price) || 0,
           originalPrice: (Number(item.price) || 0) * 1.25,
           discount: 20,
-          image: item.image || "/img/products/f1.jpg",
-          stock: "in-stock",
+          image: item.imageUrl || item.image || "/img/products/f1.jpg",
+          stock: (item.stockQuantity ?? 10) > 0 ? ("in-stock" as const) : ("out-of-stock" as const),
           rating: 5,
         };
       })

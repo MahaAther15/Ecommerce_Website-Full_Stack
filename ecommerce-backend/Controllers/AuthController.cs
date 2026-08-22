@@ -140,7 +140,7 @@ namespace ecommerce_backend.Controllers
             Response.Cookies.Delete("refreshToken", new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
+                Secure = false,
                 SameSite = SameSiteMode.Lax
             });
         }
@@ -158,11 +158,15 @@ namespace ecommerce_backend.Controllers
             try
             {
                 // 1. Pehle Cookie se refreshToken check karein, agar cookie na ho to request body se lein
-                string? refreshToken = Request.Cookies["refreshToken"] ?? request.RefreshToken;
-
-                if (string.IsNullOrEmpty(refreshToken))
+                string? refreshToken = Request.Cookies["refreshToken"];
+                if (string.IsNullOrWhiteSpace(refreshToken))
                 {
-                    return Unauthorized(new { message = "No refresh token provided in cookie." });
+                    refreshToken = request.RefreshToken;
+                }
+
+                if (string.IsNullOrWhiteSpace(refreshToken))
+                {
+                    return Unauthorized(new { message = "No refresh token provided." });
                 }
 
                 // 2. DTO ko cookie wale token se update karein

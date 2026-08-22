@@ -8,6 +8,7 @@ import { RegisterFormData, AuthFormErrors } from "@/app/types/auth";
 import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { useAppDispatch } from "@/app/redux/hooks";
 import { setCredentials } from "@/app/redux/slices/authslice";
+import { fetchUserWishlist } from "@/app/redux/slices/wishlistslice";
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState<RegisterFormData>({
@@ -84,6 +85,9 @@ export default function RegisterForm() {
         token: response.token,
       }));
 
+      // Sync Wishlist from Database
+      dispatch(fetchUserWishlist());
+
       // 4. Display success badge in form theme color
       setSuccessMessage(`Account created successfully! Welcome, ${response.fullName}. Redirecting...`);
 
@@ -125,6 +129,9 @@ export default function RegisterForm() {
         },
         token: response.token,
       }));
+
+      // Sync Wishlist from Database
+      dispatch(fetchUserWishlist());
 
       setSuccessMessage(`Account created / signed in successfully! Welcome, ${response.fullName}. Redirecting...`);
 

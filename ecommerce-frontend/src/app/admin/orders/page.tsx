@@ -36,7 +36,9 @@ export default function AdminOrdersPage() {
         setUpdatingId(orderId);
         try {
             await dispatch(updateOrderStatusAdmin({ orderId, status: newStatus })).unwrap();
-            showToast(`Order #${orderId} updated to ${newStatus}.`);
+            const order = allOrders.find((o) => o.id === orderId);
+            const orderCode = order?.orderNumber || `ORD-${10000 + orderId}`;
+            showToast(`Order ${orderCode} updated to ${newStatus}.`);
         } catch (err: any) {
             showToast(err || "Failed to update order status.", "error");
         } finally {
@@ -45,8 +47,13 @@ export default function AdminOrdersPage() {
     };
 
     const filtered = allOrders.filter((o) => {
+        const orderCode = o.orderNumber || `ORD-${10000 + o.id}`;
         const matchStatus = filterStatus === "All" || o.status === filterStatus;
-        const matchSearch = searchTerm === "" || String(o.id).includes(searchTerm) || String(o.userId).includes(searchTerm);
+        const matchSearch =
+            searchTerm === "" ||
+            orderCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            String(o.id).includes(searchTerm) ||
+            String(o.userId).includes(searchTerm);
         return matchStatus && matchSearch;
     });
 
@@ -79,7 +86,7 @@ export default function AdminOrdersPage() {
                     { label: "Total Orders", value: stats.total, icon: "fas fa-list", color: "#088178", bg: "#e6f7f5" },
                     { label: "Pending", value: stats.pending, icon: "fas fa-clock", color: "#d97706", bg: "#fef3c7" },
                     { label: "Shipped", value: stats.shipped, icon: "fas fa-shipping-fast", color: "#7c3aed", bg: "#ede9fe" },
-                    { label: "Revenue", value: `Rs. ${stats.revenue.toLocaleString()}`, icon: "fas fa-rupee-sign", color: "#16a34a", bg: "#dcfce7" },
+                    { label: "Revenue", value: `$${stats.revenue.toLocaleString()}`, icon: "fas fa-dollar-sign", color: "#16a34a", bg: "#dcfce7" },
                 ].map((card) => (
                     <div key={card.label} style={{ backgroundColor: "#fff", borderRadius: "12px", padding: "20px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "14px" }}>
                         <div style={{ width: "44px", height: "44px", borderRadius: "12px", backgroundColor: card.bg, color: card.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px", flexShrink: 0 }}>
@@ -94,14 +101,49 @@ export default function AdminOrdersPage() {
             </div>
 
             {/* Filters */}
-            <div style={{ display: "flex", gap: "12px", marginBottom: "20px", flexWrap: "wrap" }}>
-                <input
-                    type="text"
-                    placeholder="Search by Order # or Customer ID..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    style={{ flex: "1 1 260px", padding: "10px 16px", borderRadius: "8px", border: "1px solid #d1d5db", outline: "none", fontSize: "14px" }}
-                />
+            <div style={{ display: "flex", gap: "12px", marginBottom: "20px", flexWrap: "wrap", alignItems: "center" }}>
+                <div style={{ position: "relative", flex: "1 1 300px" }}>
+                    <i className="fas fa-search" style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#9ca3af", fontSize: "14px" }} />
+                    <input
+                        type="text"
+                        placeholder="Search by Order Code (e.g. ORD-10001) or Customer ID..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        style={{
+                            width: "100%",
+                            padding: "10px 38px 10px 38px",
+                            borderRadius: "8px",
+                            border: "1px solid #d1d5db",
+                            outline: "none",
+                            fontSize: "13px",
+                            backgroundColor: "#fff"
+                        }}
+                    />
+                    {searchTerm && (
+                        <button
+                            type="button"
+                            onClick={() => setSearchTerm("")}
+                            title="Clear search"
+                            style={{
+                                position: "absolute",
+                                right: "12px",
+                                top: "50%",
+                                transform: "translateY(-50%)",
+                                background: "none",
+                                border: "none",
+                                color: "#9ca3af",
+                                cursor: "pointer",
+                                fontSize: "14px",
+                                padding: "4px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                        >
+                            ✕
+                        </button>
+                    )}
+                </div>
                 <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                     {["All", ...ALL_STATUSES].map((s) => (
                         <button
@@ -139,7 +181,7 @@ export default function AdminOrdersPage() {
                     <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
                         <thead style={{ backgroundColor: "#f9fafb", borderBottom: "1px solid #e5e7eb" }}>
                             <tr>
-                                {["Order #", "Customer ID", "Items", "Total", "Payment", "Status", "Date", "Update Status"].map((h) => (
+                                {["Order Code", "Customer ID", "Items", "Total", "Payment", "Status", "Date", "Update Status"].map((h) => (
                                     <th key={h} style={{ padding: "13px 16px", fontSize: "12px", fontWeight: "700", color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.4px" }}>{h}</th>
                                 ))}
                             </tr>
@@ -148,9 +190,10 @@ export default function AdminOrdersPage() {
                             {filtered.map((order) => {
                                 const cfg = STATUS_CONFIG[order.status] ?? { color: "#6b7280", bg: "#f3f4f6", icon: "fas fa-circle" };
                                 const date = new Date(order.createdAt).toLocaleDateString("en-PK", { month: "short", day: "numeric", year: "numeric" });
+                                const orderCode = order.orderNumber || `ORD-${10000 + order.id}`;
                                 return (
                                     <tr key={order.id} style={{ borderBottom: "1px solid #f3f4f6", transition: "background 0.15s" }}>
-                                        <td style={{ padding: "14px 16px", fontWeight: "800", color: "#088178" }}>#{order.id}</td>
+                                        <td style={{ padding: "14px 16px", fontWeight: "800", color: "#088178", letterSpacing: "0.5px" }}>{orderCode}</td>
                                         <td style={{ padding: "14px 16px", color: "#374151", fontWeight: "600" }}>User #{order.userId}</td>
                                         <td style={{ padding: "14px 16px", color: "#374151" }}>
                                             <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
@@ -160,7 +203,7 @@ export default function AdminOrdersPage() {
                                                 {order.orderItems.length > 2 && <span style={{ fontSize: "11px", color: "#9ca3af" }}>+{order.orderItems.length - 2} more</span>}
                                             </div>
                                         </td>
-                                        <td style={{ padding: "14px 16px", fontWeight: "800", color: "#1f2937" }}>Rs. {order.finalAmount.toLocaleString()}</td>
+                                        <td style={{ padding: "14px 16px", fontWeight: "800", color: "#1f2937" }}>${order.finalAmount.toLocaleString()}</td>
                                         <td style={{ padding: "14px 16px" }}>
                                             <div style={{ fontSize: "12px", color: "#374151" }}>{order.paymentMethod}</div>
                                             <div style={{ fontSize: "11px", color: order.isPaid ? "#16a34a" : "#d97706", fontWeight: "700" }}>

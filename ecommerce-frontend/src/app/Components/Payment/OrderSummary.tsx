@@ -120,7 +120,7 @@ export default function OrderSummary({
                   {item.name}
                 </div>
                 <div style={{ fontSize: "12px", color: "#6b7280" }}>
-                  Qty: {item.quantity} × Rs. {item.price.toLocaleString()}
+                  Qty: {item.quantity} × ${item.price.toLocaleString()}
                 </div>
               </div>
             </div>
@@ -131,7 +131,7 @@ export default function OrderSummary({
                 color: "#1f2937",
               }}
             >
-              Rs. {(item.price * item.quantity).toLocaleString()}
+              ${(item.price * item.quantity).toLocaleString()}
             </div>
           </div>
         ))}
@@ -150,7 +150,7 @@ export default function OrderSummary({
       >
         <div style={{ display: "flex", justifyContent: "space-between", color: "#6b7280" }}>
           <span>Subtotal</span>
-          <span>Rs. {totalAmount.toLocaleString()}</span>
+          <span>${totalAmount.toLocaleString()}</span>
         </div>
 
         <div
@@ -161,7 +161,7 @@ export default function OrderSummary({
           }}
         >
           <span>Shipping Fee</span>
-          <span>{shippingFee === 0 ? "FREE 🎉" : `Rs. ${shippingFee}`}</span>
+          <span>{shippingFee === 0 ? "FREE 🎉" : `$${shippingFee}`}</span>
         </div>
 
         <div
@@ -177,29 +177,8 @@ export default function OrderSummary({
           }}
         >
           <span>Total Amount</span>
-          <span>Rs. {finalAmount.toLocaleString()}</span>
+          <span>${finalAmount.toLocaleString()}</span>
         </div>
-      </div>
-
-      {/* Free Shipping Highlight */}
-      <div
-        style={{
-          marginTop: "18px",
-          backgroundColor: "#f0fdf4",
-          border: "1px solid #bbf7d0",
-          borderRadius: "8px",
-          padding: "10px 14px",
-          fontSize: "12px",
-          color: "#166534",
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-        }}
-      >
-        <i className="fas fa-truck-loading" style={{ color: "#16a34a" }}></i>
-        <span>
-          Orders above <strong>Rs. 2,000</strong> qualify for <strong>FREE Delivery</strong> across Pakistan!
-        </span>
       </div>
 
       {/* Trust Badges */}

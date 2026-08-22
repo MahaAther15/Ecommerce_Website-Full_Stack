@@ -16,6 +16,7 @@ export interface OrderItemDto {
 
 export interface OrderDto {
     id: number;
+    orderNumber?: string;
     userId: number;
     orderItems: OrderItemDto[];
     totalAmount: number;

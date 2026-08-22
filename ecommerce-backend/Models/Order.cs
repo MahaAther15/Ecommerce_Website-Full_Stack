@@ -64,5 +64,9 @@ namespace ecommerce_backend.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
         public DateTime? DeliveredAt { get; set; }
+
+        [MaxLength(30)]
+        public string OrderNumber { get; set; } = string.Empty;
+
     }
 }

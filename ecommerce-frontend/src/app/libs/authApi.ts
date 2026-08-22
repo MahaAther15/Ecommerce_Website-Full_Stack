@@ -143,35 +143,41 @@ export async function googleLoginApi(idToken: string): Promise<AuthResponse> {
 
   return resData;
 }
-// 1. Updated Refresh Token API Call
+// 1. Updated Refresh Token API Call with Cookie + LocalStorage Fallback
 export async function refreshTokenApi(): Promise<AuthResponse> {
   const accessToken = getAuthToken();
+  const refreshToken = getRefreshToken() || "";
 
-  if (!accessToken) {
+  if (!accessToken && !refreshToken) {
     logout();
     throw new Error("No active session found.");
   }
 
-  // 🍪 Note: Hum body me refreshToken nahi bhej rahe, browser cookie ke zariye khud bhejega!
+  // 🍪 Browser cookie ke zariye bhi bhejega aur body me fallback ke taur par bhi jayega
   const response = await fetch(`${API_BASE_URL}/api/auth/refresh-token`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    credentials: "include", // 👈 ZAROORI: Browser ko cookie bhejne ki permission deta hai
-    body: JSON.stringify({ accessToken, refreshToken: "" }),
+    credentials: "include", // Browser cookie bhejne ki permission deta hai
+    body: JSON.stringify({ accessToken: accessToken || "", refreshToken }),
   });
 
-  const resData = await response.json();
+  let resData: any = null;
+  try {
+    resData = await response.json();
+  } catch {
+    // Non-JSON response handling
+  }
 
   if (!response.ok) {
     logout();
-    throw new Error(resData.message || "Session expired. Please log in again.");
+    throw new Error(resData?.message || "Session expired. Please log in again.");
   }
 
   setAuthSession(resData);
   return resData;
 }
 
-// 2. Updated Authenticated Fetch Wrapper
+// 2. Updated Authenticated Fetch Wrapper with Silent Refresh
 export async function authenticatedFetch(url: string, options: RequestInit = {}): Promise<Response> {
   let token = getAuthToken();
 
@@ -184,7 +190,7 @@ export async function authenticatedFetch(url: string, options: RequestInit = {})
   let response = await fetch(url, {
     ...options,
     headers,
-    credentials: "include" // 👈 ZAROORI
+    credentials: "include"
   });
 
   // Agar 401 aaye to silent refresh karein
