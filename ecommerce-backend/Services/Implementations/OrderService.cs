@@ -11,15 +11,18 @@ namespace ecommerce_backend.Services.Implementations
         private readonly IOrderRepository _orderRepo;
         private readonly ICartRepository _cartRepo;
         private readonly IProductRepository _productRepo;
+        private readonly INotificationService _notificationService;
 
         public OrderService(
             IOrderRepository orderRepo,
             ICartRepository cartRepo,
-            IProductRepository productRepo)
+            IProductRepository productRepo,
+            INotificationService notificationService)
         {
             _orderRepo = orderRepo;
             _cartRepo = cartRepo;
             _productRepo = productRepo;
+            _notificationService = notificationService;
         }
 
         public async Task<ApiResponse<OrderDto>> PlaceOrderAsync(int userId, PlaceOrderDto dto)
@@ -49,6 +52,25 @@ namespace ecommerce_backend.Services.Implementations
                 var product = await _productRepo.GetByIdAsync(item.ProductId);
                 product!.StockQuantity -= item.Quantity;
                 await _productRepo.UpdateAsync(product);
+
+                // If stock fell to low or out of stock, trigger Admin To-Do
+                if (product.StockQuantity <= 5)
+                {
+                    try
+                    {
+                        bool isOutOfStock = product.StockQuantity <= 0;
+                        await _notificationService.NotifyAdminAsync(
+                            title: isOutOfStock ? $"🚨 Out of Stock: {product.Title}" : $"⚠️ Low Stock Alert: {product.Title}",
+                            message: isOutOfStock 
+                                ? $"Product was just sold out (0 units remaining). Click to restock." 
+                                : $"Only {product.StockQuantity} unit(s) remaining in warehouse. Click to restock.",
+                            type: NotificationType.AdminLowStock,
+                            priority: isOutOfStock ? NotificationPriority.Urgent : NotificationPriority.High,
+                            actionUrl: $"/admin/inventory?productId={product.Id}"
+                        );
+                    }
+                    catch { /* non-blocking */ }
+                }
 
                 var orderItem = new OrderItem
                 {
@@ -92,6 +114,27 @@ namespace ecommerce_backend.Services.Implementations
 
             // 6. Cart clear karo
             await _cartRepo.ClearCartAsync(cart.Id);
+
+            // 7. Trigger Live Notifications (Customer + Admin To-Do)
+            try
+            {
+                await _notificationService.NotifyUserAsync(
+                    userId: userId,
+                    title: "Order Placed Successfully! 🎉",
+                    message: $"Your order #{order.OrderNumber} of ${order.FinalAmount:F2} has been placed.",
+                    type: NotificationType.OrderPlaced,
+                    actionUrl: $"/orders/{order.Id}"
+                );
+
+                await _notificationService.NotifyAdminAsync(
+                    title: "New Order Received! 🛒",
+                    message: $"Order #{order.OrderNumber} by User #{userId} needs processing. Total: ${order.FinalAmount:F2}",
+                    type: NotificationType.AdminNewOrder,
+                    priority: NotificationPriority.High,
+                    actionUrl: "/admin/orders"
+                );
+            }
+            catch { /* Notification failure should not block order placement */ }
 
             return ApiResponse<OrderDto>.SuccessResponse(MapToDto(order), "Order placed successfully!");
         }
@@ -141,6 +184,26 @@ namespace ecommerce_backend.Services.Implementations
                 order.PaidAt = DateTime.UtcNow;
             }
             await _orderRepo.UpdateOrderAsync(order);
+
+            // Notify user about status change
+            try
+            {
+                var notifType = dto.Status switch
+                {
+                    OrderStatus.Shipped => NotificationType.OrderShipped,
+                    OrderStatus.Delivered => NotificationType.OrderDelivered,
+                    _ => NotificationType.OrderPlaced
+                };
+
+                await _notificationService.NotifyUserAsync(
+                    userId: order.UserId,
+                    title: $"Order #{order.OrderNumber} {dto.Status}",
+                    message: $"Your order status is now '{dto.Status}'.",
+                    type: notifType,
+                    actionUrl: $"/orders/{order.Id}"
+                );
+            }
+            catch { /* non-blocking */ }
 
             return ApiResponse<OrderDto>.SuccessResponse(MapToDto(order), $"Order status updated to '{dto.Status}'.");
         }

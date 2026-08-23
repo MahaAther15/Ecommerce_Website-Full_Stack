@@ -15,11 +15,12 @@ namespace ecommerce_backend.Repositories.Interfaces
         Task<bool> ExistsByEmailAsync(string email);
         Task UpdateAsync(User user);
 
-        // Token ke through user find karna
         Task<User?> GetByResetTokenAsync(string token);
 
         // Method to Delete user from Db
-Task DeleteAsync(User user);  
+        Task DeleteAsync(User user);  
 
+        // Get All Users for Admin
+        Task<List<User>> GetAllUsersAsync();
     }
 }

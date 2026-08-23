@@ -10,10 +10,12 @@ namespace ecommerce_backend.Services.Implementations
     public class InventoryService : IInventoryService
     {
         private readonly AppDbContext _context;
+        private readonly INotificationService _notificationService;
 
-        public InventoryService(AppDbContext context)
+        public InventoryService(AppDbContext context, INotificationService notificationService)
         {
             _context = context;
+            _notificationService = notificationService;
         }
 
         public async Task<ApiResponse<InventorySummaryDto>> GetSummaryAsync()
@@ -94,6 +96,25 @@ namespace ecommerce_backend.Services.Implementations
 
             _context.InventoryLogs.Add(log);
             await _context.SaveChangesAsync();
+
+            // Check if stock became low or out of stock and trigger Admin Notification
+            if (newStock <= 5)
+            {
+                try
+                {
+                    bool isOutOfStock = newStock <= 0;
+                    await _notificationService.NotifyAdminAsync(
+                        title: isOutOfStock ? $"🚨 Out of Stock: {product.Title}" : $"⚠️ Low Stock Alert: {product.Title}",
+                        message: isOutOfStock 
+                            ? $"Product is completely sold out (0 units in warehouse). Click to restock." 
+                            : $"Only {newStock} unit(s) remaining in warehouse. Click to restock.",
+                        type: NotificationType.AdminLowStock,
+                        priority: isOutOfStock ? NotificationPriority.Urgent : NotificationPriority.High,
+                        actionUrl: $"/admin/inventory?productId={product.Id}"
+                    );
+                }
+                catch { /* non-blocking */ }
+            }
 
             var result = new InventoryItemDto
             {

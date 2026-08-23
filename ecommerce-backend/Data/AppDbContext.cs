@@ -23,6 +23,13 @@ namespace ecommerce_backend.Data
         public DbSet<WishlistItem> WishlistItems { get; set; }
         public DbSet<InventoryLog> InventoryLogs { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<ReturnRequest> ReturnRequests { get; set; }
+        public DbSet<Blog> Blogs{get;set;}
+        public DbSet<Expense> Expenses { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+
+
+
 
 
 
@@ -83,6 +90,26 @@ namespace ecommerce_backend.Data
                       .HasForeignKey(r => r.ProductId)
                       .OnDelete(DeleteBehavior.Cascade);
             });
-        }
-    }
+            modelBuilder.Entity<ReturnRequest>(entity =>
+            {
+            entity.HasOne(r => r.Order)
+                  .WithMany()
+                  .HasForeignKey(r => r.OrderId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(r => r.User)
+                  .WithMany()
+                  .HasForeignKey(r => r.UserId)
+                  .OnDelete(DeleteBehavior.Restrict);
+            });
+            base.OnModelCreating(modelBuilder);
+            // Expense Table Configuration
+            modelBuilder.Entity<Expense>(entity =>
+            {
+                  entity.Property(e => e.Amount)
+                        .HasColumnType("decimal(18,2)");
+            });
+
+                  }
+            }
 }

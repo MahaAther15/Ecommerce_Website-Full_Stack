@@ -6,6 +6,7 @@ namespace ecommerce_backend.Services.Interfaces
     {
         Task<UserProfileResponseDto> GetProfileAsync(int userId);
         Task<UserProfileResponseDto> UpdateProfileAsync(int userId, UpdateProfileRequestDto request);
-         Task DeleteAccountAsync(int userId, DeleteAccountRequestDto request);
+        Task DeleteAccountAsync(int userId, DeleteAccountRequestDto request);
+        Task<IEnumerable<UserProfileResponseDto>> GetAllUsersAsync();
     }
 }

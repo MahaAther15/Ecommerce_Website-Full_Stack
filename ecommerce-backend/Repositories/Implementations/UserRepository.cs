@@ -58,13 +58,15 @@ namespace ecommerce_backend.Repositories.Implementations
             return await _context.Users.FirstOrDefaultAsync(u => u.PasswordResetToken == token);
         }
         // Method to Delete user from Db
-public async Task DeleteAsync(User user)
-{
-    _context.Users.Remove(user);
-    await _context.SaveChangesAsync();
-}
+        public async Task DeleteAsync(User user)
+        {
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+        }
 
-
-
+        public async Task<List<User>> GetAllUsersAsync()
+        {
+            return await _context.Users.OrderByDescending(u => u.CreatedAt).ToListAsync();
+        }
     }
 }

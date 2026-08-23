@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { fetchUserWishlist } from "@/app/redux/slices/wishlistslice";
+import NotificationDropdown from "@/app/Components/Notification/NotificationDropdown";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -104,6 +105,9 @@ export default function Navbar() {
           </Link>
         )}
 
+        {/* Notification Bell */}
+        {mounted && isUserLoggedIn && <NotificationDropdown isAdmin={false} />}
+
         <Link
           className={pathname === "/cart" ? "active" : ""}
           href="/cart"
@@ -133,12 +137,12 @@ export default function Navbar() {
                 ? "active"
                 : ""
               : isUserLoggedIn
-              ? pathname === "/profile"
-                ? "active"
-                : ""
-              : pathname === "/login" || pathname === "/register"
-                ? "active"
-                : ""
+                ? pathname === "/profile"
+                  ? "active"
+                  : ""
+                : pathname === "/login" || pathname === "/register"
+                  ? "active"
+                  : ""
           }
           href={isAdmin ? "/admin/products" : isUserLoggedIn ? "/profile" : "/login"}
           title={isAdmin ? `Admin Portal (${user?.name || "Admin"})` : isUserLoggedIn ? `My Account (${user?.name || "User"})` : "Login / Register"}
@@ -154,6 +158,7 @@ export default function Navbar() {
       </div>
 
       <div className="mobile" style={{ display: "none" }}>
+        {mounted && isUserLoggedIn && <NotificationDropdown isAdmin={false} />}
         <Link href="/cart" style={{ position: "relative" }}>
           <i className="far fa-shopping-bag"></i>
           {mounted && totalQuantity > 0 && (

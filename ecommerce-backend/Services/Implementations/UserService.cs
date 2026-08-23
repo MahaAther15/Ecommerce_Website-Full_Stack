@@ -88,5 +88,23 @@ namespace ecommerce_backend.Services.Implementations
             // Database se permanently delete karein
             await _userRepository.DeleteAsync(user);
         }
+
+        public async Task<IEnumerable<UserProfileResponseDto>> GetAllUsersAsync()
+        {
+            var users = await _userRepository.GetAllUsersAsync();
+            return users.Select(u => new UserProfileResponseDto
+            {
+                Id = u.Id,
+                FullName = u.FullName,
+                Email = u.Email,
+                Role = u.Role,
+                PhoneNumber = u.PhoneNumber,
+                Address = u.Address,
+                City = u.City,
+                State = u.State,
+                PostalCode = u.PostalCode,
+                Country = u.Country
+            });
+        }
     }
 }

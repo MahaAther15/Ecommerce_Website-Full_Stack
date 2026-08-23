@@ -39,6 +39,12 @@ builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IWishlistService, WishlistService>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<IReturnRefundService, ReturnRefundService>();
+builder.Services.AddScoped<IBlogService, BlogService>();
+builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
+
 
 
 
@@ -127,6 +133,8 @@ builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+
 
 
 // 4. Configure JWT Authentication
@@ -240,7 +248,7 @@ app.UseAuthorization();
 // Middleware 15 ==> Map Controllers
 app.MapControllers();
 
-// Auto-seed Admin User if not already present
+// Auto-apply migrations and Seed Admin User and Initial Blogs if not already present
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -248,11 +256,20 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<AppDbContext>();
         var passwordHasher = services.GetRequiredService<IPasswordHasher>();
+        var photoService = services.GetRequiredService<IPhotoService>();
+
+        // Automatically create/update database tables from all migrations (including Blogs table)
+        await context.Database.MigrateAsync();
+
         await DbSeeder.SeedAdminUserAsync(context, passwordHasher);
+
+        // Seed Blogs from frontend public folder if available
+        var blogImagesPath = Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, "..", "ecommerce-frontend", "public", "img", "blog"));
+        await DbSeeder.SeedBlogsAsync(context, photoService, blogImagesPath);
     }
     catch (Exception ex)
     {
-        Log.Error(ex, "An error occurred during database seeding of admin user.");
+        Log.Error(ex, "An error occurred during database migration or seeding.");
     }
 }
 

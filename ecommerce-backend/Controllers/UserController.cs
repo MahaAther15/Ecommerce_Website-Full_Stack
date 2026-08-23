@@ -107,5 +107,20 @@ namespace ecommerce_backend.Controllers
             }
         }
 
+        // 4. GET /api/user/admin/all (Admin Only)
+        [HttpGet("admin/all")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            try
+            {
+                var users = await _userService.GetAllUsersAsync();
+                return Ok(new { success = true, data = users });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = "An error occurred while fetching users.", error = ex.Message });
+            }
+        }
     }
 }

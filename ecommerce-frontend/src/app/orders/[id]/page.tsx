@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { fetchOrderById, cancelOrder, clearSelectedOrder, fetchMyOrders } from "@/app/redux/slices/orderSlice";
+import ReturnRefundModal from "../ReturnRefundModal";
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: string }> = {
     Pending: { label: "Pending", color: "#d97706", bg: "#fef3c7", icon: "fas fa-clock" },
@@ -12,6 +13,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; 
     Shipped: { label: "Shipped", color: "#7c3aed", bg: "#ede9fe", icon: "fas fa-shipping-fast" },
     Delivered: { label: "Delivered", color: "#16a34a", bg: "#dcfce7", icon: "fas fa-box-open" },
     Cancelled: { label: "Cancelled", color: "#dc2626", bg: "#fee2e2", icon: "fas fa-times-circle" },
+    Refunded: { label: "Refunded", color: "#088178", bg: "#ccfbf1", icon: "fas fa-undo-alt" },
 };
 
 export default function OrderDetailPage() {
@@ -22,6 +24,7 @@ export default function OrderDetailPage() {
     const { isAuthenticated } = useAppSelector((state) => state.auth);
 
     const [showCancelModal, setShowCancelModal] = useState(false);
+    const [showReturnModal, setShowReturnModal] = useState(false);
     const [cancelling, setCancelling] = useState(false);
 
     useEffect(() => {
@@ -90,6 +93,27 @@ export default function OrderDetailPage() {
                     {order.status === "Pending" && (
                         <button onClick={() => setShowCancelModal(true)} style={{ backgroundColor: "#fee2e2", color: "#dc2626", border: "1px solid #fca5a5", padding: "8px 18px", borderRadius: "999px", fontWeight: "700", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}>
                             <i className="fas fa-times" /> Cancel Order
+                        </button>
+                    )}
+                    {order.status === "Delivered" && (
+                        <button
+                            onClick={() => setShowReturnModal(true)}
+                            style={{
+                                backgroundColor: "#fef3c7",
+                                color: "#d97706",
+                                border: "1px solid #f59e0b",
+                                padding: "8px 18px",
+                                borderRadius: "999px",
+                                fontWeight: "700",
+                                fontSize: "14px",
+                                cursor: "pointer",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "8px",
+                                boxShadow: "0 2px 8px rgba(217, 119, 6, 0.15)"
+                            }}
+                        >
+                            <i className="fas fa-undo-alt" /> Request Return & Refund
                         </button>
                     )}
                 </div>
@@ -357,6 +381,20 @@ export default function OrderDetailPage() {
                         </div>
                     </div>
                 </div>
+            )}
+
+            {/* Return & Refund Modal */}
+            {showReturnModal && selectedOrder && (
+                <ReturnRefundModal
+                    orderId={selectedOrder.id}
+                    orderNumber={orderCode}
+                    finalAmount={selectedOrder.finalAmount}
+                    onClose={() => setShowReturnModal(false)}
+                    onSuccess={() => {
+                        dispatch(fetchOrderById(selectedOrder.id));
+                        dispatch(fetchMyOrders());
+                    }}
+                />
             )}
         </div>
     );

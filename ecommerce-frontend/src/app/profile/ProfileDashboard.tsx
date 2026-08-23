@@ -249,13 +249,35 @@ export default function ProfileDashboard() {
     }
   };
 
+  // Pakistan phone validation: only digits, max 11 (03XX-XXXXXXX)
+  const validatePakPhone = (phone: string): string | null => {
+    if (!phone) return null; // optional field
+    const digitsOnly = phone.replace(/\D/g, "");
+    if (digitsOnly.length > 11) return "Pakistani phone number cannot exceed 11 digits.";
+    if (digitsOnly.length > 0 && !digitsOnly.startsWith("03")) return "Pakistani number must start with 03.";
+    return null;
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    // For phone fields: allow only digits, max 11
+    if (name === "phoneNumber") {
+      const digitsOnly = value.replace(/\D/g, "");
+      if (digitsOnly.length > 11) return; // block typing beyond 11 digits
+      setFormData((prev) => ({ ...prev, [name]: digitsOnly }));
+      return;
+    }
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Validate phone before submit
+    const phoneErr = validatePakPhone(formData.phoneNumber);
+    if (phoneErr) {
+      setErrorMessage(phoneErr);
+      return;
+    }
     setSaving(true);
     setErrorMessage(null);
     setSuccessMessage(null);
@@ -731,10 +753,18 @@ export default function ProfileDashboard() {
                       />
                     </div>
                     <div style={{ gridColumn: "span 2" }}>
-                      <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#444", marginBottom: "6px" }}>Phone Number</label>
-                      <input type="text" name="phoneNumber" placeholder="+92 300 1234567" value={formData.phoneNumber} onChange={handleChange}
-                        style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: "1px solid #e5e0db", outline: "none", fontSize: "13px", backgroundColor: "#faf8f5" }}
+                      <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#444", marginBottom: "6px" }}>Phone Number <span style={{ fontWeight: "400", color: "#9ca3af" }}>(Pakistan: 03XX-XXXXXXX)</span></label>
+                      <input type="tel" name="phoneNumber" placeholder="03001234567" value={formData.phoneNumber} onChange={handleChange}
+                        maxLength={11}
+                        style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", border: `1px solid ${validatePakPhone(formData.phoneNumber) ? "#dc2626" : "#e5e0db"}`, outline: "none", fontSize: "13px", backgroundColor: "#faf8f5", letterSpacing: "1px" }}
                       />
+                      {validatePakPhone(formData.phoneNumber) && (
+                        <p style={{ color: "#dc2626", fontSize: "11px", marginTop: "4px", fontWeight: "600" }}>
+                          <i className="fas fa-exclamation-circle" style={{ marginRight: "4px" }} />
+                          {validatePakPhone(formData.phoneNumber)}
+                        </p>
+                      )}
+                      <p style={{ color: "#9ca3af", fontSize: "11px", marginTop: "4px" }}>{formData.phoneNumber.length}/11 digits</p>
                     </div>
                   </div>
                   <button type="submit" disabled={saving}
@@ -1374,13 +1404,25 @@ export default function ProfileDashboard() {
                 <div>
                   <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Phone Number *</label>
                   <input
-                    type="text"
+                    type="tel"
                     required
+                    maxLength={11}
                     value={addressFormData.phoneNumber}
-                    onChange={(e) => setAddressFormData((prev) => ({ ...prev, phoneNumber: e.target.value }))}
+                    onChange={(e) => {
+                      const digitsOnly = e.target.value.replace(/\D/g, "");
+                      if (digitsOnly.length <= 11) {
+                        setAddressFormData((prev) => ({ ...prev, phoneNumber: digitsOnly }));
+                      }
+                    }}
                     placeholder="03001234567"
-                    style={{ width: "100%", padding: "9px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none", boxSizing: "border-box" }}
+                    style={{ width: "100%", padding: "9px 12px", borderRadius: "8px", border: `1px solid ${addressFormData.phoneNumber.length > 0 && !addressFormData.phoneNumber.startsWith("03") ? "#dc2626" : "#d1d5db"}`, fontSize: "13px", outline: "none", boxSizing: "border-box", letterSpacing: "1px" }}
                   />
+                  {addressFormData.phoneNumber.length > 0 && !addressFormData.phoneNumber.startsWith("03") && (
+                    <p style={{ color: "#dc2626", fontSize: "11px", marginTop: "3px", fontWeight: "600" }}>
+                      <i className="fas fa-exclamation-circle" style={{ marginRight: "4px" }} />Number must start with 03
+                    </p>
+                  )}
+                  <p style={{ color: "#9ca3af", fontSize: "10px", marginTop: "3px" }}>{addressFormData.phoneNumber.length}/11 digits</p>
                 </div>
               </div>
 

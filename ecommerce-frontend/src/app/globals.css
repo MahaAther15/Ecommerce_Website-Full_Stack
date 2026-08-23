@@ -983,18 +983,52 @@ footer .copyright {
 
 #pagination {
   text-align: center;
+  padding: 30px 0 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-#pagination a {
+#pagination a,
+#pagination button {
   text-decoration: none;
-  background-color: #088178;
-  padding: 15px 20px;
-  border-radius: 4px;
-  color: white;
-  font-weight: 600;
+  background-color: #fff;
+  color: #088178;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 15px;
+  border: 2px solid #e5e7eb;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  min-width: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-#pagination a i {
+#pagination a:hover,
+#pagination button:hover {
+  background-color: #088178;
+  color: #fff;
+  border-color: #088178;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(8, 129, 120, 0.3);
+}
+
+#pagination a.active,
+#pagination button.active {
+  background-color: #088178;
+  color: #fff;
+  border-color: #088178;
+  box-shadow: 0 4px 14px rgba(8, 129, 120, 0.35);
+  transform: scale(1.08);
+}
+
+#pagination a i,
+#pagination button i {
   font-size: 16px;
   font-weight: 600;
 }

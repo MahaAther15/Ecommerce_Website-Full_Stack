@@ -139,6 +139,20 @@ export default function AdminLayout({
                         }}>
                             <i className="fas fa-cog"></i> Settings
                         </Link>
+                        <Link href="/admin/returns" style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "12px",
+                            padding: "12px 16px",
+                            borderRadius: "8px",
+                            color: "#d1d5db",
+                            textDecoration: "none",
+                            fontWeight: "600",
+                            fontSize: "14px"
+                        }}>
+                            <i className="fas fa-undo-alt"></i> Returns & Refunds
+                        </Link>
+
 
 
                         {/* View Live Store */}

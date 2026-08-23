@@ -1,10 +1,10 @@
 "use client";
 
-import { use } from "react";
+import { use, useEffect, useState } from "react";
 import Link from "next/link";
-import blogsData from "@/app/data/blogs.json";
+import { getBlogByIdApi, BlogItem } from "@/app/libs/blogApi";
+import fallbackBlogs from "@/app/data/blogs.json";
 import Newsletter from "@/app/Components/Layout/Newsletter";
-import { BlogPost } from "@/app/types/blog";
 
 interface BlogDetailPageProps {
   params: Promise<{ id: string }>;
@@ -12,15 +12,41 @@ interface BlogDetailPageProps {
 
 export default function BlogDetailPage({ params }: BlogDetailPageProps) {
   const { id } = use(params);
-  const blog = (blogsData as BlogPost[]).find((item) => item.id === id);
+  const [blog, setBlog] = useState<BlogItem | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchBlog() {
+      setLoading(true);
+      try {
+        const data = await getBlogByIdApi(id);
+        setBlog(data);
+      } catch {
+        // Fallback to local data if backend query fails
+        const local = (fallbackBlogs as any[]).find((b) => b.id === id);
+        if (local) setBlog(local);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchBlog();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div style={{ padding: "100px 0", textAlign: "center", color: "#6b7280" }}>
+        <p>Loading article...</p>
+      </div>
+    );
+  }
 
   if (!blog) {
     return (
-      <div className="blog-detail-container text-center py-20">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+      <div className="blog-detail-container text-center py-20" style={{ textAlign: "center", padding: "80px 20px" }}>
+        <h2 style={{ fontSize: "24px", fontWeight: "800", color: "#1f2937", marginBottom: "10px" }}>
           Blog Post Not Found
         </h2>
-        <p className="text-gray-600 mb-6">
+        <p style={{ color: "#6b7280", marginBottom: "20px" }}>
           The article you are looking for might have been moved or removed.
         </p>
         <Link href="/blogs" className="blog-back-btn">
@@ -34,13 +60,13 @@ export default function BlogDetailPage({ params }: BlogDetailPageProps) {
   const authorRole = blog.authorRole || "Fashion Contributor";
   const category = blog.category || "Style & Trends";
   const readTime = blog.readTime || "5 min read";
-  const contentParagraphs = blog.fullContent || [blog.description];
+  const contentParagraphs = blog.fullContent && blog.fullContent.length > 0 ? blog.fullContent : [blog.description];
+  const takeaways = blog.keyTakeaways || blog.keyTakeAways || [];
   const authorInitial = authorName.charAt(0);
 
   return (
     <div>
       <div className="blog-detail-container">
-        {/* Navigation back link */}
         <Link href="/blogs" className="blog-back-btn">
           <i className="far fa-arrow-left"></i> Back to Blogs
         </Link>
@@ -50,7 +76,6 @@ export default function BlogDetailPage({ params }: BlogDetailPageProps) {
           <span className="blog-category-badge">{category}</span>
           <h1 className="blog-detail-title">{blog.title}</h1>
 
-          {/* Author and Metadata bar */}
           <div className="blog-meta-bar">
             <div className="blog-meta-left">
               <div className="blog-author-avatar">{authorInitial}</div>
@@ -71,20 +96,20 @@ export default function BlogDetailPage({ params }: BlogDetailPageProps) {
           </div>
         </header>
 
-        {/* Featured Hero Image */}
+        {/* Featured Cloudinary Hero Image */}
         <img
-          src={blog.image}
+          src={blog.imageUrl || blog.image || "/img/blog/b1.jpg"}
           alt={blog.title}
           className="blog-detail-hero-img"
         />
 
-        {/* Article Body Content */}
+        {/* Article Body */}
         <article className="blog-content-body">
           {contentParagraphs.map((paragraph, idx) => (
             <p key={idx}>{paragraph}</p>
           ))}
 
-          {/* Featured Quote Callout */}
+          {/* Quote Callout */}
           {blog.quote && (
             <div className="blog-quote-box">
               <i className="fas fa-quote-left"></i>
@@ -92,14 +117,14 @@ export default function BlogDetailPage({ params }: BlogDetailPageProps) {
             </div>
           )}
 
-          {/* Key Takeaways Card */}
-          {blog.keyTakeaways && blog.keyTakeaways.length > 0 && (
+          {/* Key Takeaways */}
+          {takeaways.length > 0 && (
             <div className="blog-takeaways-card">
               <h4>
                 <i className="fas fa-lightbulb"></i> Key Takeaways & Highlights
               </h4>
               <ul>
-                {blog.keyTakeaways.map((item, index) => (
+                {takeaways.map((item, index) => (
                   <li key={index}>
                     <i className="fas fa-check-circle"></i>
                     <span>{item}</span>
@@ -110,31 +135,14 @@ export default function BlogDetailPage({ params }: BlogDetailPageProps) {
           )}
         </article>
 
-        {/* Article Footer & Social Share */}
+        {/* Footer */}
         <footer className="blog-share-footer">
-          <div className="blog-share-icons">
-            <span>Share this article:</span>
-            <a href="#" className="share-icon-btn" title="Share on Facebook">
-              <i className="fab fa-facebook-f"></i>
-            </a>
-            <a href="#" className="share-icon-btn" title="Share on Twitter">
-              <i className="fab fa-twitter"></i>
-            </a>
-            <a href="#" className="share-icon-btn" title="Share on Pinterest">
-              <i className="fab fa-pinterest-p"></i>
-            </a>
-            <a href="#" className="share-icon-btn" title="Share on LinkedIn">
-              <i className="fab fa-linkedin-in"></i>
-            </a>
-          </div>
-
           <Link href="/blogs" className="blog-back-btn" style={{ margin: 0 }}>
             Explore More Articles <i className="far fa-arrow-right"></i>
           </Link>
         </footer>
       </div>
 
-      {/* Newsletter Section */}
       <Newsletter />
     </div>
   );

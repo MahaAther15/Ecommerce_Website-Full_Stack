@@ -17,12 +17,18 @@ namespace ecommerce_backend.Services.Implementations
         private readonly IReviewRepository _reviewRepo;
         private readonly IPhotoService _photoService;
         private readonly AppDbContext _context;
+        private readonly INotificationService _notificationService;
 
-        public ReviewService(IReviewRepository reviewRepo, IPhotoService photoService, AppDbContext context)
+        public ReviewService(
+            IReviewRepository reviewRepo, 
+            IPhotoService photoService, 
+            AppDbContext context,
+            INotificationService notificationService)
         {
             _reviewRepo = reviewRepo;
             _photoService = photoService;
             _context = context;
+            _notificationService = notificationService;
         }
 
         public async Task<ApiResponse<ReviewResponseDto>> AddReviewAsync(int userId, CreateReviewDto dto)
@@ -104,6 +110,19 @@ namespace ecommerce_backend.Services.Implementations
                 IsVerifiedPurchase = review.IsVerifiedPurchase,
                 CreatedAt = review.CreatedAt
             };
+
+            // Notify Admin
+            try
+            {
+                await _notificationService.NotifyAdminAsync(
+                    title: $"New {review.Rating}★ Review!",
+                    message: $"Customer {responseDto.UserName} reviewed a product: \"{review.Title}\"",
+                    type: NotificationType.AdminNewReview,
+                    priority: NotificationPriority.Normal,
+                    actionUrl: $"/products/{review.ProductId}"
+                );
+            }
+            catch { /* non-blocking */ }
 
             return ApiResponse<ReviewResponseDto>.SuccessResponse(responseDto, "Review submitted successfully!");
         }

@@ -5,6 +5,7 @@ import wishlistReducer from './slices/wishlistslice';
 import productReducer from './slices/productSlice';
 import orderReducer from './slices/orderSlice';
 import reviewReducer from './slices/reviewSlice';
+import returnRefundReducer from './slices/returnRefundSlice';
 
 export const makeStore = () => {
     return configureStore({
@@ -15,6 +16,7 @@ export const makeStore = () => {
             product: productReducer,
             order: orderReducer,
             review: reviewReducer,
+            returnRefund: returnRefundReducer,
         },
     });
 };
