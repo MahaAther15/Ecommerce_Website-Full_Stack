@@ -23,6 +23,8 @@ yarn-error.log*
 .env
 .env*.local
 appsettings.Development.json
+appsettings.Production.json
+appsettings.*.local.json
 
 # IDEs & System files
 .DS_Store
