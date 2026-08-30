@@ -608,10 +608,19 @@ footer .copyright {
     display: none;
 } */
 
-/* Media QUery (Home Page*/
+/* Media Query (Tablet & Mobile Header / Nav) */
 @media (max-width:799px) {
   .section-p1 {
     padding: 40px 40px;
+  }
+
+  .nav-center {
+    position: static;
+    transform: none;
+  }
+
+  .nav-icons {
+    display: none !important;
   }
 
   #nav-bar {
@@ -622,49 +631,54 @@ footer .copyright {
     position: fixed;
     top: 0;
     bottom: 0;
-    right: -300px;
+    right: -320px;
     height: 100vh;
-    width: 300px;
+    width: 280px;
+    max-width: 80vw;
     background-color: #E3E6F3;
-    box-shadow: 0 40px 60px rgba(0, 0, 0, 0.1);
-    padding: 80px 0 0 10px;
-    transition: 0.3s;
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+    padding: 80px 20px 20px 20px;
+    transition: right 0.3s ease-in-out;
+    z-index: 1000;
   }
 
   #nav-bar.active {
-    right: 0px;
+    right: 0px !important;
   }
 
   #nav-bar li {
-    margin-bottom: 25px;
+    margin-bottom: 22px;
+    width: 100%;
+  }
+
+  #nav-bar li a {
+    font-size: 16px;
+    font-weight: 600;
+    display: inline-block;
   }
 
   #header .mobile {
     display: flex;
     align-items: center;
+    gap: 10px;
   }
 
   .mobile i {
     color: #1a1a1a;
-    font-size: 24px;
-    padding-left: 20px;
-    display: initial;
+    font-size: 20px;
+    cursor: pointer;
   }
 
   #close {
+    display: block !important;
     position: absolute;
-    top: 30px;
-    left: 30px;
+    top: 25px;
+    right: 25px;
     color: #222;
     font-size: 24px;
-  }
-
-  /* #close{
-        display: absolute;
-    } */
-
-  #nav-bar #bag {
-    display: none;
+    cursor: pointer;
+    background: none;
+    border: none;
   }
 
   #hero {
