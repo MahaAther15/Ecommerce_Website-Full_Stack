@@ -250,7 +250,7 @@ export default function ProfileDashboard() {
   };
 
   // Pakistan phone validation: only digits, max 11 (03XX-XXXXXXX)
-  const validatePakPhone = (phone: string): string | null => {
+  const validatePakPhone = (phone?: string): string | null => {
     if (!phone) return null; // optional field
     const digitsOnly = phone.replace(/\D/g, "");
     if (digitsOnly.length > 11) return "Pakistani phone number cannot exceed 11 digits.";
@@ -764,7 +764,7 @@ export default function ProfileDashboard() {
                           {validatePakPhone(formData.phoneNumber)}
                         </p>
                       )}
-                      <p style={{ color: "#9ca3af", fontSize: "11px", marginTop: "4px" }}>{formData.phoneNumber.length}/11 digits</p>
+                      <p style={{ color: "#9ca3af", fontSize: "11px", marginTop: "4px" }}>{(formData.phoneNumber?.length || 0)}/11 digits</p>
                     </div>
                   </div>
                   <button type="submit" disabled={saving}

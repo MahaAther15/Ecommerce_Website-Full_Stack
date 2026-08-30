@@ -1,280 +1,329 @@
-# 🛒 E-Commerce Full Stack Web Application
+# 🛒 Cara E-Commerce — Full Stack Enterprise Platform
 
-A modern, production-grade, enterprise-ready Full Stack E-Commerce platform built using **ASP.NET Core 10 Web API** on the backend and **Next.js 15 (React 19) + TypeScript** on the frontend.
+A modern, production-grade, full-stack E-Commerce ecosystem built with **ASP.NET Core 10 Web API** on the backend and **Next.js 16 (React 19) + TypeScript** on the frontend. Engineered with clean architecture, enterprise security patterns, automated accounting, and real-time operational workflows.
 
 ---
 
-## 🏗️ Architecture Overview
+## 📑 Table of Contents
+1. [Tech Stack, Tools & Packages](#-tech-stack-tools--packages)
+2. [Project & File Structure](#-project--file-structure)
+3. [Core Functionalities & Domain Modules](#-core-functionalities--domain-modules)
+4. [System Workflows & Architecture](#-system-workflows--architecture)
+5. [API Endpoints Matrix](#-api-endpoints-matrix)
+6. [Security & Middleware Pipeline](#-security--middleware-pipeline)
+7. [Installation & Local Setup](#-installation--local-setup)
+
+---
+
+## 🛠️ Tech Stack, Tools & Packages
+
+### Backend (.NET 10 Web API)
+* **Framework:** ASP.NET Core 10.0 (`net10.0`)
+* **Language:** C# 13 (Nullable reference types, Implicit Usings)
+* **Database & ORM:** SQL Server / LocalDB, Entity Framework Core 10 (`Microsoft.EntityFrameworkCore.SqlServer`, `Design`, `Tools`)
+* **Security & Auth:** JWT Bearer (`Microsoft.AspNetCore.Authentication.JwtBearer`), BCrypt Hashing (`BCrypt.Net-Next`), Google OAuth 2.0 (`Google.Apis.Auth`)
+* **Media & Cloud Storage:** Cloudinary .NET SDK (`CloudinaryDotNet`) for image transformations and uploads
+* **Communication & Mailing:** MailKit & MimeKit (SMTP Gmail Integration)
+* **Logging & Observability:** Serilog (`Serilog.AspNetCore`, `Serilog.Sinks.Console`, `Serilog.Sinks.File`)
+* **API Documentation:** Swagger / OpenAPI Integration
+
+### Frontend (Next.js 16 + React 19)
+* **Framework:** Next.js 16 (App Router architecture)
+* **UI Library:** React 19 (`react`, `react-dom`)
+* **Language:** TypeScript 5
+* **State Management:** Redux Toolkit (`@reduxjs/toolkit`, `react-redux`)
+* **Authentication:** `@react-oauth/google` with HttpOnly Cookie Token Rotation
+* **Styling:** Modern Vanilla CSS + TailwindCSS v4 + Glassmorphism Design System
+
+---
+
+## 📂 Project & File Structure
 
 ```
 Ecommerce(Full Stack)/
-├── ecommerce-backend/              # ASP.NET Core 10 Web API (Clean Architecture)
-│   ├── Controllers/               # API Endpoints (Auth, User, Product, Category, Brand, Cart, Order, Address, Payment, Inventory, Review, ReturnRefund, Blog, Analytics, Notification)
-│   ├── Data/                      # AppDbContext, Migrations & DbSeeder
-│   ├── Dtos/                      # Data Transfer Objects & Request Validators
-│   ├── Middlewares/               # 16-Layer Middleware Pipeline (Exceptions, Security, Logging, RateLimiting)
-│   ├── Models/                    # Domain Entities (User, Product, Category, Brand, Cart, Order, Address, InventoryLog, Review, ReturnRequest, Blog, Expense, Notification)
-│   ├── Repositories/              # Data Access Layer (Interfaces & EF Core Implementations)
-│   └── Services/                  # Business Logic & Orchestration Engines
+├── ecommerce-backend/                     # ASP.NET Core 10 Web API (Clean Architecture)
+│   ├── Controllers/                       # 16 RESTful API Controllers
+│   │   ├── AddressController.cs           # Customer Address Book Management
+│   │   ├── AnalyticsController.cs         # Real-time Accounting & Financial Reports
+│   │   ├── AuthController.cs              # Registration, Login, Refresh, Google OAuth
+│   │   ├── BlogController.cs              # Public & Admin Blog Engine
+│   │   ├── BrandController.cs             # Brand CRUD & Slug Operations
+│   │   ├── CartController.cs              # Cart State & Item Modifications
+│   │   ├── CategoryController.cs          # Category Hierarchy & SEO Slugs
+│   │   ├── InventoryController.cs         # Stock Auditing & Restocking
+│   │   ├── NotificationController.cs      # User Alerts & Admin Actionable To-Dos
+│   │   ├── OrderController.cs             # Checkout, Lifecycle & Cancellation
+│   │   ├── PaymentController.cs           # Multi-Method Payment Gateways
+│   │   ├── ProductController.cs           # Catalog & Cloudinary Media Uploads
+│   │   ├── ReturnRefundController.cs      # Returns Submission & Admin Resolution
+│   │   ├── ReviewController.cs            # Verified Purchase Reviews & Ratings
+│   │   ├── UserController.cs              # Profile Management & Admin User Directory
+│   │   └── WishlistController.cs          # Customer Wishlist Toggle & Retrieval
+│   ├── Data/                              # AppDbContext, Seeders & EF Migrations
+│   ├── Dtos/                              # Request/Response Data Transfer Objects
+│   ├── Middlewares/                       # 16-Layer Middleware Defense Pipeline
+│   ├── Models/                            # Domain Entities (Order, Product, InventoryLog, etc.)
+│   ├── Repositories/                      # Data Access Layer (Interfaces & Implementations)
+│   ├── Services/                          # Business Logic & Orchestration Layer
+│   ├── appsettings.json                   # App Settings & DB Connection Configuration
+│   └── Program.cs                         # Dependency Injection & Middleware Pipeline
 │
-└── ecommerce-frontend/             # Next.js 15 App Router (TypeScript + Modern Vanilla CSS)
+└── ecommerce-frontend/                    # Next.js 16 App Router (TypeScript)
     ├── src/app/
-    │   ├── admin/                 # Admin Dashboard (Products, Categories, Brands, Orders, Users, Inventory, Returns, Blogs, Analytics)
-    │   ├── Components/
-    │   │   ├── Admin/             # Admin Sidebar, Header Bar, Guards & Modals
-    │   │   ├── Auth/              # Login, Register, Google OAuth Modals
-    │   │   ├── Layout/            # Main Navbar, Footer, Breadcrumbs
-    │   │   ├── Products/          # Product Grids, Cards, Quick View, Pagination
-    │   │   ├── Payment/           # Modular Payment Components (PaymentForm, OrderSummary, PaymentMethods, PaymentDetails)
-    │   │   ├── cart/              # Cart Tables, Summaries, Dynamic Sync
-    │   │   ├── Wishlist/          # Wishlist Container, Item Cards, Toast Badges
-    │   │   ├── Blogs/             # Blog Cards, Article Reader, Pagination
-    │   │   └── Notification/      # Notification Dropdown & Live To-Do Engine
-    │   ├── libs/                  # API Client Layer (Auth, Product, Category, Brand, Cart, Order, Address, User, Inventory, Review, ReturnRefund, Blog, Analytics, Notification)
-    │   ├── redux/                 # Redux Toolkit Slices (auth, product, cart, wishlist, order, returnRefund, review)
-    │   ├── types/                 # TypeScript Contract Definitions
-    │   ├── shop/                  # Product Catalog, Sorting & Multi-faceted Filtering
-    │   ├── profile/               # Customer Settings, Pakistani Phone Validator, Addresses & Danger Zone
-    │   ├── cart/                  # Shopping Cart State & Real-time Calculations
-    │   ├── payment/               # Multi-Method Checkout (COD, Card, JazzCash, EasyPaisa)
-    │   ├── orders/                # Customer Order History, Tracking & Return/Refund Submissions
-    │   ├── wishlist/              # Wishlist Collection & Dynamic Badges
-    │   └── blogs/                 # Public Knowledge Base & Article Explorer
+    │   ├── admin/                         # Admin Management Suite
+    │   │   ├── analytics/                 # Financial KPI Dashboard & Expenses
+    │   │   ├── blogs/                     # Article Composer & Publishing Studio
+    │   │   ├── brands/                    # Brand Management
+    │   │   ├── categories/                # Category Management
+    │   │   ├── inventory/                 # Stock Management & Audit Trail Logs
+    │   │   ├── orders/                    # Order Fulfillment & Status Dispatch
+    │   │   ├── products/                  # Product Catalog Management
+    │   │   ├── returns/                   # Return & Refund Verification Queue
+    │   │   ├── settings/                  # Store Settings & Preferences
+    │   │   └── users/                     # Registered User & Role Directory
+    │   ├── Components/                    # Modular Reusable UI Components
+    │   │   ├── Admin/                     # Admin Sidebar, Header & Guards
+    │   │   ├── Auth/                      # Login, Register & OAuth Modals
+    │   │   ├── Layout/                    # Main Header, Navbar, Footer, Breadcrumbs
+    │   │   ├── Products/                  # Product Cards, Quick View, Modals
+    │   │   ├── Payment/                   # Multi-Method Checkout Form & Summaries
+    │   │   ├── cart/                      # Cart Drawer & Calculation Tables
+    │   │   ├── Wishlist/                  # Wishlist Grid & Sync Badges
+    │   │   ├── Blogs/                     # Blog Feed & Reader Components
+    │   │   └── Notification/              # Real-Time Notification Bell & Dropdowns
+    │   ├── libs/                          # Strongly-Typed HTTP API Clients
+    │   ├── redux/                         # Redux Store & Feature Slices
+    │   ├── types/                         # TypeScript Domain & DTO Contracts
+    │   ├── shop/                          # Storefront Catalog with Multi-Filters
+    │   ├── cart/                          # Dynamic Shopping Cart Page
+    │   ├── checkout/                      # Address Selection & Order Placement
+    │   ├── payment/                       # Payment Gateway Selection
+    │   ├── orders/                        # Customer Order History & Return Filing
+    │   ├── wishlist/                      # Customer Wishlist Portal
+    │   ├── profile/                       # Pakistani Phone Validator & Addresses
+    │   ├── blogs/                         # Knowledge Base & Public Articles
+    │   ├── login/ & register/             # Standalone Authentication Pages
+    │   └── globals.css                    # Unified Design System & Styling
+    ├── .env.local                         # Frontend Environment Configurations
+    └── package.json                       # Dependencies & NPM Scripts
 ```
 
 ---
 
-## 🛠️ Tech Stack
+## ⚡ Core Functionalities & Domain Modules
 
-| Domain | Technologies |
-| :--- | :--- |
-| **Backend** | ASP.NET Core 10 Web API, C#, Entity Framework Core 10, SQL Server / LocalDB |
-| **Security & RBAC** | JWT Bearer (`Role` Claims), HttpOnly Cookies, Google OAuth 2.0 (`Google.Apis.Auth`), BCrypt Hashing |
-| **Media / CDN** | Cloudinary .NET SDK (`IPhotoService`) for cloud image uploads & transformations |
-| **Email Service** | MailKit, MimeKit (SMTP Gmail Integration) |
-| **Frontend** | Next.js 15 (App Router), React 19, TypeScript, Vanilla CSS / Custom Modern Design System |
-| **State Management**| Redux Toolkit (`authSlice`, `productSlice`, `cartSlice`, `wishlistSlice`, `orderSlice`, `returnRefundSlice`, `reviewSlice`) |
-| **Client Auth** | `@react-oauth/google`, Silent Auto-Refresh HTTP Interceptor, Route Guards (`AdminGuard`) |
+### 1. Storefront & Catalog Management
+* **Dynamic Product Catalog:** Filter by categories, brands, price ranges, search keywords, and stock availability.
+* **Cloudinary Media Engine:** Direct high-speed asset uploads with automated image optimization.
+* **SEO Slug Generator:** Automatic URL-friendly slugs for categories, brands, and articles.
 
----
+### 2. Shopping Cart & Wishlist System
+* **Persistent Cart State:** Real-time stock validation, quantity modifiers, and guest-to-authenticated cart merging.
+* **Wishlist Synchronization:** Instant add/remove toggles with live header counter badges.
 
-# 📦 1. Core Domain Features & Modules
-
-```
-                     ┌────────────────────────────────────────────────────────┐
-                     │              Full E-Commerce Ecosystem                 │
-                     └───────────────────────────┬────────────────────────────┘
-                                                 │
-       ┌────────────────────┬────────────────────┼────────────────────┬────────────────────┐
-       ▼                    ▼                    ▼                    ▼                    ▼
- ┌───────────┐        ┌───────────┐        ┌───────────┐        ┌───────────┐        ┌───────────┐
- │ Storefront│        │ Fulfillment│       │ After-Sale│        │ Analytics │        │Actionable │
- │& Catalog  │  ───►  │& Payments │ ───►   │ & Reviews │ ───►   │& Inventory│ ───►   │  To-Dos   │
- └───────────┘        └───────────┘        └───────────┘        └───────────┘        └───────────┘
-```
-
----
-
-## 🛍️ 1.1 Storefront & Catalog Management
-* **Products (`Product.cs`):** Full CRUD with title, description, price, discounted price, category, brand, stock, SKU, Cloudinary image upload, and active state toggles.
-* **Categories & Brands (`Category.cs`, `Brand.cs`):** Automatic SEO slug generation (e.g. `"Nike Sportswear"` ➔ `"nike-sportswear"`), logos, and filtered item relationships.
-* **Shop Explorer (`/shop`, `/products`):** Multi-faceted search, price range filter, category/brand filters, and modern responsive pagination buttons.
-
----
-
-## 🛒 1.2 Cart, Wishlist & Sync Engine
-* **Persistent DB Cart (`Cart.cs`, `CartItem.cs`):** Real-time stock validation, guest-to-authenticated cart merging, item quantity modifiers, and subtotal calculation.
-* **Wishlist System (`Wishlist.cs`, `WishlistItem.cs`):** Authenticated wishlist collection with database uniqueness constraints and header count indicators.
-
----
-
-## 💳 1.3 Checkout & Multi-Channel Payment System
-* **Saved Addresses (`Address.cs`):** Multiple address management (`Home`, `Office`, `Other`) with single-default address promotion.
-* **Payment Processing (`PaymentService.cs`):**
-  1. 💵 **Cash On Delivery (COD):** Marked as `Pending COD` until physical delivery.
+### 3. Checkout & Multi-Channel Payments
+* **Address Book:** Supports `Home`, `Office`, and `Other` address classifications with default selection.
+* **4 Supported Payment Methods:**
+  1. 💵 **Cash On Delivery (COD):** Marked as `Pending COD` until dispatch.
   2. 💳 **Credit / Debit Card:** Form verification with live card masking and validation.
-  3. 📱 **JazzCash Mobile Wallet:** Direct payment through registered JazzCash mobile numbers with MPIN prompt.
-  4. 👛 **EasyPaisa Mobile Wallet:** Instant payment authorization via EasyPaisa mobile account.
-* **Order Transition (`Order.cs`, `OrderItem.cs`):** Atomic checkout transaction converting active cart into orders, generating unique order reference numbers (`ORD-XXXXXXXX`), deducting stock, and calculating shipping rules.
+  3. 📱 **JazzCash:** Direct mobile account number entry with MPIN authorization prompt.
+  4. 👛 **EasyPaisa:** Seamless wallet authorization and instant checkout verification.
+
+### 4. Inventory Management & Immutable Audit Trail
+* **Stock Delta Tracking:** Logs every stock fluctuation with specific audit types (`InitialStock`, `Restock`, `SaleDeduction`, `ReturnRestock`, `DamagedDiscard`, `ManualAdjustment`).
+* **Admin Warehouse Dashboard:** Real-time metrics for total warehouse units, low-stock (`<= 5`), and out-of-stock items (`0`).
+
+### 5. Returns & Refunds Lifecycle
+* **Customer Return Submissions:** Direct return requests from order history with proof image upload and refund reason.
+* **Admin Inspection Queue:** Approve, reject, adjust refund amounts, write resolution notes, and process payout settlements.
+
+### 6. Verified Customer Reviews
+* **Purchase-Gated Reviews:** Restricts reviews strictly to customers with completed purchases.
+* **Photo Attachments & Ratings:** Star ratings (1-5), verified purchase badges, review photo attachments, and aggregate ratings breakdown.
+
+### 7. Content Management & Blog Engine
+* **Blog Studio:** Markdown/WYSIWYG article creator with Cloudinary cover uploads, reading time estimator, and draft/published status toggle.
+* **Public Blog Hub:** Search, category tags, and responsive reading view.
+
+### 8. Financial Analytics & Accounting Engine
+* **Source-Calculated Ledger (No blind hardcoding):**
+  * `Net Revenue = Gross Sales - Discounts - Refunds`
+  * `Gross Profit = Net Revenue - COGS (Cost of Goods Sold)`
+  * `Net Profit = Gross Profit - Damaged Stock Loss - Operating Expenses`
+* **Expense Logging:** Track marketing campaigns (Meta/Google Ads), courier shipping charges, SaaS tools, packaging, and rent.
+
+### 9. Actionable To-Dos & Live Notifications
+* **Customer Notifications:** Real-time alerts for order confirmations, dispatch updates, and return approvals.
+* **Admin Operational To-Dos:** Header alerts for low/out-of-stock items, pending fulfillment orders, incoming return requests, and new reviews.
+
+### 10. User Profile & Pakistani Validation Standards
+* **Pakistani Mobile Format:** Strict `03XX-XXXXXXX` 11-digit regex validation and live format masking.
+* **Account Security & Danger Zone:** Password updates, address management, and safe account deletion.
 
 ---
 
-## 📦 1.4 Inventory Management & Audit Trail Logging
-* **Domain Model (`InventoryLog.cs`):** Tracks every stock delta with audit action types:
-  - `InitialStock`, `Restock`, `SaleDeduction`, `ReturnRestock`, `DamagedDiscard`, `ManualAdjustment`.
-  - Captures `PreviousStock`, `NewStock`, `QuantityChanged`, `Note`, and `CreatedAt`.
-* **Admin Control Plane (`/admin/inventory`):**
-  - KPI Cards: Total Products, In-Stock, Low Stock (`<= 5`), Out of Stock (`0`), and Total Units in warehouse.
-  - Quick restock and manual adjustment modals with instant audit logging.
-  - Complete historical audit trail drawer per product.
+## 🔄 System Workflows & Architecture
+
+```
+                  ┌──────────────────────────────────────────┐
+                  │          Storefront / Customer           │
+                  └────────────────────┬─────────────────────┘
+                                       │ (Place Order)
+                                       ▼
+                  ┌──────────────────────────────────────────┐
+                  │         Checkout & Payment Gate          │
+                  │   (COD / Card / JazzCash / EasyPaisa)    │
+                  └────────────────────┬─────────────────────┘
+                                       │
+            ┌──────────────────────────┴──────────────────────────┐
+            ▼                                                     ▼
+┌───────────────────────────────┐             ┌───────────────────────────────┐
+│     Inventory Stock Engine    │             │   Admin Operational Center    │
+│  - Decrement Catalog Stock    │             │  - Real-time Order Alert      │
+│  - Create Audit Log (Sale)    │ ──────────► │  - Low-Stock Notification     │
+│  - Update Asset Valuation     │             │  - Package & Dispatch Flow    │
+└───────────────────────────────┘             └───────────────────────────────┘
+            │                                                     │
+            ▼                                                     ▼
+┌───────────────────────────────┐             ┌───────────────────────────────┐
+│   After-Sales & Accounting    │             │       Customer Tracking       │
+│  - Verified Purchase Reviews  │ ◄────────── │  - Live Order Status Timeline │
+│  - Return / Refund Handling   │             │  - Return Request Submissions │
+│  - Net Profit & Expense Calc  │             │  - Unread Notification Badge  │
+└───────────────────────────────┘             └───────────────────────────────┘
+```
 
 ---
 
-## ⭐ 1.5 Customer Reviews & Ratings System
-* **Domain Model (`Review.cs`):** Captures `UserId`, `ProductId`, `OrderId`, `Rating` (1 to 5 stars), `Comment`, `ReviewImageUrl` (Cloudinary photo upload), and `IsVerifiedPurchase`.
-* **Validation & Constraints:** Restrict cascade to eliminate SQL Server delete cycles; enforces verified purchase eligibility before review submission.
-* **Interactive UI:** Aggregated average ratings, 5-star distribution breakdown bar, user review cards with images, and submission modal.
+## 🌐 API Endpoints Matrix
 
----
-
-## 🔄 1.6 Returns & Refunds Lifecycle Engine
-* **Domain Model (`ReturnRequest.cs`):** Captures `OrderId`, `UserId`, `Reason`, `Description`, `ProofImageUrl`, `RefundAmount`, `RefundMethod`, `Status` (`Pending`, `Approved`, `Rejected`, `Refunded`), `AdminNotes`, and `ResolvedAt`.
-* **Customer Journey:** Initiates return request with reason and photo proof directly from the customer order history page (`/orders`).
-* **Admin Management (`/admin/returns`):** Review incoming proof photos, approve or reject requests, adjust refund amounts, add admin resolution notes, and process payouts.
-
----
-
-## 📰 1.7 Content Management & Blog Engine
-* **Domain Model (`Blog.cs`):** Contains `Title`, `Slug`, `Excerpt`, `Content`, `CoverImageUrl`, `Author`, `Category`, `Tags`, `ReadTimeMinutes`, `IsPublished`, and audit timestamps.
-* **Public Blog (`/blogs`, `/blogs/[id]`):** Article feed with search, category filtering, reading time estimates, related articles, and rich reading view.
-* **Admin Blog Studio (`/admin/blogs`):** Full WYSIWYG/Markdown article composer, Cloudinary cover image uploader, tag selector, and draft/published toggle.
-
----
-
-## 📊 1.8 Financial Analytics & Real-World Accounting Engine
-* **Auditable Dynamic Source Calculation (No blind static tables):**
-  - **Net Revenue:** `Gross Sales - Discounts - Processed Refunds`
-  - **COGS (Cost of Goods Sold):** Direct capital invested in sold units.
-  - **Gross Profit:** `Net Revenue - COGS`
-  - **Damaged Stock Loss:** Aggregated financial write-offs from inventory audit logs.
-  - **Operating Expenses (`Expense.cs`):** Marketing (Meta/Google Ads), Courier shipping charges, Software/Tools, Rent, and Packaging.
-  - **Net Profit:** `Gross Profit - Damaged Loss - Operating Expenses`
-  - **Inventory Asset Value:** Current total capital tied up in warehouse stock.
-  - **Growth Tracking:** Month-over-Month (MoM) revenue growth % and daily timeline breakdown.
-* **Admin Analytics Portal (`/admin/analytics`):** Real-time KPI summaries, visual revenue timeline graphs, expense logging modal, and category profitability distribution.
-
----
-
-## 🔔 1.9 Actionable To-Dos & Live Notification Engine
-* **Domain Model (`Notification.cs`):** Supports `UserId` (nullable for admin broadcasts), `Title`, `Message`, `Type` (`OrderPlaced`, `OrderShipped`, `OrderDelivered`, `AdminNewOrder`, `AdminLowStock`, `AdminReturnRequest`, `AdminNewReview`), `Priority`, `ActionUrl`, `IsRead`, `IsAdminNotification`, and `CreatedAt`.
-* **Customer Notifications:** Matching teal badge counter left of Cart icon alerting users on order confirmation, package dispatch, and refund completion.
-* **Admin Actionable To-Dos:** Top-header notification bell with automatic background sync alerting admins on:
-  - 🚨 **Out of Stock (`0 units`)** and ⚠️ **Low Stock (`<= 5 units`)** warnings with direct restock links.
-  - 🛍️ **New Orders** requiring packaging & fulfillment.
-  - 🔄 **Incoming Return Requests** awaiting inspection.
-  - ⭐ **New Product Reviews** submitted by customers.
-
----
-
-## 👥 1.10 User Profile, Pakistani Phone Validation & Admin Directory
-* **Customer Profile (`/profile`):**
-  - **Pakistani Phone Validation:** Strict `03XX-XXXXXXX` 11-digit formatting, live digit counter, and submit validation.
-  - **Saved Address Book:** Fast default address selector and address deletion safety.
-  - **Account Danger Zone:** Secure account deletion with email confirmation check.
-* **Admin User Directory (`/admin/users`):**
-  - View all registered customers and administrators.
-  - Metrics on total registrations, active customers, and admin accounts.
-  - Live search by name/email, role filtering, and detailed profile viewer modal.
-
----
-
-# 🌐 2. Comprehensive API Endpoints Matrix
-
-| Domain / Controller | Method | Endpoint | Authorization | Description |
+| Controller | Method | Endpoint | Access | Purpose |
 | :--- | :--- | :--- | :--- | :--- |
-| **Auth** | `POST` | `/api/auth/register` | Public | Customer account registration |
-| | `POST` | `/api/auth/login` | Public | Credentials authentication & JWT issue |
-| | `POST` | `/api/auth/google-login` | Public | Google OAuth 2.0 verification |
-| | `POST` | `/api/auth/refresh-token` | Public (Cookie) | Access & Refresh token rotation |
-| | `POST` | `/api/auth/logout` | Public | Clears session & cookies |
-| **User** | `GET` | `/api/user/profile` | `[Authorize]` | Logged-in user profile details |
-| | `PUT` | `/api/user/profile` | `[Authorize]` | Updates profile information |
-| | `DELETE`| `/api/user/profile` | `[Authorize]` | Deletes customer account |
-| | `GET` | `/api/user/admin/all` | `[Authorize(Roles="Admin")]` | Lists all registered platform users |
-| **Product** | `GET` | `/api/product` | Public | Paginated product catalog with filters |
+| **Auth** | `POST` | `/api/auth/register` | Public | Register new customer account |
+| | `POST` | `/api/auth/login` | Public | Email/Password login (issues JWT + cookie) |
+| | `POST` | `/api/auth/google-login` | Public | Google OAuth 2.0 authentication |
+| | `POST` | `/api/auth/refresh-token` | Public | Token rotation via HttpOnly cookie |
+| | `POST` | `/api/auth/logout` | Public | Invalidate refresh token & clear cookies |
+| **User** | `GET` | `/api/user/profile` | User | Get current user profile |
+| | `PUT` | `/api/user/profile` | User | Update personal details & phone |
+| | `DELETE`| `/api/user/profile` | User | Delete personal account |
+| | `GET` | `/api/user/admin/all` | Admin | Get full platform user directory |
+| **Product** | `GET` | `/api/product` | Public | Paginated product list with multi-filters |
 | | `GET` | `/api/product/{id}` | Public | Single product details |
-| | `POST`| `/api/product/upload-image`| `[Authorize(Roles="Admin")]` | Cloudinary image upload |
-| | `POST`| `/api/product` | `[Authorize(Roles="Admin")]` | Creates catalog product |
-| | `PUT` | `/api/product/{id}` | `[Authorize(Roles="Admin")]` | Updates product details |
-| | `DELETE`| `/api/product/{id}`| `[Authorize(Roles="Admin")]` | Deletes product |
-| **Category & Brand**| `GET` | `/api/category`, `/api/brand` | Public | List active categories & brands |
-| | `POST`| `/api/category`, `/api/brand` | `[Authorize(Roles="Admin")]` | Create category / brand |
-| | `PUT` | `/api/category/{id}`, `/api/brand/{id}` | `[Authorize(Roles="Admin")]` | Update category / brand |
-| | `DELETE`| `/api/category/{id}`, `/api/brand/{id}` | `[Authorize(Roles="Admin")]` | Delete category / brand |
-| **Cart & Wishlist** | `GET` | `/api/cart`, `/api/wishlist` | `[Authorize]` | Retrieve active user cart / wishlist |
-| | `POST`| `/api/cart/items`, `/api/wishlist/toggle` | `[Authorize]` | Add to cart / toggle wishlist |
-| | `PUT` | `/api/cart/items/{productId}` | `[Authorize]` | Modify cart item quantity |
-| | `DELETE`| `/api/cart/items/{productId}`, `/api/cart/clear` | `[Authorize]` | Remove item / clear cart |
-| **Order & Payment** | `POST`| `/api/order` | `[Authorize]` | Place order (Cart ➔ Order transition) |
-| | `GET` | `/api/order/my`, `/api/order/{id}` | `[Authorize]` | Customer order history & tracking |
-| | `POST`| `/api/order/{id}/cancel` | `[Authorize]` | Cancel order & restore catalog stock |
-| | `GET` | `/api/order/admin/all` | `[Authorize(Roles="Admin")]` | Admin view of all customer orders |
-| | `PUT` | `/api/order/admin/{id}/status` | `[Authorize(Roles="Admin")]` | Admin order lifecycle status update |
-| | `POST`| `/api/payment/process` | `[Authorize]` | Process & verify multi-method payments |
-| **Inventory** | `GET` | `/api/inventory/summary` | `[Authorize(Roles="Admin")]` | Warehouse summary KPIs |
-| | `GET` | `/api/inventory/all` | `[Authorize(Roles="Admin")]` | Complete inventory stock table |
-| | `POST`| `/api/inventory/adjust` | `[Authorize(Roles="Admin")]` | Stock adjustments with audit log |
-| | `GET` | `/api/inventory/logs/{productId}` | `[Authorize(Roles="Admin")]` | Product-specific audit logs |
-| **Reviews** | `GET` | `/api/review/product/{productId}` | Public | Reviews for specific product |
-| | `POST`| `/api/review/create` | `[Authorize]` | Submit verified purchase review |
-| | `GET` | `/api/review/can-review/{productId}` | `[Authorize]` | Check purchase review eligibility |
-| **Returns / Refunds**| `POST`| `/api/returnrefund/request` | `[Authorize]` | Submit order return/refund request |
-| | `GET` | `/api/returnrefund/my` | `[Authorize]` | Customer return request history |
-| | `GET` | `/api/returnrefund/admin/all` | `[Authorize(Roles="Admin")]` | Admin return requests queue |
-| | `PUT` | `/api/returnrefund/admin/{id}/status`| `[Authorize(Roles="Admin")]`| Approve/Reject/Refund return request |
-| **Blog System** | `GET` | `/api/blog`, `/api/blog/{idOrSlug}` | Public | Public blog articles & detail |
-| | `POST`| `/api/blog/admin/create` | `[Authorize(Roles="Admin")]` | Create article with Cloudinary cover |
-| | `PUT` | `/api/blog/admin/{id}/toggle-publish` | `[Authorize(Roles="Admin")]` | Toggle draft / published status |
-| **Analytics** | `GET` | `/api/analytics/report` | `[Authorize(Roles="Admin")]` | Real-time accounting & financial metrics |
-| | `GET` | `/api/analytics/expenses` | `[Authorize(Roles="Admin")]` | Operating expenses list |
-| | `POST`| `/api/analytics/expenses/add` | `[Authorize(Roles="Admin")]` | Log new operating expense |
-| **Notifications** | `GET` | `/api/notification/my`, `/api/notification/unread-count` | `[Authorize]` | User alerts & unread counter |
-| | `GET` | `/api/notification/admin`, `/api/notification/admin/unread-count` | `[Authorize(Roles="Admin")]` | Admin actionable To-Dos & count |
-| | `PUT` | `/api/notification/{id}/read`, `/api/notification/mark-all-read` | `[Authorize]` | Mark single / all as read |
+| | `POST` | `/api/product/upload-image`| Admin | Upload product media to Cloudinary |
+| | `POST` | `/api/product` | Admin | Create product listing |
+| | `PUT` | `/api/product/{id}` | Admin | Modify product listing |
+| | `DELETE`| `/api/product/{id}` | Admin | Delete product listing |
+| **Category & Brand** | `GET` | `/api/category`, `/api/brand` | Public | List categories / brands |
+| | `POST` | `/api/category`, `/api/brand` | Admin | Create category / brand with slug |
+| | `PUT` | `/api/category/{id}`, `/api/brand/{id}` | Admin | Edit category / brand |
+| | `DELETE`| `/api/category/{id}`, `/api/brand/{id}` | Admin | Remove category / brand |
+| **Cart & Wishlist** | `GET` | `/api/cart`, `/api/wishlist` | User | Retrieve current user cart / wishlist |
+| | `POST` | `/api/cart/items` | User | Add item to cart with quantity |
+| | `POST` | `/api/wishlist/toggle` | User | Toggle product in wishlist |
+| | `PUT` | `/api/cart/items/{productId}` | User | Update cart item quantity |
+| | `DELETE`| `/api/cart/items/{productId}` | User | Remove item from cart |
+| **Order & Payment** | `POST` | `/api/order` | User | Convert cart into order & deduct stock |
+| | `GET` | `/api/order/my`, `/api/order/{id}` | User | Customer order history & tracking |
+| | `POST` | `/api/order/{id}/cancel` | User | Cancel order & restore inventory |
+| | `GET` | `/api/order/admin/all` | Admin | Full order fulfillment pipeline |
+| | `PUT` | `/api/order/admin/{id}/status` | Admin | Advance order status (`Shipped`, `Delivered`) |
+| | `POST` | `/api/payment/process` | User | Process & verify payment gateway transactions |
+| **Inventory** | `GET` | `/api/inventory/summary` | Admin | Warehouse KPI summary cards |
+| | `GET` | `/api/inventory/all` | Admin | Full product stock table |
+| | `POST` | `/api/inventory/adjust` | Admin | Restock, damage write-off & adjustments |
+| | `GET` | `/api/inventory/logs/{productId}` | Admin | Complete immutable audit trail per SKU |
+| **Reviews** | `GET` | `/api/review/product/{productId}` | Public | Get product reviews & ratings breakdown |
+| | `POST` | `/api/review/create` | User | Submit verified purchase review with photo |
+| | `GET` | `/api/review/can-review/{productId}` | User | Check purchase eligibility for review |
+| **Returns** | `POST` | `/api/returnrefund/request` | User | Submit return/refund claim with photo proof |
+| | `GET` | `/api/returnrefund/my` | User | Customer return status tracking |
+| | `GET` | `/api/returnrefund/admin/all` | Admin | Review pending customer return claims |
+| | `PUT` | `/api/returnrefund/admin/{id}/status` | Admin | Approve / Reject / Settle refund |
+| **Blogs** | `GET` | `/api/blog`, `/api/blog/{idOrSlug}` | Public | Public articles feed & article view |
+| | `POST` | `/api/blog/admin/create` | Admin | Compose & publish article |
+| | `PUT` | `/api/blog/admin/{id}/toggle-publish` | Admin | Toggle draft / published status |
+| **Analytics** | `GET` | `/api/analytics/report` | Admin | Dynamic financial ledger & KPI metrics |
+| | `GET` | `/api/analytics/expenses` | Admin | Operating expense records |
+| | `POST` | `/api/analytics/expenses/add` | Admin | Record operating expense (ads, rent, shipping) |
+| **Notifications** | `GET` | `/api/notification/my` | User | Customer order & refund notifications |
+| | `GET` | `/api/notification/admin` | Admin | Actionable To-Do queue for administrators |
+| | `PUT` | `/api/notification/{id}/read` | User/Admin| Mark notification as read |
 
 ---
 
-# 🛡️ 3. Security & Middleware Pipeline
+## 🛡️ Security & Middleware Pipeline
 
 The backend implements an enterprise **16-layer middleware architecture**:
-1. **`ExceptionHandlingMiddleware`:** Global try-catch converting unhandled exceptions to standardized `ApiResponse<T>` payloads.
-2. **`CorrelationIdMiddleware`:** `X-Correlation-ID` tracing header propagation for distributed request tracking.
-3. **`SecurityHeadersMiddleware`:** `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `X-XSS-Protection: 1; mode=block`.
-4. **`RequestLoggingMiddleware`:** Telemetry logging endpoint, HTTP verb, authenticated user identity, and response execution times.
-5. **`UseResponseCompression()`:** Brotli and Gzip payload compression for optimal speed.
-6. **`UseCors("AllowFrontend")`:** Strict CORS binding to frontend domain with credential support.
-7. **`UseRateLimiter()`:** Sliding window rate limiter to protect against brute-force and DDoS attacks.
-8. **`UseAuthentication()` & `UseAuthorization()`:** JWT Bearer tokens & Role-Based Access Control (`[Authorize(Roles = "Admin")]`).
+1. **`ExceptionHandlingMiddleware`:** Catches all unhandled exceptions and formats responses into standard `ApiResponse<T>` schemas.
+2. **`CorrelationIdMiddleware`:** Generates and propagates `X-Correlation-ID` headers across all logs and responses.
+3. **`SecurityHeadersMiddleware`:** Enforces `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `X-XSS-Protection: 1; mode=block`, and Referrer policies.
+4. **`RequestLoggingMiddleware`:** Structured telemetry logging capturing execution durations, HTTP methods, route paths, and user identities via Serilog.
+5. **`ResponseCompression`:** Dual Brotli and Gzip payload compression for low-latency responses.
+6. **`CORS Policy ("AllowFrontend")`:** Strict domain origin binding to `http://localhost:3000` with credential support.
+7. **`RateLimiting`:** Sliding window rate limiter to safeguard sensitive endpoints against brute force and denial-of-service attempts.
+8. **`JWT Authentication & RBAC`:** Role-based claims verification (`Customer`, `Admin`) across controllers and API actions.
 
 ---
 
-# 🚀 4. How to Run Locally
+## 🚀 Installation & Local Setup
 
-### 1. Backend (.NET 10 Web API)
+### Prerequisites
+* [.NET 10 SDK](https://dotnet.microsoft.com/download)
+* [Node.js 18+](https://nodejs.org/) & `npm`
+* SQL Server or LocalDB instance
+
+---
+
+### 1. Backend Setup (.NET 10 Web API)
+
 ```bash
+# 1. Navigate to backend directory
 cd ecommerce-backend
+
+# 2. Restore NuGet dependencies
 dotnet restore
+
+# 3. Apply Entity Framework database migrations
 dotnet ef database update
+
+# 4. Launch backend server
 dotnet run
 ```
-* **API Host:** `http://localhost:5024`
-* **Swagger API Docs:** `http://localhost:5024/swagger`
 
-### 2. Frontend (Next.js 15 App Router)
-```bash
-cd ecommerce-frontend
-npm install
-npm run dev
-```
-* **Storefront:** `http://localhost:3000`
-* **Shop Catalog:** `http://localhost:3000/shop`
-* **Blog Studio & Reader:** `http://localhost:3000/blogs`
-* **Customer Profile:** `http://localhost:3000/profile`
-* **Admin Dashboard:** `http://localhost:3000/admin/products`
-* **Admin Analytics:** `http://localhost:3000/admin/analytics`
-* **Admin Inventory:** `http://localhost:3000/admin/inventory`
-* **Admin Returns:** `http://localhost:3000/admin/returns`
-* **Admin Users:** `http://localhost:3000/admin/users`
+* 🌐 **API Base URL:** `http://localhost:5024`
+* 📖 **Interactive Swagger Docs:** `http://localhost:5024/swagger`
 
 ---
 
-## 🔒 Quality & Production Checklist
+### 2. Frontend Setup (Next.js 16 App Router)
 
-- [x] **Role-Based Access Control (RBAC):** Admin endpoints secured via JWT `ClaimTypes.Role`.
-- [x] **Financial Integrity:** Source-based accounting calculating real Gross/Net Profit, COGS, and losses.
-- [x] **Inventory Tracking:** Real-time stock decrement, automated low/out-of-stock To-Dos, and full audit logs.
-- [x] **Pakistani Standard Validation:** 11-digit phone number formatting (`03XX-XXXXXXX`).
-- [x] **After-Sales Lifecycle:** Return & refund workflows with image uploads and admin resolution notes.
-- [x] **Content Management:** Full-featured Blog engine with slug routing and publication workflows.
-- [x] **Live Notifications:** Unread badge counters for customers and actionable To-Dos for store admins.
-- [x] **Modern UI/UX:** Responsive pagination, toast feedback, modal drawers, and glassmorphism styling.
+```bash
+# 1. Navigate to frontend directory
+cd ecommerce-frontend
+
+# 2. Install Node dependencies
+npm install
+
+# 3. Start development server
+npm run dev
+```
+
+* 🛍️ **Storefront & Catalog:** `http://localhost:3000`
+* 🛒 **Shopping Cart & Checkout:** `http://localhost:3000/cart`
+* 📦 **Order Tracking & History:** `http://localhost:3000/orders`
+* 📰 **Blog Hub & Knowledge Base:** `http://localhost:3000/blogs`
+* 📊 **Admin Dashboard & Analytics:** `http://localhost:3000/admin/products`
+
+---
+
+## 📊 Quality & Production Checklist
+
+- [x] **Enterprise Role-Based Access Control (RBAC):** Admin endpoints secured via JWT `ClaimTypes.Role`.
+- [x] **Financial Accounting:** Dynamic ledger computing Net Revenue, COGS, Gross/Net Profit, and Damaged Loss.
+- [x] **Inventory Control:** Real-time stock decrements, low-stock warnings, and immutable audit logging.
+- [x] **Regional Validation:** 11-digit Pakistani phone formatting (`03XX-XXXXXXX`).
+- [x] **Multi-Channel Payments:** Support for COD, Card, JazzCash, and EasyPaisa.
+- [x] **After-Sales Ecosystem:** Return & refund claims with image proof and resolution notes.
+- [x] **Content Management:** Blog engine with slug routing and publication workflow.
+- [x] **Real-Time Notifications:** Live customer alerts and admin actionable To-Dos.

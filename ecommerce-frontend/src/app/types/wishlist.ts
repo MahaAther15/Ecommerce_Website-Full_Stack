@@ -11,6 +11,19 @@ export interface WishlistItem {
   addedAt?: string;
 }
 
+export interface WishlistProduct {
+  id: number;
+  name: string;
+  category?: string;
+  description?: string;
+  price: number;
+  originalPrice?: number;
+  discount?: number;
+  image: string;
+  stock?: "in-stock" | "out-of-stock" | "low-stock";
+  rating?: number;
+}
+
 export interface WishlistResponse {
   id: number;
   userId: number;

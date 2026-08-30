@@ -86,7 +86,7 @@ export default function AdminInventoryPage() {
     try {
       setAdjusting(true);
       const payload: AdjustStockPayload = {
-        productId: selectedProduct.ProductId || (selectedProduct as any).productId || selectedProduct.productId,
+        productId: selectedProduct.productId || (selectedProduct as any).ProductId,
         quantity: finalQty,
         action: adjustAction,
         note: adjustNote,

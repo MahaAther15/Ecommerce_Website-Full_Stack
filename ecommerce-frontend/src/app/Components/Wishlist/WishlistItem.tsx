@@ -21,7 +21,8 @@ export default function WishlistItem({ product, onRemove }: WishlistItemProps) {
     stockClass = "out-of-stock";
   }
 
-  const savings = product.originalPrice - product.price;
+  const origPrice = product.originalPrice ?? product.price;
+  const savings = origPrice - product.price;
 
   return (
     <div className="wishlist-item">
@@ -35,23 +36,29 @@ export default function WishlistItem({ product, onRemove }: WishlistItemProps) {
         <img src={product.image} alt={product.name} />
       </div>
       <div className="wishlist-item-content">
-        <div className="wishlist-item-category">{product.category}</div>
+        <div className="wishlist-item-category">{product.category || "General"}</div>
         <h3 className="wishlist-item-title">{product.name}</h3>
-        <p className="wishlist-item-description">{product.description}</p>
+        <p className="wishlist-item-description">{product.description || ""}</p>
 
         <div className={`item-stock ${stockClass}`}>{stockText}</div>
 
         <div className="wishlist-item-price">
           <span className="current-price">${product.price.toFixed(2)}</span>
-          <span className="original-price">
-            ${product.originalPrice.toFixed(2)}
-          </span>
-          <span className="discount-badge">Save {product.discount}%</span>
+          {product.originalPrice && product.originalPrice > product.price && (
+            <span className="original-price">
+              ${product.originalPrice.toFixed(2)}
+            </span>
+          )}
+          {product.discount && product.discount > 0 && (
+            <span className="discount-badge">Save {product.discount}%</span>
+          )}
         </div>
 
-        <p style={{ fontSize: "12px", color: "#27ae60", marginBottom: "15px" }}>
-          <i className="far fa-tag"></i> You save ${savings.toFixed(2)}
-        </p>
+        {savings > 0 && (
+          <p style={{ fontSize: "12px", color: "#27ae60", marginBottom: "15px" }}>
+            <i className="far fa-tag"></i> You save ${savings.toFixed(2)}
+          </p>
+        )}
 
         <div className="wishlist-item-actions">
           <button
