@@ -1,0 +1,9 @@
+{
+  "name": "ecommerce-full-stack",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "cd ecommerce-frontend && npm install && npm run build",
+    "start": "cd ecommerce-frontend && npm run start"
+  }
+}
