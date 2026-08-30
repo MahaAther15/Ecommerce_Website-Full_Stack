@@ -57,12 +57,23 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.KnownIPNetworks.Clear();
     options.KnownProxies.Clear();
 });
-// (Optional) Configure HTTPS options
-builder.Services.AddHttpsRedirection(options =>
+// Configure HTTPS options
+if (builder.Environment.IsDevelopment())
 {
-    options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect; // or 308 Permanent
-    options.HttpsPort = 7257; // Your HTTPS port in launchSettings.json (if needed)
-});
+    builder.Services.AddHttpsRedirection(options =>
+    {
+        options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+        options.HttpsPort = 7257;
+    });
+}
+else
+{
+    builder.Services.AddHttpsRedirection(options =>
+    {
+        options.RedirectStatusCode = StatusCodes.Status308PermanentRedirect;
+        options.HttpsPort = 443;
+    });
+}
 
 // Add HSTS for production security
 builder.Services.AddHsts(options =>

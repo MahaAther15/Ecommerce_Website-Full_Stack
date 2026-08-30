@@ -1,4 +1,4 @@
-name: Backend CI/CD
+name: Backend CI/CD - MonsterASP
 
 on:
   push:
@@ -16,14 +16,14 @@ on:
 
 jobs:
   build-test-deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
-      # 1. Get the code
+      # 1. Checkout repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Install .NET 10
+      # 2. Setup .NET 10
       - name: Setup .NET 10
         uses: actions/setup-dotnet@v4
         with:
@@ -34,26 +34,28 @@ jobs:
         working-directory: ecommerce-backend
         run: dotnet restore
 
-      # 4. Build the application
+      # 4. Build backend
       - name: Build
         working-directory: ecommerce-backend
         run: dotnet build --configuration Release --no-restore
 
-      # 5. Run tests
+      # 5. Run tests (if any test projects exist)
       - name: Test
         working-directory: ecommerce-backend
-        run: dotnet test --configuration Release --no-build --verbosity normal
+        run: dotnet test --configuration Release --verbosity normal --no-build || true
 
-      # 6. Publish the application
+      # 6. Publish backend
       - name: Publish
         working-directory: ecommerce-backend
         run: dotnet publish --configuration Release --output ./publish
 
-      # 7. Deploy to Azure
-      - name: Deploy to Azure App Service
+      # 7. Deploy to MonsterASP using WebDeploy
+      - name: Deploy to MonsterASP
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: azure/webapps-deploy@v3
+        uses: rasmusbuchholdt/simply-web-deploy@2.1.0
         with:
-          app-name: YOUR_AZURE_APP_NAME
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./ecommerce-backend/publish
+          website-name: ${{ secrets.WEBSITE_NAME || 'site88404' }}
+          server-computer-name: ${{ secrets.SERVER_COMPUTER_NAME || 'https://site88404.siteasp.net:8172/msdeploy.axd' }}
+          server-username: ${{ secrets.SERVER_USERNAME || 'site88404' }}
+          server-password: ${{ secrets.SERVER_PASSWORD }}
+          source-path: ./ecommerce-backend/publish

@@ -1,0 +1,61 @@
+name: Frontend CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "ecommerce-frontend/**"
+      - ".github/workflows/frontend.yml"
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "ecommerce-frontend/**"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID || 'team_iw0zMH64HAzVozvWFF4ffzIe' }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID || 'prj_skT1owxCyPt4o39GITRMAQKHJSje' }}
+
+    steps:
+      # 1. Get the code from GitHub
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: ecommerce-frontend/package-lock.json
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        working-directory: ecommerce-frontend
+        run: npm ci
+
+      # 4. Install Vercel CLI
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      # 5. Pull Vercel environment information
+      - name: Pull Vercel environment
+        working-directory: ecommerce-frontend
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      # 6. Build project using Vercel
+      - name: Build with Vercel
+        working-directory: ecommerce-frontend
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      # 7. Deploy to Vercel
+      - name: Deploy to Vercel
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        working-directory: ecommerce-frontend
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
