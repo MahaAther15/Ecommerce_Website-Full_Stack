@@ -139,19 +139,44 @@ builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 
 // 4. Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var secretKey = jwtSettings["SecretKey"]!;
+var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JwtSettings:SecretKey is required.");
 
-// Program.cs me AddCors section:
+// 5. Dynamic CORS for Development and Production
+var allowedOrigins = new List<string>
+{
+    "http://localhost:3000",
+    "https://localhost:3000",
+    "https://ecommerce-website-full-stack-inky.vercel.app"
+};
+
+// Add configured FrontendUrl (from appsettings or environment variable FrontendUrl)
+var configuredFrontendUrl = builder.Configuration["FrontendUrl"];
+if (!string.IsNullOrWhiteSpace(configuredFrontendUrl))
+{
+    var urls = configuredFrontendUrl.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+    allowedOrigins.AddRange(urls);
+}
+
+// Add any extra origins from configuration
+var extraOrigins = builder.Configuration.GetSection("AllowedCorsOrigins").Get<string[]>();
+if (extraOrigins != null && extraOrigins.Length > 0)
+{
+    allowedOrigins.AddRange(extraOrigins);
+}
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000") // Frontend URL
+        policy.WithOrigins(allowedOrigins.Distinct().ToArray())
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials(); // 👈 Cookies send aur receive karne ke liye yeh ZAROORI hai
+              .AllowCredentials(); // Required for HttpOnly authentication cookies
     });
 });
+
+// 6. Add Health Checks
+builder.Services.AddHealthChecks();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -187,20 +212,6 @@ builder.Services.AddResponseCompression(options =>
 });
 
 var app = builder.Build();
-
-// Seed Database
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    var photoService = scope.ServiceProvider.GetRequiredService<IPhotoService>();
-    var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
-    
-    // Frontend images folder path
-    var imagesPath = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", "ecommerce-frontend", "public", "img", "products"));
-    
-    await DbSeeder.SeedProductsAsync(context, photoService, imagesPath);
-    await DbSeeder.SeedAdminUserAsync(context, passwordHasher);
-}
 
 // Middleware 1 ==> Catch all exception errors from backend and give controlled error page to frontend
 app.UseGlobalExceptionHandling();
@@ -245,10 +256,20 @@ app.UseAuthentication();
 // Middleware 14 ==> Enable Authorization
 app.UseAuthorization();
 
+// Health Check and Root Status Endpoints
+app.MapHealthChecks("/health");
+app.MapGet("/", () => Results.Ok(new 
+{ 
+    status = "healthy", 
+    service = "Cara Store Ecommerce API", 
+    environment = app.Environment.EnvironmentName,
+    timestamp = DateTime.UtcNow 
+}));
+
 // Middleware 15 ==> Map Controllers
 app.MapControllers();
 
-// Auto-apply migrations and Seed Admin User and Initial Blogs if not already present
+// Auto-apply migrations and Seed Initial Data (Admin, Products, Blogs)
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -258,12 +279,17 @@ using (var scope = app.Services.CreateScope())
         var passwordHasher = services.GetRequiredService<IPasswordHasher>();
         var photoService = services.GetRequiredService<IPhotoService>();
 
-        // Automatically create/update database tables from all migrations (including Blogs table)
+        // Automatically create/update database tables from all migrations
         await context.Database.MigrateAsync();
 
+        // Seed Admin User
         await DbSeeder.SeedAdminUserAsync(context, passwordHasher);
 
-        // Seed Blogs from frontend public folder if available
+        // Seed Products if images folder is available
+        var productImagesPath = Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, "..", "ecommerce-frontend", "public", "img", "products"));
+        await DbSeeder.SeedProductsAsync(context, photoService, productImagesPath);
+
+        // Seed Blogs if images folder is available
         var blogImagesPath = Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, "..", "ecommerce-frontend", "public", "img", "blog"));
         await DbSeeder.SeedBlogsAsync(context, photoService, blogImagesPath);
     }
