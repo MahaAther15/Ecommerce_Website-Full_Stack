@@ -1,0 +1,59 @@
+name: Backend CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "ecommerce-backend/**"
+      - ".github/workflows/backend.yml"
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "ecommerce-backend/**"
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Get the code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Install .NET 10
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      # 3. Restore NuGet packages
+      - name: Restore dependencies
+        working-directory: ecommerce-backend
+        run: dotnet restore
+
+      # 4. Build the application
+      - name: Build
+        working-directory: ecommerce-backend
+        run: dotnet build --configuration Release --no-restore
+
+      # 5. Run tests
+      - name: Test
+        working-directory: ecommerce-backend
+        run: dotnet test --configuration Release --no-build --verbosity normal
+
+      # 6. Publish the application
+      - name: Publish
+        working-directory: ecommerce-backend
+        run: dotnet publish --configuration Release --output ./publish
+
+      # 7. Deploy to Azure
+      - name: Deploy to Azure App Service
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: YOUR_AZURE_APP_NAME
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ./ecommerce-backend/publish
