@@ -114,9 +114,10 @@ export default function BlogsPage() {
         </div>
 
         {/* Search */}
-        <form onSubmit={handleSearch} style={{ display: "flex", gap: "8px" }}>
+        <form onSubmit={handleSearch} className="blog-search-form" style={{ display: "flex", gap: "8px" }}>
           <input
             type="text"
+            className="blog-search-input"
             placeholder="Search articles..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -130,6 +131,7 @@ export default function BlogsPage() {
           />
           <button
             type="submit"
+            className="blog-search-btn"
             style={{
               backgroundColor: "#088178",
               color: "#fff",
@@ -140,7 +142,7 @@ export default function BlogsPage() {
               cursor: "pointer",
             }}
           >
-            <i className="fas fa-search" />
+            <i className="fas fa-search"></i>
           </button>
         </form>
       </div>

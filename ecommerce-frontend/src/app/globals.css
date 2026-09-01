@@ -1597,6 +1597,33 @@ footer .copyright {
     flex: none !important;
   }
 
+  .blog-search-form {
+    width: 100% !important;
+    display: flex !important;
+    gap: 8px !important;
+    margin-top: 8px !important;
+  }
+
+  .blog-search-input {
+    flex: 1 !important;
+    width: 100% !important;
+    height: 40px !important;
+    padding: 8px 14px !important;
+    font-size: 13px !important;
+    border-radius: 8px !important;
+    box-sizing: border-box !important;
+  }
+
+  .blog-search-btn {
+    height: 40px !important;
+    padding: 0 16px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: none !important;
+  }
+
   /* ── Footer ── */
   footer {
     display: flex !important;
