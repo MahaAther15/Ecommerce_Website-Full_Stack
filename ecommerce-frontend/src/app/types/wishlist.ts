@@ -25,8 +25,9 @@ export interface WishlistProduct {
 }
 
 export interface WishlistResponse {
-  id: number;
-  userId: number;
+  id?: number;
+  userId?: number;
   items: WishlistItem[];
-  totalItems: number;
+  totalItems?: number;
+  totalCount?: number;
 }
