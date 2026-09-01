@@ -1574,16 +1574,31 @@ footer .copyright {
 
   /* ── Footer ── */
   footer {
-    padding: 25px 15px !important;
-    flex-direction: column !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: space-between !important;
+    padding: 30px 18px !important;
   }
 
   footer .col {
+    width: 100% !important;
+    margin-bottom: 22px !important;
+  }
+
+  /* About and My Account side-by-side on mobile */
+  footer .col:nth-child(2),
+  footer .col:nth-child(3) {
+    width: 48% !important;
+    margin-bottom: 22px !important;
+  }
+
+  footer .col.install {
     width: 100% !important;
     margin-bottom: 20px !important;
   }
 
   footer .copyright {
+    width: 100% !important;
     text-align: center !important;
     font-size: 11px !important;
     padding-top: 15px !important;
