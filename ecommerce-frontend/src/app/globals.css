@@ -2100,7 +2100,7 @@ footer .copyright {
   }
 
   .auth-page-wrapper {
-    padding: 30px 14px !important;
+    padding: 24px 14px !important;
     min-height: 100vh !important;
     height: auto !important;
     width: 100% !important;
@@ -2114,13 +2114,13 @@ footer .copyright {
   .auth-card-container {
     flex-direction: column !important;
     width: 100% !important;
-    max-width: 420px !important;
+    max-width: 390px !important;
     border-radius: 20px !important;
     height: auto !important;
     min-height: auto !important;
     max-height: none !important;
-    margin: 20px auto !important;
-    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.12) !important;
+    margin: auto !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1) !important;
     overflow: hidden !important;
   }
 
@@ -2129,7 +2129,8 @@ footer .copyright {
     width: 100% !important;
     height: auto !important;
     min-height: auto !important;
-    padding: 28px 18px 22px !important;
+    max-height: 140px !important;
+    padding: 20px 18px 16px !important;
     border-radius: 20px 20px 0 0 !important;
     text-align: center !important;
     align-items: center !important;
@@ -2140,7 +2141,11 @@ footer .copyright {
     box-sizing: border-box !important;
   }
 
-  .auth-banner-side > div {
+  .auth-banner-side > div[style*="position: absolute"] {
+    display: none !important;
+  }
+
+  .auth-banner-side > div:last-child {
     position: relative !important;
     z-index: 2 !important;
     width: 100% !important;
@@ -2150,26 +2155,26 @@ footer .copyright {
   }
 
   .auth-banner-side span {
-    font-size: 11px !important;
+    font-size: 10px !important;
     font-weight: 700 !important;
     letter-spacing: 1.5px !important;
-    margin-bottom: 6px !important;
+    margin-bottom: 4px !important;
     display: block !important;
     color: #a7f3d0 !important;
     line-height: 1.2 !important;
   }
 
   .auth-banner-side h1 {
-    font-size: 22px !important;
+    font-size: 20px !important;
     font-weight: 800 !important;
-    line-height: 28px !important;
-    margin: 0 0 8px 0 !important;
+    line-height: 24px !important;
+    margin: 0 0 6px 0 !important;
     color: #ffffff !important;
   }
 
   .auth-banner-side p {
-    font-size: 12px !important;
-    line-height: 1.5 !important;
+    font-size: 11px !important;
+    line-height: 1.4 !important;
     margin: 0 !important;
     display: block !important;
     max-width: 100% !important;
