@@ -769,7 +769,7 @@ export default function ProfileDashboard() {
                           {validatePakPhone(formData.phoneNumber)}
                         </p>
                       )}
-                      <p style={{ color: "#9ca3af", fontSize: "11px", marginTop: "4px">{(formData.phoneNumber?.length || 0)}/11 digits</p>
+                      <p style={{ color: "#9ca3af", fontSize: "11px", marginTop: "4px" }}>{(formData.phoneNumber?.length || 0)}/11 digits</p>
                     </div>
                   </div>
                   <button type="submit" disabled={saving}
