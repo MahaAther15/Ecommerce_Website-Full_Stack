@@ -73,21 +73,37 @@ export default function BlogsPage() {
       <BlogHero />
 
       {/* Filter & Search Bar */}
-      <div style={{ maxWidth: "1200px", margin: "30px auto 10px", padding: "0 20px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
+      <div
+        className="blog-filter-bar"
+        style={{
+          maxWidth: "1200px",
+          margin: "24px auto 10px",
+          padding: "0 20px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: "14px",
+        }}
+      >
         {/* Categories */}
-        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+        <div
+          className="blog-categories-wrapper"
+          style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" }}
+        >
           {["All", ...categories].map((cat) => (
             <button
               key={cat}
+              className={`blog-cat-btn ${selectedCategory === cat ? "active" : ""}`}
               onClick={() => setSelectedCategory(cat)}
               style={{
-                padding: "8px 18px",
-                borderRadius: "20px",
+                padding: "6px 13px",
+                borderRadius: "14px",
                 border: "none",
-                fontSize: "13px",
-                fontWeight: "700",
+                fontSize: "12px",
+                fontWeight: "600",
                 cursor: "pointer",
-                backgroundColor: selectedCategory === cat ? "#088178" : "#e5e7eb",
+                backgroundColor: selectedCategory === cat ? "#088178" : "#f1f3f5",
                 color: selectedCategory === cat ? "#fff" : "#4b5563",
                 transition: "all 0.2s ease",
               }}
