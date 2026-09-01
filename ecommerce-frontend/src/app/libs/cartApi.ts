@@ -22,18 +22,32 @@ export interface BackendCart {
     totalAmount: number;
 }
 
+async function parseJsonResponse(response: Response): Promise<any> {
+    const text = await response.text();
+    if (!text) return null;
+    try {
+        return JSON.parse(text);
+    } catch {
+        return null;
+    }
+}
+
 // 1. Get Current User Cart (Logged-in User)
 export async function getCartApi(): Promise<BackendCart> {
-    const res = await authenticatedFetch(`${API_BASE_URL}/api/cart`, {
-        method: "GET",
-        cache: "no-store",
-    });
+    try {
+        const res = await authenticatedFetch(`${API_BASE_URL}/api/cart`, {
+            method: "GET",
+            cache: "no-store",
+        });
 
-    const result = await res.json();
-    if (!res.ok || !result.success) {
-        throw new Error(result.message || "Failed to fetch cart.");
+        const result = await parseJsonResponse(res);
+        if (!res.ok || !result || !result.success) {
+            return { id: 0, userId: 0, items: [], totalQuantity: 0, totalAmount: 0 };
+        }
+        return result.data;
+    } catch {
+        return { id: 0, userId: 0, items: [], totalQuantity: 0, totalAmount: 0 };
     }
-    return result.data;
 }
 
 // 2. Add Item to Cart
@@ -44,9 +58,9 @@ export async function addToCartApi(productId: number, quantity: number = 1): Pro
         body: JSON.stringify({ productId, quantity }),
     });
 
-    const result = await res.json();
-    if (!res.ok || !result.success) {
-        throw new Error(result.message || "Failed to add item to cart.");
+    const result = await parseJsonResponse(res);
+    if (!res.ok || !result || !result.success) {
+        throw new Error(result?.message || "Failed to add item to cart.");
     }
     return result.data;
 }
@@ -59,9 +73,9 @@ export async function updateCartQuantityApi(productId: number, quantity: number)
         body: JSON.stringify({ quantity }),
     });
 
-    const result = await res.json();
-    if (!res.ok || !result.success) {
-        throw new Error(result.message || "Failed to update item quantity.");
+    const result = await parseJsonResponse(res);
+    if (!res.ok || !result || !result.success) {
+        throw new Error(result?.message || "Failed to update item quantity.");
     }
     return result.data;
 }
@@ -72,9 +86,9 @@ export async function removeFromCartApi(productId: number): Promise<BackendCart>
         method: "DELETE",
     });
 
-    const result = await res.json();
-    if (!res.ok || !result.success) {
-        throw new Error(result.message || "Failed to remove item from cart.");
+    const result = await parseJsonResponse(res);
+    if (!res.ok || !result || !result.success) {
+        throw new Error(result?.message || "Failed to remove item from cart.");
     }
     return result.data;
 }
@@ -85,9 +99,9 @@ export async function clearCartApi(): Promise<boolean> {
         method: "DELETE",
     });
 
-    const result = await res.json();
-    if (!res.ok || !result.success) {
-        throw new Error(result.message || "Failed to clear cart.");
+    const result = await parseJsonResponse(res);
+    if (!res.ok || !result || !result.success) {
+        throw new Error(result?.message || "Failed to clear cart.");
     }
     return true;
 }

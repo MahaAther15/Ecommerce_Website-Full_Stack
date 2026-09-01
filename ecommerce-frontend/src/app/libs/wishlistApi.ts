@@ -3,15 +3,31 @@ import { WishlistResponse } from "../types/wishlist";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5024";
 
+async function parseJsonResponse(response: Response): Promise<any> {
+    const text = await response.text();
+    if (!text) return null;
+    try {
+        return JSON.parse(text);
+    } catch {
+        return null;
+    }
+}
+
 // 1. Fetch current logged-in user wishlist
 export async function getWishlistApi(): Promise<WishlistResponse> {
-    const res = await authenticatedFetch(`${API_BASE_URL}/api/wishlist`, {
-        method: "GET",
-        cache: "no-store",
-    });
-    const data = await res.json();
-    if (!res.ok || !data.success) throw new Error(data.message || "Failed to fetch wishlist");
-    return data.data;
+    try {
+        const res = await authenticatedFetch(`${API_BASE_URL}/api/wishlist`, {
+            method: "GET",
+            cache: "no-store",
+        });
+        const data = await parseJsonResponse(res);
+        if (!res.ok || !data || !data.success) {
+            return { items: [], totalCount: 0 };
+        }
+        return data.data;
+    } catch {
+        return { items: [], totalCount: 0 };
+    }
 }
 
 // 2. Toggle item in wishlist (Add/Remove)
@@ -21,8 +37,8 @@ export async function toggleWishlistApi(productId: number): Promise<WishlistResp
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ productId }),
     });
-    const data = await res.json();
-    if (!res.ok || !data.success) throw new Error(data.message || "Failed to toggle wishlist");
+    const data = await parseJsonResponse(res);
+    if (!res.ok || !data || !data.success) throw new Error(data?.message || "Failed to toggle wishlist");
     return data.data;
 }
 
@@ -31,8 +47,8 @@ export async function removeFromWishlistApi(productId: number): Promise<Wishlist
     const res = await authenticatedFetch(`${API_BASE_URL}/api/wishlist/items/${productId}`, {
         method: "DELETE",
     });
-    const data = await res.json();
-    if (!res.ok || !data.success) throw new Error(data.message || "Failed to remove item");
+    const data = await parseJsonResponse(res);
+    if (!res.ok || !data || !data.success) throw new Error(data?.message || "Failed to remove item");
     return data.data;
 }
 
@@ -41,7 +57,7 @@ export async function clearWishlistApi(): Promise<boolean> {
     const res = await authenticatedFetch(`${API_BASE_URL}/api/wishlist/clear`, {
         method: "DELETE",
     });
-    const data = await res.json();
-    if (!res.ok || !data.success) throw new Error(data.message || "Failed to clear wishlist");
-    return data.data;
+    const data = await parseJsonResponse(res);
+    if (!res.ok || !data || !data.success) throw new Error(data?.message || "Failed to clear wishlist");
+    return true;
 }

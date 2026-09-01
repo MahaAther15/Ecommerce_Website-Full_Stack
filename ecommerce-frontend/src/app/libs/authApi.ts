@@ -11,6 +11,17 @@ export interface AuthResponse {
   role: string;
 }
 
+// Helper to safely parse JSON response without throwing SyntaxError
+async function parseJsonResponse(response: Response): Promise<any> {
+  const text = await response.text();
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
+
 // 1. Session Storage Helpers
 export function setAuthSession(data: AuthResponse) {
   if (typeof window !== "undefined") {
@@ -79,23 +90,28 @@ export function logout() {
 
 // 2. Register API Call
 export async function registerApi(data: RegisterFormData): Promise<AuthResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({
-      fullName: data.fullName,
-      email: data.email,
-      password: data.password,
-    }),
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        fullName: data.fullName,
+        email: data.email,
+        password: data.password,
+      }),
+    });
+  } catch {
+    throw new Error("Unable to connect to backend server. Please verify your connection or backend status.");
+  }
 
-  const resData = await response.json();
+  const resData = await parseJsonResponse(response);
 
-  if (!response.ok) {
-    throw new Error(resData.message || "Registration failed. Please try again.");
+  if (!response.ok || !resData) {
+    throw new Error(resData?.message || `Registration failed (${response.status}). Please try again.`);
   }
 
   return resData;
@@ -103,22 +119,27 @@ export async function registerApi(data: RegisterFormData): Promise<AuthResponse>
 
 // 3. Login API Call
 export async function loginApi(data: LoginFormData): Promise<AuthResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({
-      email: data.email,
-      password: data.password,
-    }),
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        email: data.email,
+        password: data.password,
+      }),
+    });
+  } catch {
+    throw new Error("Unable to connect to backend server. Please verify your connection or backend status.");
+  }
 
-  const resData = await response.json();
+  const resData = await parseJsonResponse(response);
 
-  if (!response.ok) {
-    throw new Error(resData.message || "Login failed. Invalid credentials.");
+  if (!response.ok || !resData) {
+    throw new Error(resData?.message || "Login failed. Invalid credentials or server error.");
   }
 
   return resData;
@@ -126,24 +147,30 @@ export async function loginApi(data: LoginFormData): Promise<AuthResponse> {
 
 // 4. Google Login API Call
 export async function googleLoginApi(idToken: string): Promise<AuthResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/auth/google-login`, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ idToken }),
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}/api/auth/google-login`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ idToken }),
+    });
+  } catch {
+    throw new Error("Unable to connect to backend server. Please verify your connection or backend status.");
+  }
 
-  const resData = await response.json();
+  const resData = await parseJsonResponse(response);
 
-  if (!response.ok) {
-    throw new Error(resData.message || "Google authentication failed.");
+  if (!response.ok || !resData) {
+    throw new Error(resData?.message || "Google authentication failed.");
   }
 
   return resData;
 }
-// 1. Updated Refresh Token API Call with Cookie + LocalStorage Fallback
+
+// 5. Updated Refresh Token API Call with Cookie + LocalStorage Fallback
 export async function refreshTokenApi(): Promise<AuthResponse> {
   const accessToken = getAuthToken();
   const refreshToken = getRefreshToken() || "";
@@ -153,22 +180,22 @@ export async function refreshTokenApi(): Promise<AuthResponse> {
     throw new Error("No active session found.");
   }
 
-  // 🍪 Browser cookie ke zariye bhi bhejega aur body me fallback ke taur par bhi jayega
-  const response = await fetch(`${API_BASE_URL}/api/auth/refresh-token`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include", // Browser cookie bhejne ki permission deta hai
-    body: JSON.stringify({ accessToken: accessToken || "", refreshToken }),
-  });
-
-  let resData: any = null;
+  let response: Response;
   try {
-    resData = await response.json();
+    response = await fetch(`${API_BASE_URL}/api/auth/refresh-token`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ accessToken: accessToken || "", refreshToken }),
+    });
   } catch {
-    // Non-JSON response handling
+    logout();
+    throw new Error("Session refresh connection failed.");
   }
 
-  if (!response.ok) {
+  const resData = await parseJsonResponse(response);
+
+  if (!response.ok || !resData) {
     logout();
     throw new Error(resData?.message || "Session expired. Please log in again.");
   }
@@ -177,7 +204,7 @@ export async function refreshTokenApi(): Promise<AuthResponse> {
   return resData;
 }
 
-// 2. Updated Authenticated Fetch Wrapper with Silent Refresh
+// 6. Updated Authenticated Fetch Wrapper with Silent Refresh
 export async function authenticatedFetch(url: string, options: RequestInit = {}): Promise<Response> {
   let token = getAuthToken();
 
@@ -186,12 +213,16 @@ export async function authenticatedFetch(url: string, options: RequestInit = {})
     headers.set("Authorization", `Bearer ${token}`);
   }
 
-  // Har request me credentials: "include" lazmi karein
-  let response = await fetch(url, {
-    ...options,
-    headers,
-    credentials: "include"
-  });
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      ...options,
+      headers,
+      credentials: "include"
+    });
+  } catch (err) {
+    throw new Error("Unable to reach server. Please check backend availability.");
+  }
 
   // Agar 401 aaye to silent refresh karein
   if (response.status === 401) {
@@ -210,21 +241,25 @@ export async function authenticatedFetch(url: string, options: RequestInit = {})
   return response;
 }
 
-
 // 7. Forgot Password API Call
 export async function forgotPasswordApi(email: string): Promise<{ message: string }> {
-  const response = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ email }),
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+  } catch {
+    throw new Error("Unable to connect to backend server. Please try again later.");
+  }
 
-  const resData = await response.json();
+  const resData = await parseJsonResponse(response);
 
-  if (!response.ok) {
-    throw new Error(resData.message || "Failed to process forgot password request.");
+  if (!response.ok || !resData) {
+    throw new Error(resData?.message || "Failed to process forgot password request.");
   }
 
   return resData;
@@ -232,18 +267,23 @@ export async function forgotPasswordApi(email: string): Promise<{ message: strin
 
 // 8. Reset Password API Call
 export async function resetPasswordApi(token: string, newPassword: string): Promise<{ message: string }> {
-  const response = await fetch(`${API_BASE_URL}/api/auth/reset-password`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ token, newPassword }),
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}/api/auth/reset-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ token, newPassword }),
+    });
+  } catch {
+    throw new Error("Unable to connect to backend server. Please try again later.");
+  }
 
-  const resData = await response.json();
+  const resData = await parseJsonResponse(response);
 
-  if (!response.ok) {
-    throw new Error(resData.message || "Failed to reset password.");
+  if (!response.ok || !resData) {
+    throw new Error(resData?.message || "Failed to reset password.");
   }
 
   return resData;
