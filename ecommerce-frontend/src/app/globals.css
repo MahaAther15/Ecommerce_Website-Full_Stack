@@ -2413,9 +2413,17 @@ footer .copyright {
 
   .auth-form-side input[type="text"],
   .auth-form-side input[type="email"],
+  .auth-form-side input[type="tel"] {
+    font-size: 13px !important;
+    padding: 11px 14px 11px 44px !important;
+    height: 44px !important;
+    border-radius: 10px !important;
+    box-sizing: border-box !important;
+  }
+
   .auth-form-side input[type="password"] {
     font-size: 13px !important;
-    padding: 11px 14px !important;
+    padding: 11px 55px 11px 44px !important;
     height: 44px !important;
     border-radius: 10px !important;
     box-sizing: border-box !important;
