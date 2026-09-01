@@ -6,6 +6,7 @@ import { fetchProducts, addProduct, editProduct, removeProduct } from "@/app/red
 import { uploadProductImageApi } from "@/app/libs/productApi";
 import { Product } from "@/app/types/product";
 import { getCategoriesApi, Category } from "@/app/libs/categoryApi";
+import { getProductImage } from "@/app/libs/productUtils";
 
 export default function AdminProductsPage() {
     const dispatch = useAppDispatch();
@@ -169,7 +170,7 @@ export default function AdminProductsPage() {
             )}
 
             {/* Header Bar */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "28px" }}>
+            <div className="admin-page-header-row" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "28px" }}>
                 <div>
                     <h1 style={{ fontSize: "24px", fontWeight: "800", color: "#1f2937" }}>Products Management</h1>
                     <p style={{ color: "#6b7280", fontSize: "14px" }}>Manage inventory, add new stock, update pricing & categories.</p>
@@ -194,7 +195,7 @@ export default function AdminProductsPage() {
             </div>
 
             {/* Filter / Search Bar */}
-            <div style={{ marginBottom: "20px", position: "relative", maxWidth: "450px" }}>
+            <div className="admin-search-wrapper" style={{ marginBottom: "20px", position: "relative", maxWidth: "450px" }}>
                 <i className="fas fa-search" style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#9ca3af", fontSize: "14px" }} />
                 <input
                     type="text"
@@ -238,8 +239,8 @@ export default function AdminProductsPage() {
             </div>
 
             {/* Products Table */}
-            <div style={{ backgroundColor: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", overflow: "hidden" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+            <div className="admin-table-card" style={{ backgroundColor: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: "650px" }}>
                     <thead style={{ backgroundColor: "#f9fafb", borderBottom: "1px solid #e5e7eb" }}>
                         <tr>
                             <th style={{ padding: "14px 16px" }}>Image</th>
@@ -264,7 +265,7 @@ export default function AdminProductsPage() {
                                 <tr key={prod.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
                                     <td style={{ padding: "12px 16px" }}>
                                         <img
-                                            src={prod.imageUrl || "/img/products/f1.jpg"}
+                                            src={getProductImage(prod)}
                                             alt={prod.title}
                                             style={{ width: "48px", height: "48px", objectFit: "cover", borderRadius: "6px" }}
                                         />

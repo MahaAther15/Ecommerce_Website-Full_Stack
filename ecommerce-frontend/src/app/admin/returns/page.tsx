@@ -49,7 +49,7 @@ export default function AdminReturnsPage() {
 
     return (
         <div style={{ padding: "30px", fontFamily: "'Inter', sans-serif" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+            <div className="admin-page-header-row" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
                 <div>
                     <h1 style={{ fontSize: "24px", fontWeight: "800", color: "#111827", margin: 0 }}>
                         <i className="fas fa-undo-alt" style={{ color: "#088178", marginRight: "10px" }} />
@@ -77,8 +77,8 @@ export default function AdminReturnsPage() {
             </div>
 
             {/* Table Container */}
-            <div style={{ backgroundColor: "#fff", borderRadius: "12px", boxShadow: "0 2px 10px rgba(0,0,0,0.05)", overflow: "hidden" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "14px" }}>
+            <div className="admin-table-card" style={{ backgroundColor: "#fff", borderRadius: "12px", boxShadow: "0 2px 10px rgba(0,0,0,0.05)", overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "14px", minWidth: "750px" }}>
                     <thead style={{ backgroundColor: "#f9fafb", borderBottom: "1px solid #e5e7eb" }}>
                         <tr>
                             <th style={{ padding: "14px 18px", color: "#4b5563" }}>Order #</th>

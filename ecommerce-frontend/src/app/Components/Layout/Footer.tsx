@@ -53,7 +53,7 @@ export default function Footer() {
         <img src="/img/pay/pay.png" alt="Payment Gateways" />
       </div>
       <div className="copyright">
-        <p>© 2011, Tech2 etc - HTML CSS E-Commerce Templates</p>
+        <p>© 2011, Cara-Ecommerce</p>
       </div>
     </footer>
   );

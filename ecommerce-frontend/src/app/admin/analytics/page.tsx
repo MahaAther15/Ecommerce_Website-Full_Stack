@@ -70,7 +70,7 @@ export default function AdminAnalyticsPage() {
             )}
 
             {/* Header & Controls */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "28px" }}>
+            <div className="admin-page-header-row" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "28px" }}>
                 <div>
                     <h1 style={{ fontSize: "26px", fontWeight: "800", color: "#111827", margin: 0 }}>
                         <i className="fas fa-chart-line" style={{ color: "#088178", marginRight: "12px" }} />
@@ -81,7 +81,7 @@ export default function AdminAnalyticsPage() {
                     </p>
                 </div>
 
-                <div style={{ display: "flex", gap: "10px" }}>
+                <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
                     <select
                         value={range}
                         onChange={(e) => setRange(e.target.value)}
@@ -104,7 +104,7 @@ export default function AdminAnalyticsPage() {
             </div>
 
             {/* 1. Primary Financial KPIs */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "24px" }}>
+            <div className="admin-stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "24px" }}>
                 <KpiCard title="Net Revenue" value={`$${financials.netRevenue.toLocaleString()}`} subtitle={`Gross: $${financials.grossRevenue.toLocaleString()}`} icon="fa-wallet" color="#088178" />
                 <KpiCard title="COGS / Capital" value={`$${financials.cogs.toLocaleString()}`} subtitle="Cost of sold units" icon="fa-boxes-packing" color="#3b82f6" />
                 <KpiCard title="Gross Profit" value={`$${financials.grossProfit.toLocaleString()}`} subtitle={`${financials.grossMarginPercent}% margin`} icon="fa-hand-holding-dollar" color="#10b981" />
@@ -113,7 +113,7 @@ export default function AdminAnalyticsPage() {
             </div>
 
             {/* 2. Secondary Row: Inventory, Losses, Growth, Orders */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "28px" }}>
+            <div className="admin-stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "28px" }}>
                 <KpiCard title="Inventory Asset Value" value={`$${financials.inventoryAssetValue.toLocaleString()}`} subtitle="Warehouse stock capital" icon="fa-warehouse" color="#6366f1" />
                 <KpiCard title="Damaged Stock Loss" value={`$${returnsAndLoss.damagedInventoryLoss.toLocaleString()}`} subtitle={`${returnsAndLoss.damagedUnits} damaged units`} icon="fa-triangle-exclamation" color="#ef4444" />
                 <KpiCard title="Refunds & Returns" value={`$${returnsAndLoss.totalRefundAmount.toLocaleString()}`} subtitle={`${returnsAndLoss.approvedOrders} approved refunds`} icon="fa-arrow-rotate-left" color="#8b5cf6" />
@@ -121,7 +121,7 @@ export default function AdminAnalyticsPage() {
             </div>
 
             {/* 3. Detailed P&L Waterfall Card & Category Performance */}
-            <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: "24px", marginBottom: "28px" }}>
+            <div className="admin-analytics-pnl-grid" style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: "24px", marginBottom: "28px" }}>
                 {/* P&L Statement */}
                 <div style={{ backgroundColor: "#fff", borderRadius: "14px", padding: "24px", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
                     <h3 style={{ margin: "0 0 16px 0", fontSize: "17px", fontWeight: "800", color: "#111827" }}>

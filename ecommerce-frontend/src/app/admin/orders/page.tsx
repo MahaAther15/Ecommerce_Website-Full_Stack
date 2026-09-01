@@ -81,7 +81,7 @@ export default function AdminOrdersPage() {
             </div>
 
             {/* Stats Row */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "28px" }}>
+            <div className="admin-stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "28px" }}>
                 {[
                     { label: "Total Orders", value: stats.total, icon: "fas fa-list", color: "#088178", bg: "#e6f7f5" },
                     { label: "Pending", value: stats.pending, icon: "fas fa-clock", color: "#d97706", bg: "#fef3c7" },
@@ -101,7 +101,7 @@ export default function AdminOrdersPage() {
             </div>
 
             {/* Filters */}
-            <div style={{ display: "flex", gap: "12px", marginBottom: "20px", flexWrap: "wrap", alignItems: "center" }}>
+            <div className="admin-filters-bar" style={{ display: "flex", gap: "12px", marginBottom: "20px", flexWrap: "wrap", alignItems: "center" }}>
                 <div style={{ position: "relative", flex: "1 1 300px" }}>
                     <i className="fas fa-search" style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#9ca3af", fontSize: "14px" }} />
                     <input
@@ -168,7 +168,7 @@ export default function AdminOrdersPage() {
             </div>
 
             {/* Table */}
-            <div style={{ backgroundColor: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", overflow: "hidden" }}>
+            <div className="admin-table-card" style={{ backgroundColor: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", overflowX: "auto" }}>
                 {loading ? (
                     <div style={{ textAlign: "center", padding: "60px", color: "#6b7280", fontWeight: "600" }}>
                         <i className="fas fa-spinner fa-spin" style={{ fontSize: "28px", marginBottom: "12px", display: "block" }} />Loading orders...
@@ -178,7 +178,7 @@ export default function AdminOrdersPage() {
                         <i className="fas fa-inbox" style={{ fontSize: "40px", marginBottom: "12px", display: "block" }} />No orders found.
                     </div>
                 ) : (
-                    <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: "750px" }}>
                         <thead style={{ backgroundColor: "#f9fafb", borderBottom: "1px solid #e5e7eb" }}>
                             <tr>
                                 {["Order Code", "Customer ID", "Items", "Total", "Payment", "Status", "Date", "Update Status"].map((h) => (

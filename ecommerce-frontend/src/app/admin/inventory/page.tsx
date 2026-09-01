@@ -13,6 +13,7 @@ import {
   adjustStockApi,
   getProductLogsApi,
 } from "@/app/libs/inventoryApi";
+import { getProductImage } from "@/app/libs/productUtils";
 
 export default function AdminInventoryPage() {
   const [summary, setSummary] = useState<InventorySummary | null>(null);
@@ -155,6 +156,7 @@ export default function AdminInventoryPage() {
       {/* Summary Metrics Row */}
       {summary && (
         <div
+          className="admin-stats-grid"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
@@ -204,38 +206,48 @@ export default function AdminInventoryPage() {
 
           <div style={{ backgroundColor: "#fff", borderRadius: "12px", padding: "18px 20px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "14px" }}>
             <div style={{ width: "44px", height: "44px", borderRadius: "12px", backgroundColor: "#ede9fe", color: "#7c3aed", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>
-              <i className="fas fa-warehouse" />
+              <i className="fas fa-cubes" />
             </div>
             <div>
               <div style={{ fontSize: "11px", color: "#9ca3af", fontWeight: "700", textTransform: "uppercase" }}>Total Units</div>
-              <div style={{ fontSize: "20px", fontWeight: "800", color: "#7c3aed" }}>{summary.totalStockUnits.toLocaleString()}</div>
+              <div style={{ fontSize: "20px", fontWeight: "800", color: "#7c3aed" }}>{summary.totalQuantity}</div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Filter Tabs & Search Bar */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "12px" }}>
-        <div style={{ display: "flex", gap: "8px" }}>
+      {/* Filter and Search Bar */}
+      <div
+        className="admin-filters-bar"
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: "12px",
+          marginBottom: "20px",
+        }}
+      >
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
           {[
             { key: "all", label: "All Items" },
-            { key: "lowstock", label: `Low Stock (${summary?.lowStockProducts ?? 0})` },
-            { key: "outofstock", label: `Out of Stock (${summary?.outOfStockProducts ?? 0})` },
+            { key: "low", label: `Low Stock (${summary?.lowStockProducts ?? 0})` },
+            { key: "out", label: `Out of Stock (${summary?.outOfStockProducts ?? 0})` },
           ].map((tab) => (
             <button
               key={tab.key}
-              onClick={() => setFilter(tab.key)}
+              onClick={() => handleFilterChange(tab.key)}
               style={{
                 padding: "8px 16px",
                 borderRadius: "8px",
-                border: "none",
                 fontSize: "13px",
                 fontWeight: "700",
+                border: "none",
                 cursor: "pointer",
                 backgroundColor: filter === tab.key ? "#088178" : "#fff",
-                color: filter === tab.key ? "#fff" : "#6b7280",
-                boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-                transition: "0.2s",
+                color: filter === tab.key ? "#fff" : "#4b5563",
+                boxShadow: filter === tab.key ? "0 2px 6px rgba(8,129,120,0.3)" : "0 1px 3px rgba(0,0,0,0.05)",
+                transition: "0.15s",
               }}
             >
               {tab.label}
@@ -243,7 +255,7 @@ export default function AdminInventoryPage() {
           ))}
         </div>
 
-        <form onSubmit={handleSearchSubmit} style={{ position: "relative", minWidth: "280px" }}>
+        <form onSubmit={handleSearchSubmit} className="admin-search-wrapper" style={{ position: "relative", minWidth: "280px" }}>
           <i className="fas fa-search" style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#9ca3af", fontSize: "13px" }} />
           <input
             type="text"
@@ -280,7 +292,7 @@ export default function AdminInventoryPage() {
       </div>
 
       {/* Inventory Table */}
-      <div style={{ backgroundColor: "#fff", borderRadius: "16px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", overflow: "hidden" }}>
+      <div className="admin-table-card" style={{ backgroundColor: "#fff", borderRadius: "16px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", overflowX: "auto" }}>
         {loading ? (
           <div style={{ padding: "60px", textAlign: "center", color: "#6b7280" }}>
             <i className="fas fa-spinner fa-spin" style={{ fontSize: "28px", color: "#088178", marginBottom: "12px", display: "block" }} />
@@ -293,7 +305,7 @@ export default function AdminInventoryPage() {
           </div>
         ) : (
           <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: "650px" }}>
               <thead style={{ backgroundColor: "#f9fafb", borderBottom: "1px solid #e5e7eb" }}>
                 <tr>
                   {["Product", "Category / Brand", "Price", "Stock Level", "Status", "Actions"].map((h) => (
@@ -311,7 +323,7 @@ export default function AdminInventoryPage() {
                   const category = item.category || (item as any).Category;
                   const brand = item.brand || (item as any).Brand;
                   const stock = item.stockQuantity ?? (item as any).StockQuantity ?? 0;
-                  const img = item.imageUrl || (item as any).ImageUrl || "/img/products/f1.jpg";
+                  const img = getProductImage({ imageUrl: item.imageUrl || (item as any).ImageUrl, id: prodId });
 
                   const isOut = stock <= 0;
                   const isLow = stock > 0 && stock <= 5;

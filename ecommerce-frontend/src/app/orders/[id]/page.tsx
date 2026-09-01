@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { fetchOrderById, cancelOrder, clearSelectedOrder, fetchMyOrders } from "@/app/redux/slices/orderSlice";
 import ReturnRefundModal from "../ReturnRefundModal";
+import { getProductImage } from "@/app/libs/productUtils";
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: string }> = {
     Pending: { label: "Pending", color: "#d97706", bg: "#fef3c7", icon: "fas fa-clock" },
@@ -75,7 +76,7 @@ export default function OrderDetailPage() {
     const orderCode = order.orderNumber || `ORD-${10000 + order.id}`;
 
     return (
-        <div style={{ maxWidth: "900px", margin: "40px auto", padding: "0 24px", fontFamily: "'Inter', system-ui, sans-serif" }}>
+        <div className="order-tracking-wrapper" style={{ maxWidth: "900px", margin: "40px auto", padding: "0 24px", fontFamily: "'Inter', system-ui, sans-serif" }}>
 
             {/* Header */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "32px", flexWrap: "wrap", gap: "16px" }}>
@@ -121,7 +122,7 @@ export default function OrderDetailPage() {
 
             {/* Progress Timeline */}
             {order.status !== "Cancelled" && (
-                <div style={{ backgroundColor: "#fff", borderRadius: "16px", padding: "24px 32px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", marginBottom: "24px" }}>
+                <div style={{ backgroundColor: "#fff", borderRadius: "16px", padding: "24px 20px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", marginBottom: "24px" }}>
                     <h3 style={{ fontSize: "14px", fontWeight: "700", color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "20px" }}>Order Progress</h3>
                     <div style={{ display: "flex", alignItems: "center" }}>
                         {["Pending", "Confirmed", "Shipped", "Delivered"].map((step, i, arr) => {
@@ -146,7 +147,7 @@ export default function OrderDetailPage() {
                 </div>
             )}
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: "24px" }}>
+            <div className="order-tracking-grid" style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: "24px" }}>
                 {/* Left */}
                 <div>
                     {/* Order Items */}
@@ -157,12 +158,9 @@ export default function OrderDetailPage() {
                             </h3>
                         </div>
                         {order.orderItems.map((item) => (
-                            <div key={item.id} style={{ display: "flex", alignItems: "center", gap: "16px", padding: "16px 24px", borderBottom: "1px solid #f9fafb" }}>
+                            <div key={item.id} style={{ display: "flex", alignItems: "center", gap: "16px", padding: "16px 20px", borderBottom: "1px solid #f9fafb" }}>
                                 <div style={{ width: "64px", height: "64px", borderRadius: "10px", overflow: "hidden", backgroundColor: "#f3f4f6", flexShrink: 0 }}>
-                                    {item.productImage
-                                        ? <img src={item.productImage} alt={item.productTitle} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                                        : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}><i className="fas fa-image" style={{ color: "#d1d5db", fontSize: "24px" }} /></div>
-                                    }
+                                    <img src={getProductImage({ imageUrl: item.productImage, id: item.productId })} alt={item.productTitle} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                                 </div>
                                 <div style={{ flex: 1 }}>
                                     <div style={{ fontWeight: "700", color: "#111827", fontSize: "14px" }}>{item.productTitle}</div>
@@ -210,7 +208,7 @@ export default function OrderDetailPage() {
                         <h3 style={{ fontSize: "16px", fontWeight: "800", color: "#1f2937", marginBottom: "16px" }}>
                             <i className="fas fa-map-marker-alt" style={{ color: "#088178", marginRight: "8px" }} />Shipping Details
                         </h3>
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                        <div className="order-shipping-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                             {[
                                 { label: "Address", value: order.shippingAddress },
                                 { label: "City", value: order.city },
@@ -230,7 +228,7 @@ export default function OrderDetailPage() {
 
                 {/* Right: Price Summary */}
                 <div>
-                    <div style={{ backgroundColor: "#fff", borderRadius: "16px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", padding: "24px", position: "sticky", top: "24px" }}>
+                    <div className="order-price-card" style={{ backgroundColor: "#fff", borderRadius: "16px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", padding: "24px", position: "sticky", top: "24px" }}>
                         <h3 style={{ fontSize: "16px", fontWeight: "800", color: "#1f2937", marginBottom: "20px" }}>
                             <i className="fas fa-receipt" style={{ color: "#088178", marginRight: "8px" }} />Price Breakdown
                         </h3>

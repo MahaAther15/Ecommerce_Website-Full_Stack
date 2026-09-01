@@ -1,26 +1,27 @@
 [
   {
     "id": "1",
-    "name": "John Deo",
+    "name": "Brady",
     "role": "Senior Marketing Manager",
     "phone": "+000 124 000 77 88",
-    "email": "contact@gmail.com",
+    "email": "BradJackson12@gmail.com",
     "image": "/img/people/1.png"
   },
   {
     "id": "2",
-    "name": "John Deo",
+    "name": "Luke",
     "role": "Senior Executive Manager",
     "phone": "+000 567 980 88 98",
-    "email": "contact@gmail.com",
+    "email": "Luke45@gmail.com",
     "image": "/img/people/2.png"
   },
   {
     "id": "3",
-    "name": "John Deo",
+    "name": "Nora Aeirling",
     "role": "Senior Software Engineer",
     "phone": "+089 654 612 99 88",
-    "email": "contact@gmail.com",
+    "email": "NoraAeirling30@gmail.com",
     "image": "/img/people/3.png"
+    
   }
 ]
