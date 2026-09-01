@@ -362,13 +362,12 @@ export default function ProfileDashboard() {
         style={{
           width: "100%",
           maxWidth: "1280px",
-          height: "calc(100vh - 48px)",
-          maxHeight: "860px",
+          minHeight: "calc(100vh - 48px)",
+          height: "auto",
           backgroundColor: "#ffffff",
           borderRadius: "24px",
           boxShadow: "0 20px 60px rgba(0, 0, 0, 0.08)",
           display: "flex",
-          overflow: "hidden",
           position: "relative",
         }}
       >
