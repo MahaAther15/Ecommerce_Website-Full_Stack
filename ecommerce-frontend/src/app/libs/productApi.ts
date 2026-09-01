@@ -1,8 +1,26 @@
 import { Product, PagedResult, ProductFilterParams } from "@/app/types/product";
 import { authenticatedFetch, getAuthToken } from "./authApi";
 
-
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5024";
+
+// Helper to safely parse JSON response
+async function handleResponse(res: Response) {
+  let result: any = null;
+  const text = await res.text();
+  if (text) {
+    try {
+      result = JSON.parse(text);
+    } catch {
+      result = null;
+    }
+  }
+
+  if (!res.ok || (result && !result.success)) {
+    throw new Error(result?.message || `Request failed with status ${res.status}`);
+  }
+
+  return result ? result.data : null;
+}
 
 // 1. Get All Products with Filters & Pagination
 export async function getProductsApi(filter?: ProductFilterParams): Promise<PagedResult<Product>> {
@@ -22,12 +40,7 @@ export async function getProductsApi(filter?: ProductFilterParams): Promise<Page
     cache: "no-store",
   });
 
-  const resData = await response.json();
-  if (!response.ok || !resData.success) {
-    throw new Error(resData.message || "Failed to fetch products.");
-  }
-
-  return resData.data;
+  return await handleResponse(response);
 }
 
 // 2. Get Single Product by ID
@@ -36,41 +49,37 @@ export async function getProductByIdApi(id: number): Promise<Product> {
     cache: "no-store",
   });
 
-  const resData = await response.json();
-  if (!response.ok || !resData.success) {
-    throw new Error(resData.message || "Product not found.");
-  }
-
-  return resData.data;
+  return await handleResponse(response);
 }
 
 // 3. Get Featured Products
 export async function getFeaturedProductsApi(count: number = 8): Promise<Product[]> {
-  const response = await fetch(`${API_BASE_URL}/api/product/featured?count=${count}`, {
-    cache: "no-store",
-  });
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/product/featured?count=${count}`, {
+      cache: "no-store",
+    });
 
-  const resData = await response.json();
-  if (!response.ok || !resData.success) {
-    throw new Error(resData.message || "Failed to fetch featured products.");
+    const data = await handleResponse(response);
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
   }
-
-  return resData.data;
 }
 
 // 4. Get Categories
 export async function getCategoriesApi(): Promise<string[]> {
-  const response = await fetch(`${API_BASE_URL}/api/product/categories`, {
-    cache: "no-store",
-  });
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/product/categories`, {
+      cache: "no-store",
+    });
 
-  const resData = await response.json();
-  if (!response.ok || !resData.success) {
-    throw new Error(resData.message || "Failed to fetch categories.");
+    const data = await handleResponse(response);
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
   }
-
-  return resData.data;
 }
+
 // 5. Create Product (Admin Only)
 export async function createProductApi(dto: any): Promise<Product> {
   const response = await authenticatedFetch(`${API_BASE_URL}/api/product`, {
@@ -81,11 +90,7 @@ export async function createProductApi(dto: any): Promise<Product> {
     body: JSON.stringify(dto),
   });
 
-  const resData = await response.json();
-  if (!response.ok || !resData.success) {
-    throw new Error(resData.message || "Failed to create product.");
-  }
-  return resData.data;
+  return await handleResponse(response);
 }
 
 // 6. Update Product (Admin Only)
@@ -98,11 +103,7 @@ export async function updateProductApi(id: number, dto: any): Promise<Product> {
     body: JSON.stringify(dto),
   });
 
-  const resData = await response.json();
-  if (!response.ok || !resData.success) {
-    throw new Error(resData.message || "Failed to update product.");
-  }
-  return resData.data;
+  return await handleResponse(response);
 }
 
 // 7. Delete Product (Admin Only)
@@ -111,10 +112,7 @@ export async function deleteProductApi(id: number): Promise<boolean> {
     method: "DELETE",
   });
 
-  const resData = await response.json();
-  if (!response.ok || !resData.success) {
-    throw new Error(resData.message || "Failed to delete product.");
-  }
+  await handleResponse(response);
   return true;
 }
 
@@ -132,9 +130,18 @@ export async function uploadProductImageApi(file: File): Promise<string> {
     body: formData,
   });
 
-  const resData = await response.json();
-  if (!response.ok || !resData.success) {
-    throw new Error(resData.message || "Failed to upload image.");
+  const text = await response.text();
+  let resData: any = null;
+  if (text) {
+    try {
+      resData = JSON.parse(text);
+    } catch {
+      resData = null;
+    }
+  }
+
+  if (!response.ok || !resData || !resData.success) {
+    throw new Error(resData?.message || "Failed to upload image.");
   }
   return resData.imageUrl;
 }

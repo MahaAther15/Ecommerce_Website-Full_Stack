@@ -1,5 +1,7 @@
 import { authenticatedFetch } from "./authApi";
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5024";
+
 export interface Category {
     id: number;
     name: string;
@@ -8,16 +10,36 @@ export interface Category {
     imageUrl?: string;
 }
 
-// get all categories
-export async function getCategoriesApi(): Promise<Category[]> {
-    const response = await fetch(`${API_BASE_URL}/api/category`, {
-        cache: "no-store",
-    });
-    const resData = await response.json();
-    if (!response.ok || !resData.success) {
-        throw new Error(resData.message || "Failed to fetch categories.");
+// Helper to safely parse JSON response
+async function handleResponse(res: Response) {
+    let result: any = null;
+    const text = await res.text();
+    if (text) {
+        try {
+            result = JSON.parse(text);
+        } catch {
+            result = null;
+        }
     }
-    return resData.data;
+
+    if (!res.ok || (result && !result.success)) {
+        throw new Error(result?.message || `Request failed with status ${res.status}`);
+    }
+
+    return result ? result.data : null;
+}
+
+// 1. Get all categories
+export async function getCategoriesApi(): Promise<Category[]> {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/category`, {
+            cache: "no-store",
+        });
+        const data = await handleResponse(response);
+        return Array.isArray(data) ? data : [];
+    } catch {
+        return [];
+    }
 }
 
 // 2. Create Category (Admin Only)
@@ -27,12 +49,9 @@ export async function createCategoryApi(dto: { name: string; description?: strin
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dto),
     });
-    const resData = await response.json();
-    if (!response.ok || !resData.success) {
-        throw new Error(resData.message || "Failed to create category.");
-    }
-    return resData.data;
+    return await handleResponse(response);
 }
+
 // 3. Update Category (Admin Only)
 export async function updateCategoryApi(id: number, dto: { name: string; description?: string }): Promise<Category> {
     const response = await authenticatedFetch(`${API_BASE_URL}/api/category/${id}`, {
@@ -40,11 +59,7 @@ export async function updateCategoryApi(id: number, dto: { name: string; descrip
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dto),
     });
-    const resData = await response.json();
-    if (!response.ok || !resData.success) {
-        throw new Error(resData.message || "Failed to update category.");
-    }
-    return resData.data;
+    return await handleResponse(response);
 }
 
 // 4. Delete Category (Admin Only)
@@ -52,9 +67,6 @@ export async function deleteCategoryApi(id: number): Promise<boolean> {
     const response = await authenticatedFetch(`${API_BASE_URL}/api/category/${id}`, {
         method: "DELETE",
     });
-    const resData = await response.json();
-    if (!response.ok || !resData.success) {
-        throw new Error(resData.message || "Failed to delete category.");
-    }
+    await handleResponse(response);
     return true;
 }
