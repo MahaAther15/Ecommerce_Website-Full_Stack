@@ -681,15 +681,19 @@ footer .copyright {
   }
 
   #close {
-    display: block !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
     position: absolute;
     top: 25px;
-    right: 25px;
+    left: 20px;
+    right: auto;
     color: #222;
     font-size: 24px;
     cursor: pointer;
     background: none;
     border: none;
+    padding: 0;
   }
 
   #hero {
