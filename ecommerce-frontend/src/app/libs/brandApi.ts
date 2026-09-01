@@ -1,6 +1,5 @@
 import { authenticatedFetch } from "./authApi";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5024";
+import { API_BASE_URL } from "./apiConfig";
 
 // Backend se jab brand data aye to uska structure
 export interface Brand {

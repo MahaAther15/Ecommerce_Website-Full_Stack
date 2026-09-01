@@ -1,7 +1,5 @@
 import { LoginFormData, RegisterFormData } from "@/app/types/auth";
-
-// ASP.NET Core Backend URL (launchSettings.json ke port 5024 ke mutabiq)
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5024";
+import { API_BASE_URL } from "./apiConfig";
 
 export interface AuthResponse {
   token: string;        // 30-minute access token

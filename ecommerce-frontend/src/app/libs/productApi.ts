@@ -1,7 +1,6 @@
 import { Product, PagedResult, ProductFilterParams } from "@/app/types/product";
 import { authenticatedFetch, getAuthToken } from "./authApi";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5024";
+import { API_BASE_URL } from "./apiConfig";
 
 // Helper to safely parse JSON response
 async function handleResponse(res: Response) {

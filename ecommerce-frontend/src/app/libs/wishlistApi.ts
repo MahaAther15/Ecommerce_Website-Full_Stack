@@ -1,7 +1,6 @@
 import { authenticatedFetch } from "./authApi";
 import { WishlistResponse } from "../types/wishlist";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5024";
+import { API_BASE_URL } from "./apiConfig";
 
 async function parseJsonResponse(response: Response): Promise<any> {
     const text = await response.text();
@@ -38,8 +37,10 @@ export async function toggleWishlistApi(productId: number): Promise<WishlistResp
         body: JSON.stringify({ productId }),
     });
     const data = await parseJsonResponse(res);
-    if (!res.ok || !data || !data.success) throw new Error(data?.message || "Failed to toggle wishlist");
-    return data.data;
+    if (!res.ok || !data || !data.success) {
+        throw new Error(data?.message || "Failed to toggle wishlist");
+    }
+    return data.data || { items: [], totalCount: 0 };
 }
 
 // 3. Remove single item
@@ -48,8 +49,10 @@ export async function removeFromWishlistApi(productId: number): Promise<Wishlist
         method: "DELETE",
     });
     const data = await parseJsonResponse(res);
-    if (!res.ok || !data || !data.success) throw new Error(data?.message || "Failed to remove item");
-    return data.data;
+    if (!res.ok || !data || !data.success) {
+        throw new Error(data?.message || "Failed to remove item");
+    }
+    return data.data || { items: [], totalCount: 0 };
 }
 
 // 4. Clear all wishlist
@@ -58,6 +61,8 @@ export async function clearWishlistApi(): Promise<boolean> {
         method: "DELETE",
     });
     const data = await parseJsonResponse(res);
-    if (!res.ok || !data || !data.success) throw new Error(data?.message || "Failed to clear wishlist");
+    if (!res.ok || !data || !data.success) {
+        throw new Error(data?.message || "Failed to clear wishlist");
+    }
     return true;
 }

@@ -5,8 +5,7 @@ import {
     AdjustStockPayload,
     InventoryLog,
 } from "../types/inventory";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5024";
+import { API_BASE_URL } from "./apiConfig";
 
 // 1. Get Summary Stats
 export async function getInventorySummaryApi(): Promise<InventorySummary> {
