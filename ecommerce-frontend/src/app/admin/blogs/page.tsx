@@ -183,7 +183,7 @@ export default function AdminBlogsPage() {
             )}
 
             {/* Header */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+            <div className="admin-page-header-row" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
                 <div>
                     <h1 style={{ fontSize: "24px", fontWeight: "800", color: "#111827", margin: 0 }}>
                         <i className="fas fa-newspaper" style={{ color: "#088178", marginRight: "10px" }} />
@@ -220,7 +220,7 @@ export default function AdminBlogsPage() {
             {loading ? (
                 <p style={{ color: "#6b7280", textAlign: "center", padding: "40px" }}>Loading blogs...</p>
             ) : (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px" }}>
+                <div className="admin-blogs-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px" }}>
                     {blogs.map((b) => (
                         <div key={b.id} style={{ backgroundColor: "#fff", borderRadius: "12px", boxShadow: "0 2px 10px rgba(0,0,0,0.06)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
                             <img src={b.imageUrl || b.image} alt={b.title} style={{ width: "100%", height: "160px", objectFit: "cover" }} />

@@ -1288,6 +1288,16 @@ footer .copyright {
     gap: 18px !important;
   }
 
+  .admin-settings-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  .admin-blogs-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important;
+    gap: 16px !important;
+  }
+
   /* ── Wishlist Page (Tablet) ── */
   #wishlist-container {
     padding: 30px 20px !important;
@@ -2174,6 +2184,16 @@ footer .copyright {
   }
 
   .admin-analytics-pnl-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  .admin-settings-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .admin-blogs-grid {
     grid-template-columns: 1fr !important;
     gap: 14px !important;
   }

@@ -76,7 +76,7 @@ export default function AdminUsersPage() {
             )}
 
             {/* Header */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+            <div className="admin-page-header-row" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
                 <div>
                     <h1 style={{ fontSize: "24px", fontWeight: "800", color: "#111827", margin: 0 }}>
                         <i className="fas fa-users" style={{ color: "#088178", marginRight: "10px" }} />
@@ -106,7 +106,7 @@ export default function AdminUsersPage() {
             </div>
 
             {/* Top KPI Cards */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "24px" }}>
+            <div className="admin-stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "24px" }}>
                 <div style={{ backgroundColor: "#fff", padding: "20px", borderRadius: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", borderLeft: "4px solid #088178" }}>
                     <span style={{ fontSize: "13px", color: "#6b7280", fontWeight: "600" }}>Total Registered</span>
                     <h2 style={{ fontSize: "26px", fontWeight: "900", margin: "6px 0 0 0", color: "#111827" }}>{users.length}</h2>
@@ -122,7 +122,7 @@ export default function AdminUsersPage() {
             </div>
 
             {/* Filter & Search Bar */}
-            <div style={{ backgroundColor: "#fff", borderRadius: "12px", padding: "16px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", marginBottom: "20px", display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between" }}>
+            <div className="admin-filters-bar" style={{ backgroundColor: "#fff", borderRadius: "12px", padding: "16px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", marginBottom: "20px", display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between" }}>
                 <div style={{ position: "relative", flex: 1, minWidth: "260px" }}>
                     <i className="fas fa-search" style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#9ca3af" }} />
                     <input
@@ -163,8 +163,8 @@ export default function AdminUsersPage() {
             </div>
 
             {/* Users Table */}
-            <div style={{ backgroundColor: "#fff", borderRadius: "14px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", overflow: "hidden" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+            <div className="admin-table-card" style={{ backgroundColor: "#fff", borderRadius: "14px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: "650px" }}>
                     <thead>
                         <tr style={{ backgroundColor: "#f9fafb", borderBottom: "1px solid #e5e7eb", fontSize: "12px", color: "#6b7280", textTransform: "uppercase" }}>
                             <th style={{ padding: "14px 20px" }}>User</th>

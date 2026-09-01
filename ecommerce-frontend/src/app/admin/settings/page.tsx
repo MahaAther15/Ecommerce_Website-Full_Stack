@@ -78,7 +78,7 @@ export default function AdminSettingsPage() {
                     <i className="fas fa-user-shield" style={{ color: "#088178" }}></i> Active Administrator Profile
                 </h2>
 
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                <div className="admin-settings-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                     <div style={{ backgroundColor: "#f9fafb", padding: "14px", borderRadius: "8px" }}>
                         <div style={{ fontSize: "12px", color: "#6b7280", fontWeight: "600" }}>FULL NAME</div>
                         <div style={{ fontSize: "15px", fontWeight: "700", color: "#1f2937", marginTop: "4px" }}>
