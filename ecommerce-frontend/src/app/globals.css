@@ -732,14 +732,12 @@ footer .copyright {
     max-width: 50% !important;
   }
 
-  /* ── Feature Cards (1 per row, card style) ── */
+  /* ── Feature Cards (2 per row, card style) ── */
   #feature {
     display: grid !important;
-    grid-template-columns: 1fr !important;
+    grid-template-columns: repeat(2, 1fr) !important;
     gap: 12px !important;
     width: 100% !important;
-    max-width: 280px !important;
-    margin: 0 auto !important;
   }
 
   #feature .fe-box {
@@ -998,32 +996,30 @@ footer .copyright {
     padding: 9px 55px 9px 45px !important;
   }
 
-  /* ── Feature Cards (1 per row, card style) ── */
+  /* ── Feature Cards (2 per row, card style) ── */
   #feature {
     display: grid !important;
-    grid-template-columns: 1fr !important;
+    grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px !important;
     width: 100% !important;
-    max-width: 240px !important;
-    margin: 0 auto !important;
     padding: 15px !important;
   }
 
   #feature .fe-box {
     width: 100% !important;
     margin: 0 !important;
-    padding: 18px 12px !important;
+    padding: 15px 10px !important;
     text-align: center !important;
   }
 
   #feature .fe-box img {
-    width: 70px !important;
+    width: 65px !important;
     margin-bottom: 8px !important;
   }
 
   #feature .fe-box h6 {
-    font-size: 11px !important;
-    padding: 5px 8px !important;
+    font-size: 10px !important;
+    padding: 5px 7px !important;
   }
 
   /* ── Product Cards (2 per row grid) ── */
