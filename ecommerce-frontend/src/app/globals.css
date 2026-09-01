@@ -706,49 +706,54 @@ footer .copyright {
 
   /* ── Hero Section ── */
   #hero {
-    height: 60vh !important;
-    min-height: 380px !important;
-    background-position: top 20% right 0% !important;
+    height: 50vh !important;
+    min-height: 340px !important;
+    background-position: center right !important;
     background-size: cover !important;
-    padding: 0 30px !important;
+    padding: 0 25px !important;
   }
 
   #hero h4 {
-    font-size: 15px !important;
+    font-size: 14px !important;
   }
 
   #hero h2 {
+    font-size: 26px !important;
+    line-height: 32px !important;
+  }
+
+  #hero h1 {
     font-size: 30px !important;
     line-height: 36px !important;
   }
 
-  #hero h1 {
-    font-size: 34px !important;
-    line-height: 40px !important;
-  }
-
   #hero p {
-    font-size: 13px !important;
-    max-width: 55% !important;
+    font-size: 12px !important;
+    max-width: 50% !important;
   }
 
-  /* ── Feature Cards (2 per row) ── */
+  /* ── Feature Cards (1 per row) ── */
   #feature {
     display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 15px !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
     width: 100% !important;
   }
 
   #feature .fe-box {
     width: 100% !important;
     margin: 0 !important;
-    padding: 18px 12px !important;
+    padding: 18px 20px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 15px !important;
+    text-align: left !important;
   }
 
   #feature .fe-box img {
-    width: 80px !important;
-    margin-bottom: 8px !important;
+    width: 60px !important;
+    margin-bottom: 0 !important;
   }
 
   /* ── Product Cards (2 per row) ── */
@@ -962,62 +967,67 @@ footer .copyright {
 
   /* ── Hero Section (image properly fitting mobile) ── */
   #hero {
-    height: 55vh !important;
-    min-height: 380px !important;
-    padding: 0 20px !important;
-    background-position: top 20% right -30px !important;
+    height: 45vh !important;
+    min-height: 320px !important;
+    padding: 0 15px !important;
+    background-position: center right !important;
     background-size: cover !important;
   }
 
   #hero h4 {
-    font-size: 13px !important;
-    padding-bottom: 6px !important;
+    font-size: 12px !important;
+    padding-bottom: 5px !important;
   }
 
   #hero h2 {
-    font-size: 24px !important;
-    line-height: 30px !important;
+    font-size: 22px !important;
+    line-height: 28px !important;
   }
 
   #hero h1 {
-    font-size: 28px !important;
-    line-height: 34px !important;
+    font-size: 26px !important;
+    line-height: 32px !important;
   }
 
   #hero p {
-    font-size: 12px !important;
-    margin: 8px 0 12px 0 !important;
-    max-width: 60% !important;
+    font-size: 11px !important;
+    margin: 6px 0 10px 0 !important;
+    max-width: 55% !important;
   }
 
   #hero button {
-    font-size: 13px !important;
-    padding: 10px 60px 10px 50px !important;
+    font-size: 12px !important;
+    padding: 9px 55px 9px 45px !important;
   }
 
-  /* ── Feature Cards (2 per row grid) ── */
+  /* ── Feature Cards (1 per row) ── */
   #feature {
     display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px !important;
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
     width: 100% !important;
-    padding: 15px !important;
+    padding: 12px !important;
   }
 
   #feature .fe-box {
     width: 100% !important;
     margin: 0 !important;
-    padding: 12px 8px !important;
+    padding: 12px 15px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 12px !important;
+    text-align: left !important;
   }
 
   #feature .fe-box img {
-    width: 65px !important;
-    margin-bottom: 6px !important;
+    width: 50px !important;
+    margin-bottom: 0 !important;
   }
 
   #feature .fe-box h6 {
-    font-size: 10px !important;
-    padding: 5px 7px !important;
+    font-size: 11px !important;
+    padding: 5px 8px !important;
   }
 
   /* ── Product Cards (2 per row grid) ── */
