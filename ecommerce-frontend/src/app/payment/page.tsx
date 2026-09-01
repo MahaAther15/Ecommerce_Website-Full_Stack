@@ -182,8 +182,9 @@ export default function PaymentPage() {
   }
 
   return (
-    <div style={{ backgroundColor: "#f8fafc", minHeight: "80vh", padding: "40px 0" }}>
+    <div className="payment-page-wrapper" style={{ backgroundColor: "#f8fafc", minHeight: "80vh", padding: "40px 0" }}>
       <div
+        className="payment-page-container"
         style={{
           maxWidth: "1200px",
           margin: "0 auto",

@@ -1223,6 +1223,17 @@ footer .copyright {
     gap: 16px !important;
   }
 
+  /* ── Payment / Checkout Page Responsive (Tablet) ── */
+  .payment-page-wrapper {
+    padding: 24px 0 !important;
+  }
+
+  .payment-page-container {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+    padding: 0 18px !important;
+  }
+
   /* ── Wishlist Page (Tablet) ── */
   #wishlist-container {
     padding: 30px 20px !important;
@@ -2023,6 +2034,27 @@ footer .copyright {
   .profile-settings-actions-grid {
     grid-template-columns: 1fr !important;
     gap: 16px !important;
+  }
+
+  /* ── Payment / Checkout Page Responsive (Mobile) ── */
+  .payment-page-wrapper {
+    padding: 16px 0 !important;
+  }
+
+  .payment-page-container {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    padding: 0 12px !important;
+  }
+
+  .payment-form-card {
+    padding: 18px 14px !important;
+    border-radius: 12px !important;
+  }
+
+  .order-summary-card {
+    padding: 18px 14px !important;
+    border-radius: 12px !important;
   }
 
   /* ── Cart Page ── */

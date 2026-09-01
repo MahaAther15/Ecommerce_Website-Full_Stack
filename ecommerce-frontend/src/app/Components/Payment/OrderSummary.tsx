@@ -24,6 +24,7 @@ export default function OrderSummary({
 }: OrderSummaryProps) {
   return (
     <div
+      className="order-summary-card"
       style={{
         backgroundColor: "#ffffff",
         borderRadius: "12px",

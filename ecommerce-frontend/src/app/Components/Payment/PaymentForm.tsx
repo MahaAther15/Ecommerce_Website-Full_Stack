@@ -52,6 +52,7 @@ export default function PaymentForm({
 
   return (
     <div
+      className="payment-form-card"
       style={{
         backgroundColor: "#ffffff",
         borderRadius: "12px",
