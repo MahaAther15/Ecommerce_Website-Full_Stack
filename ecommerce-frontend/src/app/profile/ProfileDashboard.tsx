@@ -34,6 +34,7 @@ export default function ProfileDashboard() {
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
   const { myOrders = [], loading: ordersLoading = false } = useAppSelector((state) => state.order) ?? {};
   const [activeTab, setActiveTab] = useState<"dashboard" | "profile" | "address" | "orders" | "settings">("dashboard");
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [formData, setFormData] = useState<UpdateProfileData>({
@@ -368,12 +369,29 @@ export default function ProfileDashboard() {
           boxShadow: "0 20px 60px rgba(0, 0, 0, 0.08)",
           display: "flex",
           overflow: "hidden",
+          position: "relative",
         }}
       >
+        {/* Mobile Backdrop Overlay */}
+        {sidebarOpen && (
+          <div
+            onClick={() => setSidebarOpen(false)}
+            className="profile-backdrop"
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              zIndex: 998,
+            }}
+          />
+        )}
 
-        {/* ───── LEFT SIDEBAR ───── */}
+        {/* ───── LEFT SIDEBAR (Desktop Fixed / Mobile Drawer) ───── */}
         <aside
-          className="profile-dashboard-sidebar"
+          className={`profile-dashboard-sidebar ${sidebarOpen ? "open" : ""}`}
           style={{
             width: "230px",
             background: "linear-gradient(180deg, #088178 0%, #065c54 100%)",
@@ -385,19 +403,35 @@ export default function ProfileDashboard() {
             borderRadius: "24px 0 0 24px",
           }}
         >
-          {/* Logo / Brand */}
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "32px", paddingLeft: "4px" }}>
-            <div style={{
-              width: "36px", height: "36px", borderRadius: "10px",
-              backgroundColor: "rgba(255,255,255,0.2)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: "16px",
-            }}>
-              <i className="fas fa-leaf"></i>
+          {/* Logo / Brand & Close button */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "28px", paddingLeft: "4px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div style={{
+                width: "36px", height: "36px", borderRadius: "10px",
+                backgroundColor: "rgba(255,255,255,0.2)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: "16px",
+              }}>
+                <i className="fas fa-leaf"></i>
+              </div>
+              <span style={{ fontSize: "16px", fontWeight: "800", letterSpacing: "0.5px" }}>
+                Cara Store
+              </span>
             </div>
-            <span style={{ fontSize: "16px", fontWeight: "800", letterSpacing: "0.5px" }}>
-              Cara Store
-            </span>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="profile-close-btn"
+              style={{
+                background: "none",
+                border: "none",
+                color: "#ffffff",
+                fontSize: "18px",
+                cursor: "pointer",
+                padding: "4px 8px",
+              }}
+            >
+              <i className="fas fa-times"></i>
+            </button>
           </div>
 
           {/* Navigation Menu */}
@@ -405,7 +439,10 @@ export default function ProfileDashboard() {
             {menuItems.map((item) => (
               <button
                 key={item.id}
-                onClick={() => setActiveTab(item.id)}
+                onClick={() => {
+                  setActiveTab(item.id);
+                  setSidebarOpen(false);
+                }}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -430,6 +467,7 @@ export default function ProfileDashboard() {
             {/* Wishlist (external link) */}
             <Link
               href="/wishlist"
+              onClick={() => setSidebarOpen(false)}
               style={{
                 display: "flex", alignItems: "center", gap: "12px",
                 padding: "11px 16px", borderRadius: "12px",
@@ -459,6 +497,7 @@ export default function ProfileDashboard() {
             </p>
             <Link
               href="/shop"
+              onClick={() => setSidebarOpen(false)}
               style={{
                 display: "inline-block",
                 backgroundColor: "#ffffff",
@@ -476,7 +515,10 @@ export default function ProfileDashboard() {
 
           {/* Logout */}
           <button
-            onClick={handleLogout}
+            onClick={() => {
+              setSidebarOpen(false);
+              handleLogout();
+            }}
             style={{
               display: "flex", alignItems: "center", gap: "10px",
               padding: "10px 16px", borderRadius: "10px",
@@ -504,13 +546,36 @@ export default function ProfileDashboard() {
               justifyContent: "space-between",
             }}
           >
-            <div>
-              <h2 style={{ margin: 0, fontSize: "22px", fontWeight: "800", color: "#1a1a1a" }}>
-                My Account
-              </h2>
-              <p style={{ margin: "2px 0 0 0", fontSize: "12px", color: "#888" }}>
-                Welcome back, {firstName}! Manage your profile & orders.
-              </p>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              {/* Mobile Hamburger Menu Button */}
+              <button
+                onClick={() => setSidebarOpen(true)}
+                className="profile-hamburger-btn"
+                style={{
+                  backgroundColor: "#088178",
+                  border: "none",
+                  color: "#ffffff",
+                  width: "38px",
+                  height: "38px",
+                  borderRadius: "10px",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  fontSize: "16px",
+                  flexShrink: 0,
+                }}
+              >
+                <i className="fas fa-bars"></i>
+              </button>
+
+              <div>
+                <h2 style={{ margin: 0, fontSize: "22px", fontWeight: "800", color: "#1a1a1a" }}>
+                  My Account
+                </h2>
+                <p style={{ margin: "2px 0 0 0", fontSize: "12px", color: "#888" }}>
+                  Welcome back, {firstName}! Manage your profile & orders.
+                </p>
+              </div>
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>

@@ -23,11 +23,13 @@ body {
 }
 
 /* Base Desktop Admin & Dashboard Utility */
-.admin-hamburger-btn {
+.admin-hamburger-btn,
+.profile-hamburger-btn {
   display: none !important;
 }
 
-.admin-close-btn {
+.admin-close-btn,
+.profile-close-btn {
   display: none !important;
 }
 
@@ -1072,6 +1074,14 @@ footer .copyright {
   }
 
   /* ── User Profile Dashboard Responsive (Tablet) ── */
+  .profile-hamburger-btn {
+    display: flex !important;
+  }
+
+  .profile-close-btn {
+    display: block !important;
+  }
+
   .profile-dashboard-wrapper {
     padding: 16px 12px !important;
     height: auto !important;
@@ -1085,32 +1095,51 @@ footer .copyright {
     max-height: none !important;
     border-radius: 16px !important;
     width: 100% !important;
+    position: relative !important;
   }
 
   .profile-dashboard-sidebar {
-    width: 100% !important;
-    border-radius: 16px 16px 0 0 !important;
-    padding: 18px 16px !important;
-    height: auto !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 270px !important;
+    max-width: 85vw !important;
+    height: 100vh !important;
+    transform: translateX(-100%) !important;
+    z-index: 1000 !important;
+    box-shadow: 5px 0 25px rgba(0, 0, 0, 0.3) !important;
+    transition: transform 0.3s ease-in-out !important;
+    border-radius: 0 18px 18px 0 !important;
+    padding: 24px 18px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }
+
+  .profile-dashboard-sidebar.open {
+    transform: translateX(0) !important;
   }
 
   .profile-sidebar-nav {
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
-    gap: 6px !important;
-    margin-bottom: 10px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin-bottom: 12px !important;
   }
 
   .profile-sidebar-nav button,
   .profile-sidebar-nav a {
-    padding: 8px 12px !important;
-    font-size: 12px !important;
-    border-radius: 8px !important;
-    flex: 1 1 auto !important;
+    width: 100% !important;
+    flex: none !important;
+    padding: 11px 14px !important;
+    font-size: 13px !important;
+    border-radius: 10px !important;
+    justify-content: flex-start !important;
   }
 
   .profile-sidebar-promo {
-    display: none !important;
+    display: block !important;
   }
 
   .profile-dashboard-main {
@@ -1716,37 +1745,62 @@ footer .copyright {
     flex-direction: column !important;
     height: auto !important;
     max-height: none !important;
-    border-radius: 12px !important;
+    border-radius: 16px !important;
     width: 100% !important;
     overflow-x: hidden !important;
+    position: relative !important;
+  }
+
+  .profile-hamburger-btn {
+    display: flex !important;
+  }
+
+  .profile-close-btn {
+    display: block !important;
   }
 
   .profile-dashboard-sidebar {
-    width: 100% !important;
-    border-radius: 12px 12px 0 0 !important;
-    padding: 14px 10px !important;
-    height: auto !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 270px !important;
+    max-width: 85vw !important;
+    height: 100vh !important;
+    transform: translateX(-100%) !important;
+    z-index: 1000 !important;
+    box-shadow: 5px 0 25px rgba(0, 0, 0, 0.3) !important;
+    transition: transform 0.3s ease-in-out !important;
+    border-radius: 0 18px 18px 0 !important;
+    padding: 24px 18px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }
+
+  .profile-dashboard-sidebar.open {
+    transform: translateX(0) !important;
   }
 
   .profile-sidebar-nav {
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
-    gap: 4px !important;
-    margin-bottom: 8px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin-bottom: 12px !important;
   }
 
   .profile-sidebar-nav button,
   .profile-sidebar-nav a {
-    padding: 6px 8px !important;
-    font-size: 11px !important;
-    border-radius: 6px !important;
-    flex: 1 1 calc(50% - 4px) !important;
-    justify-content: center !important;
-    white-space: nowrap !important;
+    width: 100% !important;
+    flex: none !important;
+    padding: 11px 14px !important;
+    font-size: 13px !important;
+    border-radius: 10px !important;
+    justify-content: flex-start !important;
   }
 
   .profile-sidebar-promo {
-    display: none !important;
+    display: block !important;
   }
 
   .profile-dashboard-main {
