@@ -1218,6 +1218,11 @@ footer .copyright {
     gap: 14px !important;
   }
 
+  .profile-settings-actions-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
   /* ── Wishlist Page (Tablet) ── */
   #wishlist-container {
     padding: 30px 20px !important;
@@ -2013,6 +2018,11 @@ footer .copyright {
     display: grid !important;
     grid-template-columns: 1fr !important;
     gap: 12px !important;
+  }
+
+  .profile-settings-actions-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
   }
 
   /* ── Cart Page ── */

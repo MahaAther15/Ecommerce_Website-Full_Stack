@@ -1103,8 +1103,8 @@ export default function ProfileDashboard() {
                   <h3 style={{ margin: "0 0 4px 0", fontSize: "18px", fontWeight: "800", color: "#1a1a1a" }}>Account & Security Settings</h3>
                   <p style={{ fontSize: "12px", color: "#888", marginBottom: "24px" }}>Manage your account session and permanent data controls.</p>
 
-                  {/* Actions Row: Logout & Delete Account Side-by-Side */}
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+                  {/* Actions Row: Logout & Delete Account Side-by-Side (Desktop) / Column (Mobile) */}
+                  <div className="profile-settings-actions-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
                     
                     {/* 1. Logout Box */}
                     <div style={{
