@@ -147,18 +147,19 @@ export default function RegisterForm() {
 
   return (
     <section
+      className="auth-page-wrapper"
       style={{
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "100vh",
+        minHeight: "100vh",
         padding: "20px",
         backgroundColor: "#f0f4f3",
         boxSizing: "border-box",
-        overflow: "hidden",
       }}
     >
       <div
+        className="auth-card-container"
         style={{
           display: "flex",
           width: "100%",
@@ -172,6 +173,7 @@ export default function RegisterForm() {
       >
         {/* Left Side: Decorative Theme Banner */}
         <div
+          className="auth-banner-side"
           style={{
             flex: "1",
             background: "linear-gradient(135deg, #088178 0%, #04524c 100%)",
@@ -249,8 +251,8 @@ export default function RegisterForm() {
                 fontSize: "15px",
                 color: "#e0f2f1",
                 lineHeight: "1.6",
-                maxWidth: "320px",
                 margin: 0,
+                opacity: 0.9,
               }}
             >
               Sign up to start shopping, get personalized recommendations, and receive exclusive offers directly in your inbox.
@@ -260,6 +262,7 @@ export default function RegisterForm() {
 
         {/* Right Side: Register Form */}
         <div
+          className="auth-form-side"
           style={{
             flex: "1.2",
             padding: "45px 45px",

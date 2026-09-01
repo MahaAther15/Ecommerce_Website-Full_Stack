@@ -1109,6 +1109,48 @@ footer .copyright {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 15px !important;
   }
+
+  /* ── Auth Pages (Login & Register - Tablet) ── */
+  .auth-page-root {
+    min-height: 100vh;
+    width: 100%;
+  }
+
+  .auth-page-wrapper {
+    padding: 30px 20px !important;
+    min-height: 100vh !important;
+    height: auto !important;
+  }
+
+  .auth-card-container {
+    flex-direction: column !important;
+    max-width: 500px !important;
+    border-radius: 18px !important;
+    min-height: auto !important;
+  }
+
+  .auth-banner-side {
+    padding: 30px 25px !important;
+    border-radius: 18px 18px 0 0 !important;
+    text-align: center !important;
+    align-items: center !important;
+  }
+
+  .auth-banner-side h1 {
+    font-size: 26px !important;
+    line-height: 32px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .auth-banner-side p {
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+    max-width: 100% !important;
+  }
+
+  .auth-form-side {
+    padding: 35px 30px !important;
+  }
 }
 
 /* Media Query for Mobile (Iphone 14 pro max 😎) */
@@ -1866,6 +1908,83 @@ footer .copyright {
     padding: 6px 8px !important;
     font-size: 11px !important;
     justify-content: center !important;
+  }
+
+  /* ── Auth Pages (Login & Register - Mobile) ── */
+  .auth-page-root {
+    min-height: 100vh;
+    width: 100%;
+  }
+
+  .auth-page-wrapper {
+    padding: 15px 12px !important;
+    min-height: 100vh !important;
+    height: auto !important;
+    align-items: flex-start !important;
+  }
+
+  .auth-card-container {
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 16px !important;
+    min-height: auto !important;
+    margin: 10px 0 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  .auth-banner-side {
+    padding: 24px 18px !important;
+    border-radius: 16px 16px 0 0 !important;
+    text-align: center !important;
+    align-items: center !important;
+  }
+
+  .auth-banner-side span {
+    font-size: 11px !important;
+    letter-spacing: 1.5px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .auth-banner-side h1 {
+    font-size: 22px !important;
+    line-height: 28px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .auth-banner-side p {
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+    margin: 0 !important;
+    display: block !important;
+    max-width: 100% !important;
+  }
+
+  .auth-form-side {
+    padding: 25px 18px !important;
+    width: 100% !important;
+  }
+
+  .auth-form-side h2 {
+    font-size: 22px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .auth-form-side p {
+    font-size: 12px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .auth-form-side input[type="text"],
+  .auth-form-side input[type="email"],
+  .auth-form-side input[type="password"] {
+    font-size: 13px !important;
+    padding: 10px 12px !important;
+  }
+
+  .auth-form-side button[type="submit"] {
+    font-size: 14px !important;
+    padding: 11px !important;
   }
 }
 
