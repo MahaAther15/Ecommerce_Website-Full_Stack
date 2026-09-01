@@ -4,7 +4,7 @@ import StoreProvider from "./redux/StoreProvider";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" style={{ colorScheme: "light" }}>
       <head>
         <meta name="color-scheme" content="light" />
         <meta name="theme-color" content="#E3E6F3" />
