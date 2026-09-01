@@ -240,15 +240,15 @@ export default function AdminProductsPage() {
 
             {/* Products Table */}
             <div className="admin-table-card" style={{ backgroundColor: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: "650px" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: "620px" }}>
                     <thead style={{ backgroundColor: "#f9fafb", borderBottom: "1px solid #e5e7eb" }}>
                         <tr>
-                            <th style={{ padding: "14px 16px" }}>Image</th>
-                            <th style={{ padding: "14px 16px" }}>Product</th>
-                            <th style={{ padding: "14px 16px" }}>Category</th>
-                            <th style={{ padding: "14px 16px" }}>Price</th>
-                            <th style={{ padding: "14px 16px" }}>Stock</th>
-                            <th style={{ padding: "14px 16px" }}>Actions</th>
+                            <th style={{ padding: "14px 16px", whiteSpace: "nowrap" }}>Image</th>
+                            <th style={{ padding: "14px 16px", whiteSpace: "nowrap" }}>Product</th>
+                            <th style={{ padding: "14px 16px", whiteSpace: "nowrap" }}>Category</th>
+                            <th style={{ padding: "14px 16px", whiteSpace: "nowrap" }}>Price</th>
+                            <th style={{ padding: "14px 16px", whiteSpace: "nowrap" }}>Stock</th>
+                            <th style={{ padding: "14px 16px", whiteSpace: "nowrap" }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -263,9 +263,9 @@ export default function AdminProductsPage() {
                         ) : (
                             filteredProducts.map((prod) => (
                                 <tr key={prod.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
-                                    <td style={{ padding: "12px 16px" }}>
+                                    <td style={{ padding: "12px 16px", whiteSpace: "nowrap" }}>
                                         <img
-                                            src={getProductImage(prod)}
+                                            src={getProductImage({ id: prod.id, title: prod.title, category: prod.category, imageUrl: prod.imageUrl })}
                                             alt={prod.title}
                                             style={{ width: "48px", height: "48px", objectFit: "cover", borderRadius: "6px" }}
                                         />
