@@ -33,6 +33,29 @@ body {
   display: none !important;
 }
 
+.profile-dashboard-wrapper {
+  overflow-y: auto;
+}
+
+.profile-dashboard-main {
+  overflow-y: auto !important;
+  scrollbar-width: thin;
+  scrollbar-color: #088178 #f1f1f1;
+}
+
+.profile-dashboard-main::-webkit-scrollbar {
+  width: 6px;
+}
+
+.profile-dashboard-main::-webkit-scrollbar-track {
+  background: #faf8f5;
+}
+
+.profile-dashboard-main::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 6px;
+}
+
 /* Base Desktop Auth Styles */
 .auth-page-root {
   height: 100vh;
