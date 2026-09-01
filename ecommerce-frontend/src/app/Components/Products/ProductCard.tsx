@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Product } from "@/app/types/product";
 import { useAppDispatch } from "@/app/redux/hooks";
 import { addToCart } from "@/app/redux/slices/cartslice";
+import { getProductImage } from "@/app/libs/productUtils";
 
 interface ProductCardProps {
   product: Product;
@@ -12,6 +13,8 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
+
+  const imageSrc = getProductImage(product);
 
   const handleCardClick = (e: React.MouseEvent) => {
     // Prevent navigation if user clicked on the cart button directly
@@ -30,13 +33,11 @@ export default function ProductCard({ product }: ProductCardProps) {
         productId: Number(product.id),
         name: product.title,
         price: product.price,
-        image: product.imageUrl || (product as any).image || "",
+        image: imageSrc,
         quantity: 1,
       })
     );
   };
-
-  const imageSrc = product.imageUrl || (product as any).image || "/img/products/f1.jpg";
 
   return (
     <div className="pro" onClick={handleCardClick}>

@@ -9,6 +9,7 @@ import {
   removeWishlistItem,
   clearUserWishlist,
 } from "../redux/slices/wishlistslice";
+import { getProductImage } from "../libs/productUtils";
 
 interface ToastState {
   message: string;
@@ -64,15 +65,16 @@ export default function WishlistPage() {
   const wishlistProducts = mounted
     ? wishlistItems.map((item) => {
         const prodId = item.productId || item.id;
+        const mappedId = typeof prodId === "number" ? prodId : parseInt(String(prodId), 10) || 1;
         return {
-          id: typeof prodId === "number" ? prodId : parseInt(String(prodId), 10) || 1,
+          id: mappedId,
           name: item.title || item.name || "Product",
           category: item.brand || "Fashion & Lifestyle",
           description: "Premium quality item saved in your personal wishlist.",
           price: Number(item.price) || 0,
           originalPrice: (Number(item.price) || 0) * 1.25,
           discount: 20,
-          image: item.imageUrl || item.image || "/img/products/f1.jpg",
+          image: getProductImage({ id: mappedId, imageUrl: item.imageUrl, image: item.image }),
           stock: (item.stockQuantity ?? 10) > 0 ? ("in-stock" as const) : ("out-of-stock" as const),
           rating: 5,
         };

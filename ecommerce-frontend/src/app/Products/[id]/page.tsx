@@ -9,6 +9,7 @@ import { addToCart } from "@/app/redux/slices/cartslice";
 import { toggleWishlistItem } from "@/app/redux/slices/wishlistslice";
 import { fetchProductById } from "@/app/redux/slices/productSlice";
 import { fetchProductReviews } from "@/app/redux/slices/reviewSlice";
+import { getProductImage } from "@/app/libs/productUtils";
 
 interface ProductDetailsProps {
   params: Promise<{ id: string }>;
@@ -38,12 +39,12 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
     }
   }, [dispatch, productId]);
 
-  const productImage = product?.imageUrl || (product as any)?.image || "/img/products/f1.jpg";
+  const productImage = getProductImage(product);
   const [activeImage, setActiveImage] = useState<string>("");
 
   useEffect(() => {
     if (product) {
-      setActiveImage(product.imageUrl || (product as any).image || "/img/products/f1.jpg");
+      setActiveImage(getProductImage(product));
     }
   }, [product]);
 
