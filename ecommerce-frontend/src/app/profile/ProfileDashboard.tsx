@@ -343,6 +343,7 @@ export default function ProfileDashboard() {
 
   return (
     <div
+      className="profile-dashboard-wrapper"
       style={{
         minHeight: "100vh",
         backgroundColor: "#f5f0eb",
@@ -356,6 +357,7 @@ export default function ProfileDashboard() {
     >
       {/* Outer Dashboard Container */}
       <div
+        className="profile-dashboard-container"
         style={{
           width: "100%",
           maxWidth: "1280px",
@@ -371,6 +373,7 @@ export default function ProfileDashboard() {
 
         {/* ───── LEFT SIDEBAR ───── */}
         <aside
+          className="profile-dashboard-sidebar"
           style={{
             width: "230px",
             background: "linear-gradient(180deg, #088178 0%, #065c54 100%)",
@@ -398,7 +401,7 @@ export default function ProfileDashboard() {
           </div>
 
           {/* Navigation Menu */}
-          <nav style={{ display: "flex", flexDirection: "column", gap: "4px", flex: 1 }}>
+          <nav className="profile-sidebar-nav" style={{ display: "flex", flexDirection: "column", gap: "4px", flex: 1 }}>
             {menuItems.map((item) => (
               <button
                 key={item.id}
@@ -441,6 +444,7 @@ export default function ProfileDashboard() {
 
           {/* Bottom Illustration Card */}
           <div
+            className="profile-sidebar-promo"
             style={{
               backgroundColor: "rgba(255,255,255,0.12)",
               borderRadius: "16px",
@@ -486,10 +490,11 @@ export default function ProfileDashboard() {
         </aside>
 
         {/* ───── RIGHT MAIN PANEL ───── */}
-        <main style={{ flex: 1, backgroundColor: "#faf8f5", display: "flex", flexDirection: "column", overflowY: "auto" }}>
+        <main className="profile-dashboard-main" style={{ flex: 1, backgroundColor: "#faf8f5", display: "flex", flexDirection: "column", overflowY: "auto" }}>
 
           {/* Top Header Bar */}
           <header
+            className="profile-header-bar"
             style={{
               padding: "18px 30px",
               backgroundColor: "#ffffff",
@@ -543,7 +548,7 @@ export default function ProfileDashboard() {
           </header>
 
           {/* Main Content Padding */}
-          <div style={{ padding: "24px 30px", flex: 1 }}>
+          <div className="profile-content-area" style={{ padding: "24px 30px", flex: 1 }}>
 
             {/* 🔴 Error Alert */}
             {errorMessage && (
