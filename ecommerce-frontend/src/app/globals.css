@@ -843,12 +843,27 @@ footer .copyright {
   }
 
   #feature {
-    justify-content: space-between;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    width: 100% !important;
+    padding: 20px 15px !important;
   }
 
   #feature .fe-box {
-    width: 155px;
-    margin: 0 0 15px 0;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 15px 10px !important;
+  }
+
+  #feature .fe-box img {
+    width: 75px;
+    margin-bottom: 8px;
+  }
+
+  #feature .fe-box h6 {
+    font-size: 11px;
+    padding: 6px 8px;
   }
 
   #product1 .pro {
