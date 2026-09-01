@@ -578,7 +578,7 @@ export default function ProfileDashboard() {
             {activeTab === "dashboard" && (
               <>
                 {/* Quick Action Icon Cards Row (Matching mockup app icons row) */}
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "14px", marginBottom: "24px" }}>
+                <div className="profile-quick-actions" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "14px", marginBottom: "24px" }}>
                   {[
                     { icon: "fas fa-user-circle", label: "Profile", color: "#088178", bg: "#e6f7f5", tab: "profile" as const },
                     { icon: "fas fa-map-marker-alt", label: "Address", color: "#d97706", bg: "#fef3c7", tab: "address" as const },
@@ -611,7 +611,7 @@ export default function ProfileDashboard() {
                 </div>
 
                 {/* Middle Section: 3 columns */}
-                <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1.2fr 1fr", gap: "18px", marginBottom: "22px" }}>
+                <div className="profile-details-grid" style={{ display: "grid", gridTemplateColumns: "1.2fr 1.2fr 1fr", gap: "18px", marginBottom: "22px" }}>
 
                   {/* Column 1: Personal Details Table */}
                   <div style={{ backgroundColor: "#fff", borderRadius: "16px", padding: "20px", border: "1px solid #f0ebe6" }}>
@@ -744,7 +744,7 @@ export default function ProfileDashboard() {
                 <p style={{ fontSize: "12px", color: "#888", marginBottom: "24px" }}>Update your display name and contact details.</p>
 
                 <form onSubmit={handleSubmit}>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "18px", marginBottom: "18px" }}>
+                  <div className="profile-form-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "18px", marginBottom: "18px" }}>
                     <div>
                       <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#444", marginBottom: "6px" }}>Full Name</label>
                       <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required
@@ -769,7 +769,7 @@ export default function ProfileDashboard() {
                           {validatePakPhone(formData.phoneNumber)}
                         </p>
                       )}
-                      <p style={{ color: "#9ca3af", fontSize: "11px", marginTop: "4px" }}>{(formData.phoneNumber?.length || 0)}/11 digits</p>
+                      <p style={{ color: "#9ca3af", fontSize: "11px", marginTop: "4px">{(formData.phoneNumber?.length || 0)}/11 digits</p>
                     </div>
                   </div>
                   <button type="submit" disabled={saving}
@@ -842,7 +842,7 @@ export default function ProfileDashboard() {
                 )}
 
                 {!addressLoading && addresses.length > 0 && (
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "16px" }}>
+                  <div className="profile-address-cards-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "16px" }}>
                     {addresses.map((addr) => (
                       <div
                         key={addr.id}
