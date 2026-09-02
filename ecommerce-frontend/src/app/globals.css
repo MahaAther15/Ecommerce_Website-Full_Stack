@@ -1,18 +1,53 @@
 @import url('https://fonts.googleapis.com/css2?family=Spartan:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 :root {
-  color-scheme: light !important;
-  -moz-border-left-colors: light;
+  color-scheme: only light !important;
+  -webkit-color-scheme: only light !important;
 }
 
 html,
 body {
-  color-scheme: light !important;
+  color-scheme: only light !important;
+  -webkit-color-scheme: only light !important;
   background-color: #ffffff !important;
   color: #222222 !important;
   overflow-x: hidden;
   max-width: 100vw;
   width: 100%;
+}
+
+/* Enforce explicit background colors to stop mobile auto-dark mode */
+#header {
+  background-color: #E3E6F3 !important;
+}
+
+#hero {
+  background-color: #E3E6F3 !important;
+}
+
+#feature {
+  background-color: #ffffff !important;
+}
+
+#feature .fe-box {
+  background-color: #ffffff !important;
+  border: 1px solid #cce7d0 !important;
+}
+
+#product1 {
+  background-color: #ffffff !important;
+}
+
+#product1 .pro {
+  background-color: #ffffff !important;
+}
+
+#cart {
+  background-color: #ffffff !important;
+}
+
+footer {
+  background-color: #ffffff !important;
 }
 
 * {
