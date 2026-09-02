@@ -15,14 +15,20 @@ export default function ProductsPage() {
     (state) => state.product
   );
 
-  const [availableBrands, setAvailableBrands] = useState<string[]>([
-    "All",
+  const DEFAULT_BRANDS = [
     "Adidas",
     "Nike",
     "H&M",
+    "Zara",
     "Uniqlo",
     "Ralph Lauren",
-    "Zara",
+    "Puma",
+    "Levis",
+  ];
+
+  const [availableBrands, setAvailableBrands] = useState<string[]>([
+    "All",
+    ...DEFAULT_BRANDS,
   ]);
 
   // Initial categories and brands fetch from database
@@ -32,16 +38,40 @@ export default function ProductsPage() {
     async function loadBrands() {
       try {
         const brands = await getBrandApi();
-        if (Array.isArray(brands) && brands.length > 0) {
-          const names = Array.from(new Set(brands.map((b) => b.name).filter(Boolean)));
-          setAvailableBrands(["All", ...names]);
-        }
+        const dbNames = Array.isArray(brands)
+          ? brands.map((b) => b.name).filter(Boolean)
+          : [];
+
+        const combined = new Map<string, string>();
+        DEFAULT_BRANDS.forEach((b) => combined.set(b.toLowerCase(), b));
+        dbNames.forEach((b) => combined.set(b.toLowerCase(), b));
+
+        setAvailableBrands(["All", ...Array.from(combined.values())]);
       } catch {
-        // keep fallback brands
+        // keep default brands
       }
     }
     loadBrands();
   }, [dispatch]);
+
+  // Also collect any brands present on products
+  useEffect(() => {
+    if (products && products.length > 0) {
+      setAvailableBrands((prev) => {
+        const map = new Map<string, string>();
+        DEFAULT_BRANDS.forEach((b) => map.set(b.toLowerCase(), b));
+        prev.forEach((b) => {
+          if (b !== "All") map.set(b.toLowerCase(), b);
+        });
+        products.forEach((p) => {
+          if (p.brand && p.brand.trim()) {
+            map.set(p.brand.trim().toLowerCase(), p.brand.trim());
+          }
+        });
+        return ["All", ...Array.from(map.values())];
+      });
+    }
+  }, [products]);
 
   // Fetch products from backend whenever filters change
   useEffect(() => {
