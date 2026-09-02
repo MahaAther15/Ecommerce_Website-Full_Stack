@@ -8,8 +8,8 @@
 html,
 body {
   color-scheme: light !important;
-  background-color: #ffffff;
-  color: #222222;
+  background-color: #ffffff !important;
+  color: #222222 !important;
   overflow-x: hidden;
   max-width: 100vw;
   width: 100%;
@@ -811,30 +811,30 @@ footer .copyright {
   }
 
   #hero h4 {
-    color: #ffffff !important;
+    color: #222222 !important;
     font-size: 14px !important;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6) !important;
+    text-shadow: none !important;
   }
 
   #hero h2 {
-    color: #ffffff !important;
+    color: #222222 !important;
     font-size: 26px !important;
     line-height: 32px !important;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6) !important;
+    text-shadow: none !important;
   }
 
   #hero h1 {
-    color: #00dfa2 !important;
+    color: #088178 !important;
     font-size: 30px !important;
     line-height: 36px !important;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6) !important;
+    text-shadow: none !important;
   }
 
   #hero p {
-    color: #f1f5f9 !important;
+    color: #465b52 !important;
     font-size: 12px !important;
     max-width: 55% !important;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6) !important;
+    text-shadow: none !important;
   }
 
   /* ── Feature Cards (2 per row on tablet) ── */
@@ -1430,32 +1430,32 @@ footer .copyright {
   }
 
   #hero h4 {
-    color: #ffffff !important;
+    color: #222222 !important;
     font-size: 12px !important;
     padding-bottom: 5px !important;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6) !important;
+    text-shadow: none !important;
   }
 
   #hero h2 {
-    color: #ffffff !important;
+    color: #222222 !important;
     font-size: 22px !important;
     line-height: 28px !important;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6) !important;
+    text-shadow: none !important;
   }
 
   #hero h1 {
-    color: #00dfa2 !important;
+    color: #088178 !important;
     font-size: 26px !important;
     line-height: 32px !important;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6) !important;
+    text-shadow: none !important;
   }
 
   #hero p {
-    color: #f1f5f9 !important;
+    color: #465b52 !important;
     font-size: 11px !important;
     margin: 6px 0 10px 0 !important;
     max-width: 60% !important;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6) !important;
+    text-shadow: none !important;
   }
 
   #hero button {
