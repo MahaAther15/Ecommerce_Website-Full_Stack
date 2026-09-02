@@ -20,7 +20,7 @@ export default function AdminSettingsPage() {
 
         try {
             // Optional: call backend logout endpoint to clear HttpOnly cookie
-            const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5024";
+            const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://cara-ecommerce.runasp.net";
             await fetch(`${API_BASE_URL}/api/auth/logout`, {
                 method: "POST",
                 credentials: "include",
