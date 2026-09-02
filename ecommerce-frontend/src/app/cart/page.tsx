@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import CartHero from "../Components/cart/CartHero";
 import CartTable from "../Components/cart/CartTable";
-import CouponSection from "../Components/cart/CouponSection";
 import CartSummary from "../Components/cart/CartSummary";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { removeFromCart, updateQuantity } from "../redux/slices/cartslice";
@@ -62,7 +61,6 @@ export default function CartPage() {
         onUpdateQuantity={handleUpdateQuantity}
       />
       <section id="cart-add" className="section-p1">
-        <CouponSection />
         <CartSummary cart={cartItems} />
       </section>
     </div>
