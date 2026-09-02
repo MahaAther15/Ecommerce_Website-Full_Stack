@@ -151,6 +151,47 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
         </div>
       )}
 
+      {/* Top Back Navigation Bar */}
+      <div style={{ maxWidth: "1200px", margin: "18px auto 0 auto", padding: "0 24px" }}>
+        <button
+          type="button"
+          onClick={() => {
+            if (window.history.length > 1) {
+              router.back();
+            } else {
+              router.push("/shop");
+            }
+          }}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "8px",
+            backgroundColor: "#e8f5f3",
+            color: "#088178",
+            border: "1.5px solid #c2e5e1",
+            padding: "8px 16px",
+            borderRadius: "20px",
+            fontSize: "13px",
+            fontWeight: "700",
+            cursor: "pointer",
+            transition: "all 0.2s ease",
+            boxShadow: "0 2px 6px rgba(8, 129, 120, 0.08)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = "#088178";
+            e.currentTarget.style.color = "#ffffff";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = "#e8f5f3";
+            e.currentTarget.style.color = "#088178";
+          }}
+          title="Go back to previous page"
+        >
+          <i className="fas fa-arrow-left" style={{ fontSize: "13px" }}></i>
+          <span>Back</span>
+        </button>
+      </div>
+
       {/* Main Single Product Details Section */}
       <section
         id="prodetails"
@@ -160,7 +201,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
           alignItems: "flex-start",
           gap: "40px",
           maxWidth: "1200px",
-          margin: "30px auto",
+          margin: "16px auto 30px auto",
           padding: "0 24px",
           boxSizing: "border-box",
         }}
