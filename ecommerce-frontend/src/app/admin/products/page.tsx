@@ -465,20 +465,22 @@ export default function AdminProductsPage() {
                     justifyContent: "center",
                     alignItems: "center",
                     zIndex: 10000,
-                    padding: "16px"
+                    padding: "16px",
+                    boxSizing: "border-box"
                 }}>
-                    <div style={{
+                    <div className="admin-product-modal" style={{
                         backgroundColor: "#fff",
                         borderRadius: "14px",
                         width: "100%",
-                        maxWidth: "560px",
-                        maxHeight: "92vh",
+                        maxWidth: "540px",
+                        maxHeight: "88vh",
                         overflowY: "auto",
-                        padding: "24px",
-                        boxShadow: "0 20px 40px rgba(0,0,0,0.2)"
+                        padding: "20px",
+                        boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
+                        boxSizing: "border-box"
                     }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-                            <h2 style={{ fontSize: "18px", fontWeight: "800", margin: 0, color: "#1f2937" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+                            <h2 style={{ fontSize: "17px", fontWeight: "800", margin: 0, color: "#1f2937" }}>
                                 {editingProduct ? "✏️ Edit Product" : "✨ Add New Product"}
                             </h2>
                             <button
@@ -496,49 +498,49 @@ export default function AdminProductsPage() {
                                 backgroundColor: "#fef2f2",
                                 border: "1px solid #f87171",
                                 color: "#b91c1c",
-                                padding: "10px 14px",
+                                padding: "8px 12px",
                                 borderRadius: "8px",
-                                fontSize: "13px",
+                                fontSize: "12px",
                                 fontWeight: "600",
-                                marginBottom: "14px",
+                                marginBottom: "12px",
                                 display: "flex",
                                 alignItems: "center",
                                 gap: "8px"
                             }}>
-                                <i className="fas fa-exclamation-circle" style={{ fontSize: "16px" }}></i>
+                                <i className="fas fa-exclamation-circle" style={{ fontSize: "14px" }}></i>
                                 <span>{modalError}</span>
                             </div>
                         )}
 
-                        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                             <div>
-                                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Title</label>
+                                <label style={{ display: "block", fontSize: "11px", fontWeight: "700", color: "#374151", marginBottom: "3px" }}>Title</label>
                                 <input
                                     type="text"
                                     required
                                     value={formData.title}
                                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                    style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none" }}
+                                    style={{ width: "100%", padding: "8px 10px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none", boxSizing: "border-box" }}
                                 />
                             </div>
 
-                            <div className="admin-form-row" style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-                                <div style={{ flex: "1 1 200px" }}>
-                                    <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Brand</label>
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                                <div>
+                                    <label style={{ display: "block", fontSize: "11px", fontWeight: "700", color: "#374151", marginBottom: "3px" }}>Brand</label>
                                     <input
                                         type="text"
                                         required
                                         value={formData.brand}
                                         onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                                        style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none" }}
+                                        style={{ width: "100%", padding: "8px 10px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none", boxSizing: "border-box" }}
                                     />
                                 </div>
-                                <div style={{ flex: "1 1 200px" }}>
-                                    <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Category</label>
+                                <div>
+                                    <label style={{ display: "block", fontSize: "11px", fontWeight: "700", color: "#374151", marginBottom: "3px" }}>Category</label>
                                     <select
                                         value={formData.category}
                                         onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                        style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none", backgroundColor: "#fff" }}
+                                        style={{ width: "100%", padding: "8px 10px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none", backgroundColor: "#fff", boxSizing: "border-box" }}
                                     >
                                         <option value="featured">Featured (Default)</option>
                                         <option value="newArrival">New Arrival (Default)</option>
@@ -551,34 +553,34 @@ export default function AdminProductsPage() {
                                 </div>
                             </div>
 
-                            <div className="admin-form-row" style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-                                <div style={{ flex: "1 1 200px" }}>
-                                    <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Price ($)</label>
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                                <div>
+                                    <label style={{ display: "block", fontSize: "11px", fontWeight: "700", color: "#374151", marginBottom: "3px" }}>Price ($)</label>
                                     <input
                                         type="number"
                                         step="0.01"
                                         required
                                         value={formData.price}
                                         onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
-                                        style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none" }}
+                                        style={{ width: "100%", padding: "8px 10px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none", boxSizing: "border-box" }}
                                     />
                                 </div>
-                                <div style={{ flex: "1 1 200px" }}>
-                                    <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Stock Quantity</label>
+                                <div>
+                                    <label style={{ display: "block", fontSize: "11px", fontWeight: "700", color: "#374151", marginBottom: "3px" }}>Stock Quantity</label>
                                     <input
                                         type="number"
                                         required
                                         value={formData.stockQuantity}
                                         onChange={(e) => setFormData({ ...formData, stockQuantity: parseInt(e.target.value) || 0 })}
-                                        style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none" }}
+                                        style={{ width: "100%", padding: "8px 10px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none", boxSizing: "border-box" }}
                                     />
                                 </div>
                             </div>
 
                             {/* Cloudinary Image Upload Section */}
                             <div>
-                                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Product Image</label>
-                                <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
+                                <label style={{ display: "block", fontSize: "11px", fontWeight: "700", color: "#374151", marginBottom: "3px" }}>Product Image</label>
+                                <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
                                     <input
                                         type="file"
                                         ref={fileInputRef}
@@ -591,23 +593,23 @@ export default function AdminProductsPage() {
                                         disabled={imageUploading}
                                         onClick={() => fileInputRef.current?.click()}
                                         style={{
-                                            padding: "9px 16px",
+                                            padding: "7px 12px",
                                             borderRadius: "8px",
                                             backgroundColor: "#f3f4f6",
                                             border: "1px solid #d1d5db",
                                             cursor: "pointer",
                                             fontWeight: "700",
-                                            fontSize: "13px",
+                                            fontSize: "12px",
                                             color: "#374151"
                                         }}
                                     >
-                                        {imageUploading ? "Uploading to Cloudinary..." : "📁 Choose Image"}
+                                        {imageUploading ? "Uploading..." : "📁 Choose Image"}
                                     </button>
                                     {formData.imageUrl && (
                                         <img
                                             src={formData.imageUrl}
                                             alt="Preview"
-                                            style={{ width: "44px", height: "44px", objectFit: "cover", borderRadius: "8px", border: "1px solid #e5e7eb" }}
+                                            style={{ width: "36px", height: "36px", objectFit: "cover", borderRadius: "6px", border: "1px solid #e5e7eb" }}
                                         />
                                     )}
                                 </div>
@@ -616,33 +618,33 @@ export default function AdminProductsPage() {
                                     placeholder="Or paste direct Cloudinary Image URL"
                                     value={formData.imageUrl}
                                     onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                                    style={{ width: "100%", marginTop: "8px", padding: "8px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "12px", outline: "none" }}
+                                    style={{ width: "100%", marginTop: "6px", padding: "7px 10px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "12px", outline: "none", boxSizing: "border-box" }}
                                 />
                             </div>
 
                             <div>
-                                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Description</label>
+                                <label style={{ display: "block", fontSize: "11px", fontWeight: "700", color: "#374151", marginBottom: "3px" }}>Description</label>
                                 <textarea
-                                    rows={3}
+                                    rows={2}
                                     required
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none", resize: "vertical" }}
+                                    style={{ width: "100%", padding: "8px 10px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none", resize: "vertical", boxSizing: "border-box" }}
                                 />
                             </div>
 
-                            <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginTop: "10px" }}>
+                            <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginTop: "6px" }}>
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    style={{ flex: 1, padding: "10px 16px", borderRadius: "8px", border: "1px solid #d1d5db", background: "#fff", color: "#374151", fontWeight: "700", cursor: "pointer", fontSize: "13px" }}
+                                    style={{ flex: 1, padding: "9px 14px", borderRadius: "8px", border: "1px solid #d1d5db", background: "#fff", color: "#374151", fontWeight: "700", cursor: "pointer", fontSize: "13px" }}
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={imageUploading}
-                                    style={{ flex: 1, padding: "10px 20px", borderRadius: "8px", border: "none", background: "#088178", color: "#fff", fontWeight: "700", cursor: "pointer", fontSize: "13px" }}
+                                    style={{ flex: 1, padding: "9px 18px", borderRadius: "8px", border: "none", background: "#088178", color: "#fff", fontWeight: "700", cursor: "pointer", fontSize: "13px" }}
                                 >
                                     {editingProduct ? "Update Product" : "Create Product"}
                                 </button>

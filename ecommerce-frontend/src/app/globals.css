@@ -4725,4 +4725,10 @@ footer .copyright {
     padding: 20px 14px !important;
     overflow-x: visible !important;
   }
+  .admin-product-modal {
+    width: 100% !important;
+    max-width: calc(100vw - 28px) !important;
+    padding: 16px 14px !important;
+    max-height: 88vh !important;
+  }
 }
