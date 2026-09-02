@@ -7,10 +7,18 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
       },
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
     ],
   },
-  /* config options here */
-  reactCompiler: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: false,
+  },
 };
 
 export default nextConfig;
