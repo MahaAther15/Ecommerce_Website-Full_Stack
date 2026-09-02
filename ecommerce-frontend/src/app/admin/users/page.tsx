@@ -2,26 +2,38 @@
 
 import { useEffect, useState } from "react";
 import { getAllUsersAdminApi, UserItem } from "@/app/libs/userApi";
+import {
+    getContactMessagesAdminApi,
+    deleteContactMessageAdminApi,
+} from "@/app/libs/contactApi";
+import { ContactMessage } from "@/app/types/contact";
 
 export default function AdminUsersPage() {
+    const [activeTab, setActiveTab] = useState<"users" | "messages">("users");
     const [users, setUsers] = useState<UserItem[]>([]);
+    const [messages, setMessages] = useState<ContactMessage[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [roleFilter, setRoleFilter] = useState("all");
     const [selectedUser, setSelectedUser] = useState<UserItem | null>(null);
+    const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
     const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
 
     useEffect(() => {
-        loadUsers();
+        loadData();
     }, []);
 
-    const loadUsers = async () => {
+    const loadData = async () => {
         setLoading(true);
         try {
-            const data = await getAllUsersAdminApi();
-            setUsers(data);
+            const [usersData, messagesData] = await Promise.all([
+                getAllUsersAdminApi().catch(() => []),
+                getContactMessagesAdminApi().catch(() => []),
+            ]);
+            setUsers(usersData);
+            setMessages(messagesData);
         } catch (err: any) {
-            showToast(err.message || "Failed to load registered users", "error");
+            showToast(err.message || "Failed to load directory data", "error");
         } finally {
             setLoading(false);
         }
@@ -32,12 +44,35 @@ export default function AdminUsersPage() {
         setTimeout(() => setToast(null), 3500);
     };
 
+    const handleDeleteMessage = async (id: string, e?: React.MouseEvent) => {
+        if (e) e.stopPropagation();
+        if (!confirm("Are you sure you want to delete this contact message?")) return;
+        try {
+            await deleteContactMessageAdminApi(id);
+            setMessages((prev) => prev.filter((m) => m.id !== id));
+            if (selectedMessage?.id === id) setSelectedMessage(null);
+            showToast("Message deleted successfully!");
+        } catch {
+            showToast("Failed to delete message", "error");
+        }
+    };
+
     const filteredUsers = users.filter((u) => {
         const matchesSearch =
             u.fullName.toLowerCase().includes(search.toLowerCase()) ||
             u.email.toLowerCase().includes(search.toLowerCase());
         const matchesRole = roleFilter === "all" || u.role.toLowerCase() === roleFilter.toLowerCase();
         return matchesSearch && matchesRole;
+    });
+
+    const filteredMessages = messages.filter((m) => {
+        const q = search.toLowerCase();
+        return (
+            m.name.toLowerCase().includes(q) ||
+            m.email.toLowerCase().includes(q) ||
+            m.subject.toLowerCase().includes(q) ||
+            m.message.toLowerCase().includes(q)
+        );
     });
 
     const totalCustomers = users.filter((u) => u.role.toLowerCase() !== "admin").length;
@@ -47,7 +82,7 @@ export default function AdminUsersPage() {
         return (
             <div style={{ padding: "60px", textAlign: "center", backgroundColor: "#fff", borderRadius: "12px" }}>
                 <i className="fas fa-spinner fa-spin" style={{ fontSize: "28px", color: "#088178", marginBottom: "12px", display: "block" }} />
-                <p style={{ margin: 0, color: "#6b7280", fontWeight: "600" }}>Loading users directory...</p>
+                <p style={{ margin: 0, color: "#6b7280", fontWeight: "600" }}>Loading directory & inquiries...</p>
             </div>
         );
     }
@@ -76,18 +111,18 @@ export default function AdminUsersPage() {
             )}
 
             {/* Header */}
-            <div className="admin-page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", flexWrap: "wrap", gap: "12px" }}>
+            <div className="admin-page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "12px" }}>
                 <div>
                     <h1 style={{ fontSize: "24px", fontWeight: "800", color: "#111827", margin: "0 0 4px 0" }}>
-                        <i className="fas fa-users" style={{ color: "#088178", marginRight: "10px" }} />
-                        User Directory
+                        <i className="fas fa-users-cog" style={{ color: "#088178", marginRight: "10px" }} />
+                        Users & Contact Inquiries
                     </h1>
                     <p style={{ color: "#6b7280", fontSize: "14px", margin: 0 }}>
-                        View registered customers and administrators across your store
+                        Manage registered accounts and review customer inquiries from the contact form
                     </p>
                 </div>
                 <button
-                    onClick={loadUsers}
+                    onClick={loadData}
                     className="admin-action-btn"
                     style={{
                         backgroundColor: "#fff",
@@ -107,7 +142,59 @@ export default function AdminUsersPage() {
                 </button>
             </div>
 
-            {/* Top KPI Cards - Always 1 single row */}
+            {/* Top Navigation Tabs */}
+            <div style={{ display: "flex", gap: "10px", marginBottom: "20px", borderBottom: "2px solid #e5e7eb", paddingBottom: "10px" }}>
+                <button
+                    type="button"
+                    onClick={() => { setActiveTab("users"); setSearch(""); }}
+                    style={{
+                        padding: "10px 20px",
+                        borderRadius: "8px",
+                        border: "none",
+                        fontWeight: "800",
+                        fontSize: "14px",
+                        cursor: "pointer",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        backgroundColor: activeTab === "users" ? "#088178" : "#f3f4f6",
+                        color: activeTab === "users" ? "#ffffff" : "#4b5563",
+                        transition: "0.2s ease",
+                    }}
+                >
+                    <i className="fas fa-users"></i>
+                    <span>Registered Users ({users.length})</span>
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => { setActiveTab("messages"); setSearch(""); }}
+                    style={{
+                        padding: "10px 20px",
+                        borderRadius: "8px",
+                        border: "none",
+                        fontWeight: "800",
+                        fontSize: "14px",
+                        cursor: "pointer",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        backgroundColor: activeTab === "messages" ? "#088178" : "#f3f4f6",
+                        color: activeTab === "messages" ? "#ffffff" : "#4b5563",
+                        transition: "0.2s ease",
+                    }}
+                >
+                    <i className="fas fa-envelope-open-text"></i>
+                    <span>Contact Inquiries ({messages.length})</span>
+                    {messages.length > 0 && (
+                        <span style={{ backgroundColor: activeTab === "messages" ? "#ffffff" : "#088178", color: activeTab === "messages" ? "#088178" : "#ffffff", padding: "2px 7px", borderRadius: "10px", fontSize: "11px", fontWeight: "800" }}>
+                            {messages.length}
+                        </span>
+                    )}
+                </button>
+            </div>
+
+            {/* Top KPI Cards */}
             <div className="admin-user-kpi-row" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "10px", marginBottom: "20px" }}>
                 <div style={{ backgroundColor: "#fff", padding: "12px 14px", borderRadius: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", borderLeft: "3.5px solid #088178", minWidth: 0 }}>
                     <span style={{ fontSize: "10px", color: "#6b7280", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.3px", display: "block", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Total Users</span>
@@ -118,18 +205,18 @@ export default function AdminUsersPage() {
                     <h2 style={{ fontSize: "20px", fontWeight: "800", margin: "2px 0 0 0", color: "#111827" }}>{totalCustomers}</h2>
                 </div>
                 <div style={{ backgroundColor: "#fff", padding: "12px 14px", borderRadius: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", borderLeft: "3.5px solid #8b5cf6", minWidth: 0 }}>
-                    <span style={{ fontSize: "10px", color: "#6b7280", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.3px", display: "block", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Admins</span>
-                    <h2 style={{ fontSize: "20px", fontWeight: "800", margin: "2px 0 0 0", color: "#111827" }}>{totalAdmins}</h2>
+                    <span style={{ fontSize: "10px", color: "#6b7280", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.3px", display: "block", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Contact Inquiries</span>
+                    <h2 style={{ fontSize: "20px", fontWeight: "800", margin: "2px 0 0 0", color: "#111827" }}>{messages.length}</h2>
                 </div>
             </div>
 
-            {/* Filter & Search Bar - 1 Single Row */}
+            {/* Filter & Search Bar */}
             <div className="admin-filters-bar" style={{ backgroundColor: "#fff", borderRadius: "12px", padding: "12px 14px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", marginBottom: "20px", display: "flex", gap: "8px", flexWrap: "nowrap", alignItems: "center", width: "100%", boxSizing: "border-box" }}>
                 <div className="admin-search-wrapper" style={{ position: "relative", flex: 1, minWidth: 0 }}>
                     <i className="fas fa-search" style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "#9ca3af", fontSize: "13px" }} />
                     <input
                         type="text"
-                        placeholder="Search by name or email..."
+                        placeholder={activeTab === "users" ? "Search by name or email..." : "Search inquiries by sender, email, subject, or message..."}
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         style={{
@@ -169,62 +256,155 @@ export default function AdminUsersPage() {
                     )}
                 </div>
 
-                <div style={{ flexShrink: 0, minWidth: "110px", maxWidth: "140px" }}>
-                    <select
-                        value={roleFilter}
-                        onChange={(e) => setRoleFilter(e.target.value)}
-                        style={{
-                            width: "100%",
-                            padding: "9px 10px",
-                            borderRadius: "8px",
-                            border: "1px solid #d1d5db",
-                            backgroundColor: "#fff",
-                            fontSize: "13px",
-                            fontWeight: "600",
-                            cursor: "pointer",
-                            outline: "none",
-                            boxSizing: "border-box"
-                        }}
-                    >
-                        <option value="all">All Roles</option>
-                        <option value="Customer">Customers</option>
-                        <option value="Admin">Admins</option>
-                    </select>
-                </div>
+                {activeTab === "users" && (
+                    <div style={{ flexShrink: 0, minWidth: "110px", maxWidth: "140px" }}>
+                        <select
+                            value={roleFilter}
+                            onChange={(e) => setRoleFilter(e.target.value)}
+                            style={{
+                                width: "100%",
+                                padding: "9px 10px",
+                                borderRadius: "8px",
+                                border: "1px solid #d1d5db",
+                                backgroundColor: "#fff",
+                                fontSize: "13px",
+                                fontWeight: "600",
+                                cursor: "pointer",
+                                outline: "none",
+                                boxSizing: "border-box"
+                            }}
+                        >
+                            <option value="all">All Roles</option>
+                            <option value="Customer">Customers</option>
+                            <option value="Admin">Admins</option>
+                        </select>
+                    </div>
+                )}
             </div>
 
-            {/* Users Content */}
-            {filteredUsers.length === 0 ? (
-                <div style={{ textAlign: "center", padding: "60px", color: "#9ca3af", backgroundColor: "#fff", borderRadius: "12px" }}>
-                    <i className="fas fa-user-slash" style={{ fontSize: "40px", marginBottom: "12px", display: "block" }} />
-                    No users found matching your search.
-                </div>
-            ) : (
+            {/* ═══ TAB 1: USERS DIRECTORY ═══ */}
+            {activeTab === "users" && (
                 <>
-                    {/* ═══ Desktop View (Table) ═══ */}
-                    <div className="admin-desktop-view admin-table-card" style={{ backgroundColor: "#fff", borderRadius: "14px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", overflowX: "auto" }}>
-                        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: "650px" }}>
-                            <thead>
-                                <tr style={{ backgroundColor: "#f9fafb", borderBottom: "1px solid #e5e7eb", fontSize: "12px", color: "#6b7280", textTransform: "uppercase" }}>
-                                    <th style={{ padding: "14px 20px" }}>User</th>
-                                    <th style={{ padding: "14px 20px" }}>Contact</th>
-                                    <th style={{ padding: "14px 20px" }}>Location</th>
-                                    <th style={{ padding: "14px 20px" }}>Role</th>
-                                    <th style={{ padding: "14px 20px", textAlign: "right" }}>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody style={{ fontSize: "14px" }}>
+                    {filteredUsers.length === 0 ? (
+                        <div style={{ textAlign: "center", padding: "60px", color: "#9ca3af", backgroundColor: "#fff", borderRadius: "12px" }}>
+                            <i className="fas fa-user-slash" style={{ fontSize: "40px", marginBottom: "12px", display: "block" }} />
+                            No users found matching your search.
+                        </div>
+                    ) : (
+                        <>
+                            {/* Desktop View (Table) */}
+                            <div className="admin-desktop-view admin-table-card" style={{ backgroundColor: "#fff", borderRadius: "14px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", overflowX: "auto" }}>
+                                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: "650px" }}>
+                                    <thead>
+                                        <tr style={{ backgroundColor: "#f9fafb", borderBottom: "1px solid #e5e7eb", fontSize: "12px", color: "#6b7280", textTransform: "uppercase" }}>
+                                            <th style={{ padding: "14px 20px" }}>User</th>
+                                            <th style={{ padding: "14px 20px" }}>Contact</th>
+                                            <th style={{ padding: "14px 20px" }}>Location</th>
+                                            <th style={{ padding: "14px 20px" }}>Role</th>
+                                            <th style={{ padding: "14px 20px", textAlign: "right" }}>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style={{ fontSize: "14px" }}>
+                                        {filteredUsers.map((u) => {
+                                            const initials = u.fullName ? u.fullName.charAt(0).toUpperCase() : u.email.charAt(0).toUpperCase();
+                                            const isAdminRole = u.role.toLowerCase() === "admin";
+                                            return (
+                                                <tr key={u.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
+                                                    <td style={{ padding: "14px 20px" }}>
+                                                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                                                            <div
+                                                                style={{
+                                                                    width: "38px",
+                                                                    height: "38px",
+                                                                    borderRadius: "50%",
+                                                                    backgroundColor: isAdminRole ? "#8b5cf6" : "#088178",
+                                                                    color: "#fff",
+                                                                    display: "flex",
+                                                                    alignItems: "center",
+                                                                    justifyContent: "center",
+                                                                    fontWeight: "700",
+                                                                    fontSize: "14px",
+                                                                    flexShrink: 0
+                                                                }}
+                                                            >
+                                                                {initials}
+                                                            </div>
+                                                            <div>
+                                                                <div style={{ fontWeight: "700", color: "#111827" }}>{u.fullName || "Unnamed User"}</div>
+                                                                <div style={{ fontSize: "12px", color: "#6b7280" }}>{u.email}</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td style={{ padding: "14px 20px", color: "#4b5563" }}>
+                                                        {u.phoneNumber || <span style={{ color: "#9ca3af" }}>Not provided</span>}
+                                                    </td>
+                                                    <td style={{ padding: "14px 20px", color: "#4b5563" }}>
+                                                        {u.city ? `${u.city}${u.country ? `, ${u.country}` : ""}` : <span style={{ color: "#9ca3af" }}>N/A</span>}
+                                                    </td>
+                                                    <td style={{ padding: "14px 20px" }}>
+                                                        <span
+                                                            style={{
+                                                                padding: "4px 10px",
+                                                                borderRadius: "20px",
+                                                                fontSize: "12px",
+                                                                fontWeight: "700",
+                                                                backgroundColor: isAdminRole ? "#f3e8ff" : "#f0fdf4",
+                                                                color: isAdminRole ? "#7e22ce" : "#15803d",
+                                                            }}
+                                                        >
+                                                            {isAdminRole ? "Admin" : "Customer"}
+                                                        </span>
+                                                    </td>
+                                                    <td style={{ padding: "14px 20px", textAlign: "right" }}>
+                                                        <button
+                                                            onClick={() => setSelectedUser(u)}
+                                                            style={{
+                                                                backgroundColor: "#f3f4f6",
+                                                                border: "none",
+                                                                padding: "6px 12px",
+                                                                borderRadius: "6px",
+                                                                fontSize: "12px",
+                                                                fontWeight: "600",
+                                                                color: "#111827",
+                                                                cursor: "pointer",
+                                                            }}
+                                                        >
+                                                            <i className="fas fa-eye" style={{ marginRight: "4px" }} /> View
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {/* Mobile View (Cards) */}
+                            <div className="admin-mobile-view" style={{ display: "none", flexDirection: "column", gap: "12px", width: "100%" }}>
                                 {filteredUsers.map((u) => {
                                     const initials = u.fullName ? u.fullName.charAt(0).toUpperCase() : u.email.charAt(0).toUpperCase();
                                     const isAdminRole = u.role.toLowerCase() === "admin";
+
                                     return (
-                                        <tr key={u.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
-                                            <td style={{ padding: "14px 20px" }}>
-                                                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                                        <div
+                                            key={u.id}
+                                            style={{
+                                                backgroundColor: "#fff",
+                                                borderRadius: "12px",
+                                                padding: "16px",
+                                                boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+                                                border: "1px solid #f3f4f6",
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                gap: "12px"
+                                            }}
+                                        >
+                                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "10px" }}>
+                                                <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
                                                     <div
                                                         style={{
-                                                            width: "38px",
-                                                            height: "38px",
+                                                            width: "40px",
+                                                            height: "40px",
                                                             borderRadius: "50%",
                                                             backgroundColor: isAdminRole ? "#8b5cf6" : "#088178",
                                                             color: "#fff",
@@ -238,165 +418,234 @@ export default function AdminUsersPage() {
                                                     >
                                                         {initials}
                                                     </div>
-                                                    <div>
-                                                        <div style={{ fontWeight: "700", color: "#111827" }}>{u.fullName || "Unnamed User"}</div>
-                                                        <div style={{ fontSize: "12px", color: "#6b7280" }}>{u.email}</div>
+                                                    <div style={{ minWidth: 0 }}>
+                                                        <div style={{ fontWeight: "700", color: "#111827", fontSize: "14px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                                            {u.fullName || "Unnamed User"}
+                                                        </div>
+                                                        <div style={{ fontSize: "12px", color: "#6b7280", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                                            {u.email}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </td>
-                                            <td style={{ padding: "14px 20px", color: "#4b5563" }}>
-                                                {u.phoneNumber || <span style={{ color: "#9ca3af" }}>Not provided</span>}
-                                            </td>
-                                            <td style={{ padding: "14px 20px", color: "#4b5563" }}>
-                                                {u.city ? `${u.city}${u.country ? `, ${u.country}` : ""}` : <span style={{ color: "#9ca3af" }}>N/A</span>}
-                                            </td>
-                                            <td style={{ padding: "14px 20px" }}>
                                                 <span
                                                     style={{
-                                                        padding: "4px 10px",
+                                                        padding: "3px 10px",
                                                         borderRadius: "20px",
-                                                        fontSize: "12px",
+                                                        fontSize: "11px",
                                                         fontWeight: "700",
                                                         backgroundColor: isAdminRole ? "#f3e8ff" : "#f0fdf4",
                                                         color: isAdminRole ? "#7e22ce" : "#15803d",
+                                                        flexShrink: 0
                                                     }}
                                                 >
                                                     {isAdminRole ? "Admin" : "Customer"}
                                                 </span>
-                                            </td>
-                                            <td style={{ padding: "14px 20px", textAlign: "right" }}>
-                                                <button
-                                                    onClick={() => setSelectedUser(u)}
-                                                    style={{
-                                                        backgroundColor: "#f3f4f6",
-                                                        border: "none",
-                                                        padding: "6px 12px",
-                                                        borderRadius: "6px",
-                                                        fontSize: "12px",
-                                                        fontWeight: "600",
-                                                        color: "#111827",
-                                                        cursor: "pointer",
-                                                    }}
-                                                >
-                                                    <i className="fas fa-eye" style={{ marginRight: "4px" }} /> View
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
+                                            </div>
 
-                    {/* ═══ Mobile View (Cards) ═══ */}
-                    <div className="admin-mobile-view" style={{ display: "none", flexDirection: "column", gap: "12px", width: "100%" }}>
-                        {filteredUsers.map((u) => {
-                            const initials = u.fullName ? u.fullName.charAt(0).toUpperCase() : u.email.charAt(0).toUpperCase();
-                            const isAdminRole = u.role.toLowerCase() === "admin";
+                                            <div style={{
+                                                display: "grid",
+                                                gridTemplateColumns: "1fr 1fr",
+                                                gap: "8px",
+                                                padding: "10px 12px",
+                                                backgroundColor: "#f9fafb",
+                                                borderRadius: "8px",
+                                                fontSize: "12px"
+                                            }}>
+                                                <div>
+                                                    <span style={{ color: "#9ca3af", display: "block", fontSize: "10px", fontWeight: "700", textTransform: "uppercase" }}>Phone</span>
+                                                    <span style={{ color: "#374151", fontWeight: "600" }}>{u.phoneNumber || "Not provided"}</span>
+                                                </div>
+                                                <div>
+                                                    <span style={{ color: "#9ca3af", display: "block", fontSize: "10px", fontWeight: "700", textTransform: "uppercase" }}>Location</span>
+                                                    <span style={{ color: "#374151", fontWeight: "600" }}>{u.city ? `${u.city}${u.country ? `, ${u.country}` : ""}` : "N/A"}</span>
+                                                </div>
+                                            </div>
 
-                            return (
-                                <div
-                                    key={u.id}
-                                    style={{
-                                        backgroundColor: "#fff",
-                                        borderRadius: "12px",
-                                        padding: "16px",
-                                        boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
-                                        border: "1px solid #f3f4f6",
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        gap: "12px"
-                                    }}
-                                >
-                                    {/* Top Line: Avatar + Name + Role */}
-                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "10px" }}>
-                                        <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
-                                            <div
+                                            <button
+                                                onClick={() => setSelectedUser(u)}
                                                 style={{
-                                                    width: "40px",
-                                                    height: "40px",
-                                                    borderRadius: "50%",
-                                                    backgroundColor: isAdminRole ? "#8b5cf6" : "#088178",
-                                                    color: "#fff",
+                                                    width: "100%",
+                                                    backgroundColor: "#f3f4f6",
+                                                    border: "1px solid #e5e7eb",
+                                                    padding: "8px 14px",
+                                                    borderRadius: "8px",
+                                                    fontSize: "12px",
+                                                    fontWeight: "700",
+                                                    color: "#1f2937",
+                                                    cursor: "pointer",
                                                     display: "flex",
                                                     alignItems: "center",
                                                     justifyContent: "center",
-                                                    fontWeight: "700",
-                                                    fontSize: "14px",
-                                                    flexShrink: 0
+                                                    gap: "6px"
                                                 }}
                                             >
-                                                {initials}
-                                            </div>
-                                            <div style={{ minWidth: 0 }}>
-                                                <div style={{ fontWeight: "700", color: "#111827", fontSize: "14px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                                                    {u.fullName || "Unnamed User"}
-                                                </div>
-                                                <div style={{ fontSize: "12px", color: "#6b7280", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                                                    {u.email}
-                                                </div>
-                                            </div>
+                                                <i className="fas fa-eye" /> View Full Profile
+                                            </button>
                                         </div>
-                                        <span
-                                            style={{
-                                                padding: "3px 10px",
-                                                borderRadius: "20px",
-                                                fontSize: "11px",
-                                                fontWeight: "700",
-                                                backgroundColor: isAdminRole ? "#f3e8ff" : "#f0fdf4",
-                                                color: isAdminRole ? "#7e22ce" : "#15803d",
-                                                flexShrink: 0
-                                            }}
-                                        >
-                                            {isAdminRole ? "Admin" : "Customer"}
-                                        </span>
-                                    </div>
+                                    );
+                                })}
+                            </div>
+                        </>
+                    )}
+                </>
+            )}
 
-                                    {/* Info Grid: Contact & Location */}
-                                    <div style={{
-                                        display: "grid",
-                                        gridTemplateColumns: "1fr 1fr",
-                                        gap: "8px",
-                                        padding: "10px 12px",
-                                        backgroundColor: "#f9fafb",
-                                        borderRadius: "8px",
-                                        fontSize: "12px"
-                                    }}>
-                                        <div>
-                                            <span style={{ color: "#9ca3af", display: "block", fontSize: "10px", fontWeight: "700", textTransform: "uppercase" }}>Phone</span>
-                                            <span style={{ color: "#374151", fontWeight: "600" }}>{u.phoneNumber || "Not provided"}</span>
-                                        </div>
-                                        <div>
-                                            <span style={{ color: "#9ca3af", display: "block", fontSize: "10px", fontWeight: "700", textTransform: "uppercase" }}>Location</span>
-                                            <span style={{ color: "#374151", fontWeight: "600" }}>{u.city ? `${u.city}${u.country ? `, ${u.country}` : ""}` : "N/A"}</span>
-                                        </div>
-                                    </div>
+            {/* ═══ TAB 2: CONTACT INQUIRIES & FORM MESSAGES ═══ */}
+            {activeTab === "messages" && (
+                <>
+                    {filteredMessages.length === 0 ? (
+                        <div style={{ textAlign: "center", padding: "60px", color: "#9ca3af", backgroundColor: "#fff", borderRadius: "12px" }}>
+                            <i className="fas fa-inbox" style={{ fontSize: "40px", marginBottom: "12px", display: "block", color: "#088178" }} />
+                            <h3 style={{ fontSize: "18px", color: "#1f2937", margin: "0 0 6px 0" }}>No Contact Inquiries Found</h3>
+                            <p style={{ margin: 0, fontSize: "14px" }}>When customers submit the Contact Us form, their messages will appear here with highlighted details.</p>
+                        </div>
+                    ) : (
+                        <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                            {filteredMessages.map((msg) => {
+                                const initials = msg.name ? msg.name.charAt(0).toUpperCase() : "U";
+                                const formattedDate = new Date(msg.createdAt).toLocaleDateString("en-US", {
+                                    month: "short",
+                                    day: "numeric",
+                                    year: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                });
 
-                                    {/* Action button */}
-                                    <button
-                                        onClick={() => setSelectedUser(u)}
+                                return (
+                                    <div
+                                        key={msg.id}
                                         style={{
-                                            width: "100%",
-                                            backgroundColor: "#f3f4f6",
-                                            border: "1px solid #e5e7eb",
-                                            padding: "8px 14px",
-                                            borderRadius: "8px",
-                                            fontSize: "12px",
-                                            fontWeight: "700",
-                                            color: "#1f2937",
-                                            cursor: "pointer",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            gap: "6px"
+                                            backgroundColor: "#ffffff",
+                                            borderRadius: "14px",
+                                            border: "1.5px solid #e5e7eb",
+                                            padding: "20px",
+                                            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.04)",
+                                            transition: "border-color 0.2s ease",
                                         }}
                                     >
-                                        <i className="fas fa-eye" /> View Full Profile
-                                    </button>
-                                </div>
-                            );
-                        })}
-                    </div>
+                                        {/* Header Row: Sender Highlight + Actions */}
+                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "12px", marginBottom: "14px" }}>
+                                            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                                                {/* Branded Avatar */}
+                                                <div
+                                                    style={{
+                                                        width: "44px",
+                                                        height: "44px",
+                                                        borderRadius: "50%",
+                                                        backgroundColor: "#088178",
+                                                        color: "#ffffff",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
+                                                        fontWeight: "800",
+                                                        fontSize: "16px",
+                                                        flexShrink: 0,
+                                                        boxShadow: "0 2px 8px rgba(8, 129, 120, 0.25)",
+                                                    }}
+                                                >
+                                                    {initials}
+                                                </div>
+
+                                                <div>
+                                                    {/* Highlighted Username */}
+                                                    <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                                                        <span
+                                                            style={{
+                                                                fontSize: "16px",
+                                                                fontWeight: "800",
+                                                                color: "#088178",
+                                                                backgroundColor: "#e8f6ea",
+                                                                padding: "2px 10px",
+                                                                borderRadius: "6px",
+                                                                letterSpacing: "0.2px",
+                                                            }}
+                                                        >
+                                                            {msg.name}
+                                                        </span>
+                                                        <span style={{ fontSize: "12px", color: "#6b7280" }}>
+                                                            ({msg.email})
+                                                        </span>
+                                                    </div>
+                                                    <div style={{ fontSize: "12px", color: "#9ca3af", marginTop: "2px" }}>
+                                                        Received on {formattedDate}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Action Buttons */}
+                                            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                                <a
+                                                    href={`mailto:${msg.email}?subject=Re: ${encodeURIComponent(msg.subject)}`}
+                                                    style={{
+                                                        backgroundColor: "#088178",
+                                                        color: "#ffffff",
+                                                        textDecoration: "none",
+                                                        padding: "7px 14px",
+                                                        borderRadius: "8px",
+                                                        fontSize: "12px",
+                                                        fontWeight: "700",
+                                                        display: "inline-flex",
+                                                        alignItems: "center",
+                                                        gap: "6px",
+                                                        boxShadow: "0 2px 6px rgba(8,129,120,0.2)",
+                                                    }}
+                                                >
+                                                    <i className="fas fa-reply"></i> Reply
+                                                </a>
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => handleDeleteMessage(msg.id, e)}
+                                                    style={{
+                                                        backgroundColor: "#fee2e2",
+                                                        color: "#dc2626",
+                                                        border: "none",
+                                                        padding: "7px 12px",
+                                                        borderRadius: "8px",
+                                                        fontSize: "12px",
+                                                        fontWeight: "700",
+                                                        cursor: "pointer",
+                                                        display: "inline-flex",
+                                                        alignItems: "center",
+                                                        gap: "4px",
+                                                    }}
+                                                    title="Delete message"
+                                                >
+                                                    <i className="far fa-trash-alt"></i> Delete
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        {/* Subject */}
+                                        <div style={{ marginBottom: "10px" }}>
+                                            <span style={{ fontSize: "12px", fontWeight: "700", color: "#4b5563", textTransform: "uppercase", marginRight: "8px" }}>
+                                                Subject:
+                                            </span>
+                                            <strong style={{ fontSize: "14px", color: "#111827" }}>
+                                                {msg.subject}
+                                            </strong>
+                                        </div>
+
+                                        {/* Full Message Box */}
+                                        <div
+                                            style={{
+                                                backgroundColor: "#f9fafb",
+                                                border: "1px solid #e5e7eb",
+                                                borderRadius: "10px",
+                                                padding: "14px 16px",
+                                                fontSize: "14px",
+                                                lineHeight: "1.6",
+                                                color: "#374151",
+                                                whiteSpace: "pre-wrap",
+                                                wordBreak: "break-word",
+                                            }}
+                                        >
+                                            {msg.message}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
                 </>
             )}
 

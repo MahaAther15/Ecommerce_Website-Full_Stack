@@ -4,9 +4,9 @@ import { useState } from "react";
 import { ContactFormData, ContactFormErrors } from "@/app/types/contact";
 import { TeamMember } from "@/app/types/team";
 import teamData from "@/app/data/team.json";
+import { sendContactMessageApi } from "@/app/libs/contactApi";
 
 const teamMembers: TeamMember[] = teamData;
-
 
 export default function Contactform() {
   const [formData, setFormData] = useState<ContactFormData>({
@@ -17,34 +17,31 @@ export default function Contactform() {
   });
 
   const [errors, setErrors] = useState<ContactFormErrors>({});
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   const validate = (): boolean => {
     const newErrors: ContactFormErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    // .NET DataAnnotation validation parity: [Required], [StringLength(100, MinimumLength = 2)]
     if (!formData.name.trim()) {
       newErrors.name = "Name is required.";
     } else if (formData.name.trim().length < 2) {
       newErrors.name = "Name must be at least 2 characters.";
     }
 
-    // .NET DataAnnotation validation parity: [Required], [EmailAddress]
     if (!formData.email.trim()) {
       newErrors.email = "Email is required.";
     } else if (!emailRegex.test(formData.email.trim())) {
       newErrors.email = "Please enter a valid email address.";
     }
 
-    // .NET DataAnnotation validation parity: [Required], [StringLength(150, MinimumLength = 3)]
     if (!formData.subject.trim()) {
       newErrors.subject = "Subject is required.";
     } else if (formData.subject.trim().length < 3) {
       newErrors.subject = "Subject must be at least 3 characters.";
     }
 
-    // .NET DataAnnotation validation parity: [Required], [StringLength(2000, MinimumLength = 10)]
     if (!formData.message.trim()) {
       newErrors.message = "Message is required.";
     } else if (formData.message.trim().length < 10) {
@@ -65,14 +62,21 @@ export default function Contactform() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validate()) {
-      // Form is valid and ready for backend API (.NET Controller / api/contact)
+    if (!validate()) return;
+
+    try {
+      setSubmitting(true);
+      await sendContactMessageApi(formData);
       setSubmitted(true);
-      alert("Thank you! Your message has been sent successfully.");
       setFormData({ name: "", email: "", subject: "", message: "" });
       setErrors({});
+      setTimeout(() => setSubmitted(false), 7000);
+    } catch {
+      alert("Failed to send message. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -81,6 +85,28 @@ export default function Contactform() {
       <form onSubmit={handleSubmit} noValidate>
         <span>LEAVE A MESSAGE</span>
         <h2>We love to hear from you</h2>
+
+        {submitted && (
+          <div
+            style={{
+              width: "100%",
+              padding: "14px 18px",
+              backgroundColor: "#e8f6ea",
+              border: "1.5px solid #088178",
+              borderRadius: "8px",
+              color: "#088178",
+              fontWeight: "700",
+              fontSize: "14px",
+              marginBottom: "16px",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
+            <i className="fas fa-check-circle" style={{ fontSize: "18px" }}></i>
+            <span>Thank you! Your message has been sent to our administration.</span>
+          </div>
+        )}
 
         <div>
           <input
@@ -127,8 +153,13 @@ export default function Contactform() {
           {errors.message && <span style={{ color: "red", fontSize: "12px", display: "block", marginBottom: "8px" }}>{errors.message}</span>}
         </div>
 
-        <button type="submit" className="normal">
-          Submit
+        <button
+          type="submit"
+          className="normal"
+          disabled={submitting}
+          style={{ opacity: submitting ? 0.7 : 1, cursor: submitting ? "not-allowed" : "pointer" }}
+        >
+          {submitting ? "Sending..." : "Submit"}
         </button>
       </form>
 
