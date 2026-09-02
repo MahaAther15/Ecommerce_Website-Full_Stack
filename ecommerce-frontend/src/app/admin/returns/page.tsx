@@ -48,23 +48,23 @@ export default function AdminReturnsPage() {
     const filtered = allReturns.filter((r) => filterStatus === "All" || r.status === filterStatus);
 
     return (
-        <div style={{ padding: "30px", fontFamily: "'Inter', sans-serif" }}>
-            <div className="admin-page-header-row" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", width: "100%" }}>
+            <div className="admin-page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", flexWrap: "wrap", gap: "12px" }}>
                 <div>
-                    <h1 style={{ fontSize: "24px", fontWeight: "800", color: "#111827", margin: 0 }}>
+                    <h1 style={{ fontSize: "24px", fontWeight: "800", color: "#111827", margin: "0 0 4px 0" }}>
                         <i className="fas fa-undo-alt" style={{ color: "#088178", marginRight: "10px" }} />
                         Returns & Refund Management
                     </h1>
-                    <p style={{ color: "#6b7280", fontSize: "14px", marginTop: "4px" }}>
+                    <p style={{ color: "#6b7280", fontSize: "14px", margin: 0 }}>
                         Process customer return claims and approve refunds
                     </p>
                 </div>
 
-                <div style={{ display: "flex", gap: "10px" }}>
+                <div className="admin-search-wrapper" style={{ display: "flex", gap: "10px", maxWidth: "260px", width: "100%" }}>
                     <select
                         value={filterStatus}
                         onChange={(e) => setFilterStatus(e.target.value)}
-                        style={{ padding: "8px 16px", borderRadius: "8px", border: "1px solid #d1d5db", fontWeight: "600" }}
+                        style={{ width: "100%", padding: "9px 16px", borderRadius: "8px", border: "1px solid #d1d5db", fontWeight: "600", fontSize: "13px", backgroundColor: "#fff", outline: "none" }}
                     >
                         <option value="All">All Statuses</option>
                         <option value="Pending">Pending</option>
@@ -76,95 +76,180 @@ export default function AdminReturnsPage() {
                 </div>
             </div>
 
-            {/* Table Container */}
-            <div className="admin-table-card" style={{ backgroundColor: "#fff", borderRadius: "12px", boxShadow: "0 2px 10px rgba(0,0,0,0.05)", overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "14px", minWidth: "750px" }}>
-                    <thead style={{ backgroundColor: "#f9fafb", borderBottom: "1px solid #e5e7eb" }}>
-                        <tr>
-                            <th style={{ padding: "14px 18px", color: "#4b5563" }}>Order #</th>
-                            <th style={{ padding: "14px 18px", color: "#4b5563" }}>Customer</th>
-                            <th style={{ padding: "14px 18px", color: "#4b5563" }}>Reason</th>
-                            <th style={{ padding: "14px 18px", color: "#4b5563" }}>Refund Amount</th>
-                            <th style={{ padding: "14px 18px", color: "#4b5563" }}>Date</th>
-                            <th style={{ padding: "14px 18px", color: "#4b5563" }}>Status</th>
-                            <th style={{ padding: "14px 18px", color: "#4b5563", textAlign: "right" }}>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loading && (
-                            <tr>
-                                <td colSpan={7} style={{ textAlign: "center", padding: "40px", color: "#6b7280" }}>
-                                    Loading return requests...
-                                </td>
-                            </tr>
-                        )}
-                        {!loading && filtered.length === 0 && (
-                            <tr>
-                                <td colSpan={7} style={{ textAlign: "center", padding: "40px", color: "#9ca3af" }}>
-                                    No return & refund requests found.
-                                </td>
-                            </tr>
-                        )}
-                        {!loading && filtered.map((req) => {
+            {/* Content */}
+            {loading ? (
+                <div style={{ textAlign: "center", padding: "60px", color: "#6b7280", fontWeight: "600", backgroundColor: "#fff", borderRadius: "12px" }}>
+                    <i className="fas fa-spinner fa-spin" style={{ fontSize: "28px", color: "#088178", marginBottom: "12px", display: "block" }} />
+                    Loading return requests...
+                </div>
+            ) : filtered.length === 0 ? (
+                <div style={{ textAlign: "center", padding: "60px", color: "#9ca3af", backgroundColor: "#fff", borderRadius: "12px" }}>
+                    <i className="fas fa-box-open" style={{ fontSize: "40px", marginBottom: "12px", display: "block" }} />
+                    No return & refund requests found.
+                </div>
+            ) : (
+                <>
+                    {/* ═══ Desktop Table View ═══ */}
+                    <div className="admin-desktop-view admin-table-card" style={{ backgroundColor: "#fff", borderRadius: "12px", boxShadow: "0 2px 10px rgba(0,0,0,0.05)", overflowX: "auto" }}>
+                        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "14px", minWidth: "750px" }}>
+                            <thead style={{ backgroundColor: "#f9fafb", borderBottom: "1px solid #e5e7eb" }}>
+                                <tr>
+                                    <th style={{ padding: "14px 18px", color: "#4b5563" }}>Order #</th>
+                                    <th style={{ padding: "14px 18px", color: "#4b5563" }}>Customer</th>
+                                    <th style={{ padding: "14px 18px", color: "#4b5563" }}>Reason</th>
+                                    <th style={{ padding: "14px 18px", color: "#4b5563" }}>Refund Amount</th>
+                                    <th style={{ padding: "14px 18px", color: "#4b5563" }}>Date</th>
+                                    <th style={{ padding: "14px 18px", color: "#4b5563" }}>Status</th>
+                                    <th style={{ padding: "14px 18px", color: "#4b5563", textAlign: "right" }}>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filtered.map((req) => {
+                                    const badge = STATUS_BADGES[req.status] || { color: "#6b7280", bg: "#f3f4f6" };
+                                    return (
+                                        <tr key={req.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
+                                            <td style={{ padding: "14px 18px", fontWeight: "700", color: "#111827" }}>{req.orderNumber}</td>
+                                            <td style={{ padding: "14px 18px" }}>
+                                                <div style={{ fontWeight: "600", color: "#1f2937" }}>{req.userFullName}</div>
+                                                <div style={{ fontSize: "12px", color: "#9ca3af" }}>{req.userEmail}</div>
+                                            </td>
+                                            <td style={{ padding: "14px 18px", color: "#374151" }}>{req.reason}</td>
+                                            <td style={{ padding: "14px 18px", fontWeight: "700", color: "#088178" }}>${req.refundAmount.toFixed(2)}</td>
+                                            <td style={{ padding: "14px 18px", color: "#6b7280", fontSize: "12px" }}>
+                                                {new Date(req.createdAt).toLocaleDateString()}
+                                            </td>
+                                            <td style={{ padding: "14px 18px" }}>
+                                                <span style={{
+                                                    backgroundColor: badge.bg, color: badge.color,
+                                                    padding: "4px 12px", borderRadius: "999px",
+                                                    fontWeight: "700", fontSize: "12px"
+                                                }}>
+                                                    {req.status}
+                                                </span>
+                                            </td>
+                                            <td style={{ padding: "14px 18px", textAlign: "right" }}>
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedRequest(req);
+                                                        setAdminNotes(req.adminNotes || "");
+                                                    }}
+                                                    style={{
+                                                        backgroundColor: "#088178", color: "#fff",
+                                                        border: "none", padding: "6px 14px",
+                                                        borderRadius: "6px", fontWeight: "600",
+                                                        fontSize: "12px", cursor: "pointer"
+                                                    }}
+                                                >
+                                                    Process Return
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* ═══ Mobile Card View ═══ */}
+                    <div className="admin-mobile-view" style={{ display: "none", flexDirection: "column", gap: "12px", width: "100%" }}>
+                        {filtered.map((req) => {
                             const badge = STATUS_BADGES[req.status] || { color: "#6b7280", bg: "#f3f4f6" };
                             return (
-                                <tr key={req.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
-                                    <td style={{ padding: "14px 18px", fontWeight: "700", color: "#111827" }}>{req.orderNumber}</td>
-                                    <td style={{ padding: "14px 18px" }}>
-                                        <div style={{ fontWeight: "600", color: "#1f2937" }}>{req.userFullName}</div>
-                                        <div style={{ fontSize: "12px", color: "#9ca3af" }}>{req.userEmail}</div>
-                                    </td>
-                                    <td style={{ padding: "14px 18px", color: "#374151" }}>{req.reason}</td>
-                                    <td style={{ padding: "14px 18px", fontWeight: "700", color: "#088178" }}>${req.refundAmount.toFixed(2)}</td>
-                                    <td style={{ padding: "14px 18px", color: "#6b7280", fontSize: "12px" }}>
-                                        {new Date(req.createdAt).toLocaleDateString()}
-                                    </td>
-                                    <td style={{ padding: "14px 18px" }}>
+                                <div
+                                    key={req.id}
+                                    style={{
+                                        backgroundColor: "#fff",
+                                        borderRadius: "12px",
+                                        padding: "16px",
+                                        boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+                                        border: "1px solid #f3f4f6",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        gap: "10px"
+                                    }}
+                                >
+                                    {/* Top Line: Order Number & Status */}
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                        <div>
+                                            <span style={{ fontWeight: "800", color: "#088178", fontSize: "15px" }}>{req.orderNumber}</span>
+                                            <div style={{ fontSize: "11px", color: "#9ca3af" }}>{new Date(req.createdAt).toLocaleDateString()}</div>
+                                        </div>
                                         <span style={{
-                                            backgroundColor: badge.bg, color: badge.color,
-                                            padding: "4px 12px", borderRadius: "999px",
-                                            fontWeight: "700", fontSize: "12px"
+                                            backgroundColor: badge.bg,
+                                            color: badge.color,
+                                            padding: "3px 10px",
+                                            borderRadius: "999px",
+                                            fontWeight: "700",
+                                            fontSize: "11px"
                                         }}>
                                             {req.status}
                                         </span>
-                                    </td>
-                                    <td style={{ padding: "14px 18px", textAlign: "right" }}>
-                                        <button
-                                            onClick={() => {
-                                                setSelectedRequest(req);
-                                                setAdminNotes(req.adminNotes || "");
-                                            }}
-                                            style={{
-                                                backgroundColor: "#088178", color: "#fff",
-                                                border: "none", padding: "6px 14px",
-                                                borderRadius: "6px", fontWeight: "600",
-                                                fontSize: "12px", cursor: "pointer"
-                                            }}
-                                        >
-                                            Process Return
-                                        </button>
-                                    </td>
-                                </tr>
+                                    </div>
+
+                                    {/* Customer & Reason Info */}
+                                    <div style={{ backgroundColor: "#f9fafb", borderRadius: "8px", padding: "10px 12px", fontSize: "12px" }}>
+                                        <div style={{ color: "#1f2937", fontWeight: "700" }}>{req.userFullName}</div>
+                                        <div style={{ color: "#6b7280", fontSize: "11px", marginBottom: "6px" }}>{req.userEmail}</div>
+                                        <div style={{ color: "#374151" }}><strong>Reason:</strong> {req.reason}</div>
+                                    </div>
+
+                                    {/* Refund Amount */}
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                        <span style={{ fontSize: "12px", color: "#6b7280", fontWeight: "600" }}>Refund Amount:</span>
+                                        <span style={{ fontWeight: "800", color: "#088178", fontSize: "16px" }}>${req.refundAmount.toFixed(2)}</span>
+                                    </div>
+
+                                    {/* Action Button */}
+                                    <button
+                                        onClick={() => {
+                                            setSelectedRequest(req);
+                                            setAdminNotes(req.adminNotes || "");
+                                        }}
+                                        style={{
+                                            width: "100%",
+                                            backgroundColor: "#088178",
+                                            color: "#fff",
+                                            border: "none",
+                                            padding: "9px 14px",
+                                            borderRadius: "8px",
+                                            fontWeight: "700",
+                                            fontSize: "12px",
+                                            cursor: "pointer",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            gap: "6px"
+                                        }}
+                                    >
+                                        <i className="fas fa-undo-alt" /> Process Return
+                                    </button>
+                                </div>
                             );
                         })}
-                    </tbody>
-                </table>
-            </div>
+                    </div>
+                </>
+            )}
 
             {/* Admin Action Modal */}
             {selectedRequest && (
                 <div style={{
                     position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.5)",
+                    backdropFilter: "blur(4px)",
                     display: "flex", alignItems: "center", justifyContent: "center",
                     zIndex: 1000, padding: "16px"
                 }}>
                     <div style={{
                         backgroundColor: "#fff", borderRadius: "16px", maxWidth: "540px",
-                        width: "100%", padding: "28px", boxShadow: "0 20px 40px rgba(0,0,0,0.2)"
+                        width: "100%", padding: "24px", boxShadow: "0 20px 40px rgba(0,0,0,0.2)"
                     }}>
-                        <h3 style={{ margin: "0 0 16px 0", fontSize: "18px", fontWeight: "800" }}>
-                            Process Return for {selectedRequest.orderNumber}
-                        </h3>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+                            <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "800", color: "#1f2937" }}>
+                                Process Return for {selectedRequest.orderNumber}
+                            </h3>
+                            <button onClick={() => setSelectedRequest(null)} style={{ background: "none", border: "none", fontSize: "16px", cursor: "pointer", color: "#6b7280" }}>
+                                <i className="fas fa-times" />
+                            </button>
+                        </div>
 
                         <div style={{ backgroundColor: "#f9fafb", padding: "14px", borderRadius: "8px", fontSize: "13px", marginBottom: "16px" }}>
                             <p style={{ margin: "0 0 6px 0" }}><strong>Reason:</strong> {selectedRequest.reason}</p>
@@ -173,14 +258,14 @@ export default function AdminReturnsPage() {
                             <p style={{ margin: 0 }}><strong>Refund Amount:</strong> <span style={{ color: "#088178", fontWeight: "800" }}>${selectedRequest.refundAmount.toFixed(2)}</span></p>
                         </div>
 
-                        <div style={{ marginBottom: "16px" }}>
-                            <label style={{ display: "block", fontSize: "13px", fontWeight: "700", marginBottom: "6px" }}>
+                        <div style={{ marginBottom: "14px" }}>
+                            <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>
                                 Update Return Status
                             </label>
                             <select
                                 value={actionStatus}
                                 onChange={(e) => setActionStatus(Number(e.target.value))}
-                                style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid #d1d5db" }}
+                                style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none", backgroundColor: "#fff" }}
                             >
                                 <option value={1}>Under Review</option>
                                 <option value={2}>Approved (Awaiting Item Return)</option>
@@ -189,8 +274,8 @@ export default function AdminReturnsPage() {
                             </select>
                         </div>
 
-                        <div style={{ marginBottom: "20px" }}>
-                            <label style={{ display: "block", fontSize: "13px", fontWeight: "700", marginBottom: "6px" }}>
+                        <div style={{ marginBottom: "18px" }}>
+                            <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>
                                 Admin Response / Remarks
                             </label>
                             <textarea
@@ -198,14 +283,14 @@ export default function AdminReturnsPage() {
                                 value={adminNotes}
                                 onChange={(e) => setAdminNotes(e.target.value)}
                                 placeholder="Add notes for customer (e.g. Refund sent via Bank transfer #TXN123)..."
-                                style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px" }}
+                                style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none", resize: "vertical" }}
                             />
                         </div>
 
                         <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
                             <button
                                 onClick={() => setSelectedRequest(null)}
-                                style={{ padding: "10px 16px", borderRadius: "8px", border: "1px solid #d1d5db", backgroundColor: "#fff", fontWeight: "600", cursor: "pointer" }}
+                                style={{ flex: 1, padding: "10px 16px", borderRadius: "8px", border: "1px solid #d1d5db", backgroundColor: "#fff", fontWeight: "700", cursor: "pointer", fontSize: "13px", color: "#374151" }}
                             >
                                 Cancel
                             </button>
@@ -213,12 +298,13 @@ export default function AdminReturnsPage() {
                                 onClick={handleUpdateStatus}
                                 disabled={processing}
                                 style={{
-                                    padding: "10px 22px", borderRadius: "8px", border: "none",
+                                    flex: 1,
+                                    padding: "10px 20px", borderRadius: "8px", border: "none",
                                     backgroundColor: actionStatus === 3 ? "#16a34a" : (actionStatus === 4 ? "#dc2626" : "#088178"),
-                                    color: "#fff", fontWeight: "700", cursor: processing ? "not-allowed" : "pointer"
+                                    color: "#fff", fontWeight: "700", cursor: processing ? "not-allowed" : "pointer", fontSize: "13px"
                                 }}
                             >
-                                {processing ? "Processing..." : (actionStatus === 3 ? "Process & Return Refund" : "Save Changes")}
+                                {processing ? "Processing..." : (actionStatus === 3 ? "Process Refund" : "Save Changes")}
                             </button>
                         </div>
                     </div>

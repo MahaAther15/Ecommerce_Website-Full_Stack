@@ -20,7 +20,17 @@ export default function NotificationDropdown({ isAdmin = false }: Props) {
     const [open, setOpen] = useState(false);
     const [notifications, setNotifications] = useState<NotificationItem[]>([]);
     const [unreadCount, setUnreadCount] = useState(0);
+    const [isMobile, setIsMobile] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+        checkMobile();
+        window.addEventListener("resize", checkMobile);
+        return () => window.removeEventListener("resize", checkMobile);
+    }, []);
 
     useEffect(() => {
         loadCount();
@@ -153,23 +163,45 @@ export default function NotificationDropdown({ isAdmin = false }: Props) {
             {/* Dropdown Menu */}
             {open && (
                 <div
-                    style={{
-                        position: "absolute",
-                        right: 0,
-                        top: "100%",
-                        marginTop: "8px",
-                        width: "360px",
-                        maxHeight: "480px",
-                        backgroundColor: "#fff",
-                        borderRadius: "14px",
-                        boxShadow: "0 10px 30px rgba(0, 0, 0, 0.15)",
-                        border: "1px solid #e5e7eb",
-                        zIndex: 99999,
-                        overflow: "hidden",
-                        display: "flex",
-                        flexDirection: "column",
-                        fontFamily: "'Inter', sans-serif",
-                    }}
+                    className="notification-dropdown-menu"
+                    style={
+                        isMobile
+                            ? {
+                                position: "fixed",
+                                top: "64px",
+                                left: "12px",
+                                right: "12px",
+                                width: "auto",
+                                maxWidth: "calc(100vw - 24px)",
+                                maxHeight: "75vh",
+                                backgroundColor: "#fff",
+                                borderRadius: "14px",
+                                boxShadow: "0 16px 40px rgba(0, 0, 0, 0.25)",
+                                border: "1px solid #e5e7eb",
+                                zIndex: 999999,
+                                overflow: "hidden",
+                                display: "flex",
+                                flexDirection: "column",
+                                fontFamily: "'Inter', sans-serif",
+                            }
+                            : {
+                                position: "absolute",
+                                right: 0,
+                                top: "100%",
+                                marginTop: "8px",
+                                width: "360px",
+                                maxHeight: "480px",
+                                backgroundColor: "#fff",
+                                borderRadius: "14px",
+                                boxShadow: "0 10px 30px rgba(0, 0, 0, 0.15)",
+                                border: "1px solid #e5e7eb",
+                                zIndex: 99999,
+                                overflow: "hidden",
+                                display: "flex",
+                                flexDirection: "column",
+                                fontFamily: "'Inter', sans-serif",
+                            }
+                    }
                 >
                     {/* Header */}
                     <div style={{ padding: "14px 18px", borderBottom: "1px solid #f3f4f6", display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "#fafafa" }}>

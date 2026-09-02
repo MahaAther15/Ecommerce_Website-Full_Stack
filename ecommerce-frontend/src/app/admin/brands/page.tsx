@@ -62,7 +62,7 @@ export default function AdminBrandsPage() {
         setIsModalOpen(true);
     };
 
-    // Cloudinary Logo Upload
+    // Cloudinary Brand Logo Upload
     const handleLogoFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -124,7 +124,7 @@ export default function AdminBrandsPage() {
     );
 
     return (
-        <div>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", width: "100%" }}>
             {/* Toast Notification */}
             {toast && (
                 <div style={{
@@ -144,13 +144,14 @@ export default function AdminBrandsPage() {
             )}
 
             {/* Header */}
-            <div className="admin-page-header-row" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+            <div className="admin-page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", flexWrap: "wrap", gap: "12px" }}>
                 <div>
-                    <h1 style={{ fontSize: "24px", fontWeight: "800", color: "#1f2937" }}>Brands Management</h1>
-                    <p style={{ color: "#6b7280", fontSize: "14px" }}>Manage brand logos, URL slugs, and storefront taxonomies.</p>
+                    <h1 style={{ fontSize: "24px", fontWeight: "800", color: "#1f2937", margin: "0 0 4px 0" }}>Brands Management</h1>
+                    <p style={{ color: "#6b7280", fontSize: "14px", margin: 0 }}>Manage brand logos, URL slugs, and storefront taxonomies.</p>
                 </div>
                 <button
                     onClick={() => handleOpenModal()}
+                    className="admin-action-btn"
                     style={{
                         backgroundColor: "#088178",
                         color: "#fff",
@@ -159,9 +160,11 @@ export default function AdminBrandsPage() {
                         fontWeight: "700",
                         border: "none",
                         cursor: "pointer",
-                        display: "flex",
+                        display: "inline-flex",
                         alignItems: "center",
-                        gap: "8px"
+                        gap: "8px",
+                        fontSize: "14px",
+                        boxShadow: "0 2px 8px rgba(8,129,120,0.2)"
                     }}
                 >
                     <i className="fas fa-plus"></i> Add New Brand
@@ -169,7 +172,7 @@ export default function AdminBrandsPage() {
             </div>
 
             {/* Search Bar */}
-            <div className="admin-search-wrapper" style={{ marginBottom: "20px", position: "relative", maxWidth: "450px" }}>
+            <div className="admin-search-wrapper" style={{ marginBottom: "20px", position: "relative", maxWidth: "450px", width: "100%" }}>
                 <i className="fas fa-search" style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#9ca3af", fontSize: "14px" }} />
                 <input
                     type="text"
@@ -212,43 +215,140 @@ export default function AdminBrandsPage() {
                 )}
             </div>
 
-            {/* Table */}
-            <div className="admin-table-card" style={{ backgroundColor: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: "650px" }}>
-                    <thead style={{ backgroundColor: "#f9fafb", borderBottom: "1px solid #e5e7eb" }}>
-                        <tr>
-                            <th style={{ padding: "14px 16px" }}>Logo</th>
-                            <th style={{ padding: "14px 16px" }}>Brand Name</th>
-                            <th style={{ padding: "14px 16px" }}>Slug (URL)</th>
-                            <th style={{ padding: "14px 16px" }}>Description</th>
-                            <th style={{ padding: "14px 16px" }}>Status</th>
-                            <th style={{ padding: "14px 16px" }}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loading ? (
-                            <tr>
-                                <td colSpan={6} style={{ textAlign: "center", padding: "40px" }}>Loading brands...</td>
-                            </tr>
-                        ) : filteredBrands.length === 0 ? (
-                            <tr>
-                                <td colSpan={6} style={{ textAlign: "center", padding: "40px" }}>No brands found. Click "Add New Brand" to create one.</td>
-                            </tr>
-                        ) : (
-                            filteredBrands.map((brand) => (
-                                <tr key={brand.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
-                                    {/* Logo */}
-                                    <td style={{ padding: "12px 16px" }}>
+            {/* Content */}
+            {loading ? (
+                <div style={{ textAlign: "center", padding: "60px", color: "#6b7280", fontWeight: "600", backgroundColor: "#fff", borderRadius: "12px" }}>
+                    <i className="fas fa-spinner fa-spin" style={{ fontSize: "28px", color: "#088178", marginBottom: "12px", display: "block" }} />
+                    Loading brands...
+                </div>
+            ) : filteredBrands.length === 0 ? (
+                <div style={{ textAlign: "center", padding: "60px", color: "#9ca3af", backgroundColor: "#fff", borderRadius: "12px" }}>
+                    <i className="fas fa-copyright" style={{ fontSize: "40px", marginBottom: "12px", display: "block" }} />
+                    No brands found matching your search.
+                </div>
+            ) : (
+                <>
+                    {/* ═══ Desktop Table View ═══ */}
+                    <div className="admin-desktop-view admin-table-card" style={{ backgroundColor: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", overflowX: "auto" }}>
+                        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: "650px" }}>
+                            <thead style={{ backgroundColor: "#f9fafb", borderBottom: "1px solid #e5e7eb" }}>
+                                <tr>
+                                    <th style={{ padding: "14px 16px" }}>Logo</th>
+                                    <th style={{ padding: "14px 16px" }}>Brand Name</th>
+                                    <th style={{ padding: "14px 16px" }}>Slug (URL)</th>
+                                    <th style={{ padding: "14px 16px" }}>Description</th>
+                                    <th style={{ padding: "14px 16px" }}>Status</th>
+                                    <th style={{ padding: "14px 16px" }}>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredBrands.map((brand) => (
+                                    <tr key={brand.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
+                                        {/* Logo */}
+                                        <td style={{ padding: "12px 16px" }}>
+                                            {brand.logoUrl ? (
+                                                <img
+                                                    src={brand.logoUrl}
+                                                    alt={brand.name}
+                                                    style={{ width: "42px", height: "42px", objectFit: "contain", borderRadius: "6px", border: "1px solid #e5e7eb", padding: "2px", backgroundColor: "#fff" }}
+                                                />
+                                            ) : (
+                                                <div style={{
+                                                    width: "42px",
+                                                    height: "42px",
+                                                    borderRadius: "6px",
+                                                    backgroundColor: "#f3f4f6",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    fontWeight: "700",
+                                                    color: "#088178",
+                                                    fontSize: "16px"
+                                                }}>
+                                                    {brand.name.charAt(0).toUpperCase()}
+                                                </div>
+                                            )}
+                                        </td>
+                                        {/* Brand Name */}
+                                        <td style={{ padding: "14px 16px", fontWeight: "700", color: "#111827" }}>
+                                            {brand.name}
+                                        </td>
+                                        {/* Slug */}
+                                        <td style={{ padding: "14px 16px" }}>
+                                            <span style={{ backgroundColor: "#f3f4f6", color: "#4b5563", padding: "4px 8px", borderRadius: "4px", fontSize: "12px", fontFamily: "monospace" }}>
+                                                {brand.slug}
+                                            </span>
+                                        </td>
+                                        {/* Description */}
+                                        <td style={{ padding: "14px 16px", color: "#6b7280", fontSize: "13px", maxWidth: "250px" }}>
+                                            {brand.description || <span style={{ color: "#9ca3af" }}>No description</span>}
+                                        </td>
+                                        {/* Status */}
+                                        <td style={{ padding: "14px 16px" }}>
+                                            <span style={{
+                                                backgroundColor: brand.isActive !== false ? "#dcfce7" : "#fee2e2",
+                                                color: brand.isActive !== false ? "#15803d" : "#b91c1c",
+                                                padding: "4px 10px",
+                                                borderRadius: "12px",
+                                                fontSize: "12px",
+                                                fontWeight: "600"
+                                            }}>
+                                                {brand.isActive !== false ? "Active" : "Inactive"}
+                                            </span>
+                                        </td>
+                                        {/* Actions */}
+                                        <td style={{ padding: "14px 16px" }}>
+                                            <div style={{ display: "flex", gap: "8px" }}>
+                                                <button
+                                                    onClick={() => handleOpenModal(brand)}
+                                                    style={{ background: "#f3f4f6", border: "none", padding: "6px 12px", borderRadius: "6px", cursor: "pointer", color: "#374151", fontWeight: "600", fontSize: "12px" }}
+                                                >
+                                                    <i className="fas fa-edit"></i> Edit
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(brand.id, brand.name)}
+                                                    style={{ background: "#fee2e2", border: "none", padding: "6px 12px", borderRadius: "6px", cursor: "pointer", color: "#dc2626", fontSize: "12px" }}
+                                                    title="Delete Brand"
+                                                >
+                                                    <i className="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* ═══ Mobile Card View ═══ */}
+                    <div className="admin-mobile-view" style={{ display: "none", flexDirection: "column", gap: "12px", width: "100%" }}>
+                        {filteredBrands.map((brand) => (
+                            <div
+                                key={brand.id}
+                                style={{
+                                    backgroundColor: "#fff",
+                                    borderRadius: "12px",
+                                    padding: "16px",
+                                    boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+                                    border: "1px solid #f3f4f6",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    gap: "10px"
+                                }}
+                            >
+                                {/* Top row: Logo + Brand Name + Status */}
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "10px" }}>
+                                    <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
                                         {brand.logoUrl ? (
                                             <img
                                                 src={brand.logoUrl}
                                                 alt={brand.name}
-                                                style={{ width: "42px", height: "42px", objectFit: "contain", borderRadius: "6px", border: "1px solid #e5e7eb", padding: "2px" }}
+                                                style={{ width: "40px", height: "40px", objectFit: "contain", borderRadius: "6px", border: "1px solid #e5e7eb", padding: "2px", flexShrink: 0, backgroundColor: "#fff" }}
                                             />
                                         ) : (
                                             <div style={{
-                                                width: "42px",
-                                                height: "42px",
+                                                width: "40px",
+                                                height: "40px",
                                                 borderRadius: "6px",
                                                 backgroundColor: "#f3f4f6",
                                                 display: "flex",
@@ -256,62 +356,87 @@ export default function AdminBrandsPage() {
                                                 justifyContent: "center",
                                                 fontWeight: "700",
                                                 color: "#088178",
-                                                fontSize: "16px"
+                                                fontSize: "16px",
+                                                flexShrink: 0
                                             }}>
                                                 {brand.name.charAt(0).toUpperCase()}
                                             </div>
                                         )}
-                                    </td>
-                                    {/* Brand Name */}
-                                    <td style={{ padding: "14px 16px", fontWeight: "600", color: "#111827" }}>
-                                        {brand.name}
-                                    </td>
-                                    {/* Slug */}
-                                    <td style={{ padding: "14px 16px" }}>
-                                        <span style={{ backgroundColor: "#f3f4f6", color: "#4b5563", padding: "4px 8px", borderRadius: "4px", fontSize: "12px", fontFamily: "monospace" }}>
-                                            {brand.slug}
-                                        </span>
-                                    </td>
-                                    {/* Description */}
-                                    <td style={{ padding: "14px 16px", color: "#4b5563", fontSize: "13px", maxWidth: "250px" }}>
-                                        {brand.description || <span style={{ color: "#9ca3af" }}>No description</span>}
-                                    </td>
-                                    {/* Status */}
-                                    <td style={{ padding: "14px 16px" }}>
-                                        <span style={{
-                                            backgroundColor: brand.isActive !== false ? "#dcfce7" : "#fee2e2",
-                                            color: brand.isActive !== false ? "#15803d" : "#b91c1c",
-                                            padding: "4px 10px",
-                                            borderRadius: "12px",
-                                            fontSize: "12px",
-                                            fontWeight: "600"
-                                        }}>
-                                            {brand.isActive !== false ? "Active" : "Inactive"}
-                                        </span>
-                                    </td>
-                                    {/* Actions */}
-                                    <td style={{ padding: "14px 16px" }}>
-                                        <div style={{ display: "flex", gap: "8px" }}>
-                                            <button
-                                                onClick={() => handleOpenModal(brand)}
-                                                style={{ background: "#f3f4f6", border: "none", padding: "6px 12px", borderRadius: "6px", cursor: "pointer", color: "#374151" }}
-                                            >
-                                                <i className="fas fa-edit"></i> Edit
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(brand.id, brand.name)}
-                                                style={{ background: "#fee2e2", border: "none", padding: "6px 12px", borderRadius: "6px", cursor: "pointer", color: "#dc2626" }}
-                                            >
-                                                <i className="fas fa-trash"></i>
-                                            </button>
+                                        <div style={{ minWidth: 0 }}>
+                                            <div style={{ fontWeight: "700", color: "#111827", fontSize: "15px" }}>
+                                                {brand.name}
+                                            </div>
+                                            <span style={{ fontSize: "11px", color: "#6b7280", fontFamily: "monospace" }}>
+                                                {brand.slug}
+                                            </span>
                                         </div>
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-            </div>
+                                    </div>
+                                    <span style={{
+                                        backgroundColor: brand.isActive !== false ? "#dcfce7" : "#fee2e2",
+                                        color: brand.isActive !== false ? "#15803d" : "#b91c1c",
+                                        padding: "3px 8px",
+                                        borderRadius: "12px",
+                                        fontSize: "11px",
+                                        fontWeight: "600",
+                                        flexShrink: 0
+                                    }}>
+                                        {brand.isActive !== false ? "Active" : "Inactive"}
+                                    </span>
+                                </div>
+
+                                {/* Description */}
+                                <p style={{ margin: 0, fontSize: "13px", color: brand.description ? "#4b5563" : "#9ca3af", fontStyle: brand.description ? "normal" : "italic", lineHeight: "1.4" }}>
+                                    {brand.description || "No description provided."}
+                                </p>
+
+                                {/* Action Buttons */}
+                                <div style={{ display: "flex", gap: "8px", paddingTop: "8px", borderTop: "1px solid #f3f4f6" }}>
+                                    <button
+                                        onClick={() => handleOpenModal(brand)}
+                                        style={{
+                                            flex: 1,
+                                            background: "#f3f4f6",
+                                            border: "1px solid #e5e7eb",
+                                            padding: "8px 12px",
+                                            borderRadius: "8px",
+                                            cursor: "pointer",
+                                            color: "#374151",
+                                            fontSize: "12px",
+                                            fontWeight: "700",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            gap: "6px"
+                                        }}
+                                    >
+                                        <i className="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(brand.id, brand.name)}
+                                        style={{
+                                            flex: 1,
+                                            background: "#fee2e2",
+                                            border: "1px solid #fecaca",
+                                            padding: "8px 12px",
+                                            borderRadius: "8px",
+                                            cursor: "pointer",
+                                            color: "#dc2626",
+                                            fontSize: "12px",
+                                            fontWeight: "700",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            gap: "6px"
+                                        }}
+                                    >
+                                        <i className="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </>
+            )}
 
             {/* Modal */}
             {isModalOpen && (
@@ -319,47 +444,58 @@ export default function AdminBrandsPage() {
                     position: "fixed",
                     inset: 0,
                     backgroundColor: "rgba(0,0,0,0.5)",
+                    backdropFilter: "blur(4px)",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
                     zIndex: 10000,
-                    padding: "20px"
+                    padding: "16px"
                 }}>
                     <div style={{
                         backgroundColor: "#fff",
-                        borderRadius: "12px",
+                        borderRadius: "14px",
                         width: "100%",
-                        maxWidth: "520px",
-                        padding: "28px"
+                        maxWidth: "500px",
+                        padding: "24px",
+                        boxShadow: "0 20px 40px rgba(0,0,0,0.2)"
                     }}>
-                        <h2 style={{ fontSize: "20px", fontWeight: "800", marginBottom: "16px" }}>
-                            {editingBrand ? "✏️ Edit Brand" : "✨ Add New Brand"}
-                        </h2>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+                            <h2 style={{ fontSize: "18px", fontWeight: "800", margin: 0, color: "#1f2937" }}>
+                                {editingBrand ? "✏️ Edit Brand" : "✨ Add New Brand"}
+                            </h2>
+                            <button
+                                type="button"
+                                onClick={() => setIsModalOpen(false)}
+                                style={{ background: "none", border: "none", fontSize: "18px", color: "#9ca3af", cursor: "pointer", padding: "4px" }}
+                            >
+                                ✕
+                            </button>
+                        </div>
 
                         {error && (
-                            <div style={{ backgroundColor: "#fef2f2", color: "#b91c1c", padding: "10px", borderRadius: "6px", fontSize: "13px", marginBottom: "14px" }}>
+                            <div style={{ backgroundColor: "#fef2f2", color: "#b91c1c", padding: "10px 14px", borderRadius: "8px", fontSize: "13px", marginBottom: "14px", fontWeight: "600" }}>
                                 {error}
                             </div>
                         )}
 
-                        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
                             {/* Brand Name */}
                             <div>
-                                <label style={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "4px" }}>Brand Name *</label>
+                                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Brand Name *</label>
                                 <input
                                     type="text"
                                     required
                                     placeholder="e.g. Nike, Adidas, Rolex, Zara"
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid #ccc" }}
+                                    style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none" }}
                                 />
                             </div>
 
                             {/* Cloudinary Brand Logo Upload */}
                             <div>
-                                <label style={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "4px" }}>Brand Logo</label>
-                                <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Brand Logo</label>
+                                <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
                                     <input
                                         type="file"
                                         ref={fileInputRef}
@@ -373,12 +509,13 @@ export default function AdminBrandsPage() {
                                         onClick={() => fileInputRef.current?.click()}
                                         style={{
                                             padding: "8px 16px",
-                                            borderRadius: "6px",
+                                            borderRadius: "8px",
                                             backgroundColor: "#f3f4f6",
                                             border: "1px solid #d1d5db",
                                             cursor: "pointer",
-                                            fontWeight: "600",
-                                            fontSize: "13px"
+                                            fontWeight: "700",
+                                            fontSize: "13px",
+                                            color: "#374151"
                                         }}
                                     >
                                         {imageUploading ? "Uploading to Cloudinary..." : "📁 Upload Brand Logo"}
@@ -388,7 +525,7 @@ export default function AdminBrandsPage() {
                                         <img
                                             src={formData.logoUrl}
                                             alt="Preview"
-                                            style={{ width: "45px", height: "45px", objectFit: "contain", borderRadius: "6px", border: "1px solid #ccc", padding: "2px" }}
+                                            style={{ width: "40px", height: "40px", objectFit: "contain", borderRadius: "6px", border: "1px solid #e5e7eb", padding: "2px", backgroundColor: "#fff" }}
                                         />
                                     )}
                                 </div>
@@ -397,35 +534,35 @@ export default function AdminBrandsPage() {
                                     placeholder="Or paste direct Logo URL"
                                     value={formData.logoUrl}
                                     onChange={(e) => setFormData({ ...formData, logoUrl: e.target.value })}
-                                    style={{ width: "100%", marginTop: "6px", padding: "6px 10px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "12px" }}
+                                    style={{ width: "100%", marginTop: "8px", padding: "8px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "12px", outline: "none" }}
                                 />
                             </div>
 
                             {/* Description */}
                             <div>
-                                <label style={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "4px" }}>Description (Optional)</label>
+                                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Description (Optional)</label>
                                 <textarea
                                     rows={3}
                                     placeholder="Brief details about the brand story or products..."
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc" }}
+                                    style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none", resize: "vertical" }}
                                 />
                             </div>
 
                             {/* Modal Actions */}
-                            <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginTop: "8px" }}>
+                            <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginTop: "10px" }}>
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    style={{ padding: "8px 16px", borderRadius: "6px", border: "1px solid #ccc", background: "#fff", cursor: "pointer" }}
+                                    style={{ flex: 1, padding: "10px 16px", borderRadius: "8px", border: "1px solid #d1d5db", background: "#fff", color: "#374151", fontWeight: "700", cursor: "pointer", fontSize: "13px" }}
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={imageUploading}
-                                    style={{ padding: "8px 20px", borderRadius: "6px", border: "none", background: "#088178", color: "#fff", fontWeight: "700", cursor: "pointer" }}
+                                    style={{ flex: 1, padding: "10px 20px", borderRadius: "8px", border: "none", background: "#088178", color: "#fff", fontWeight: "700", cursor: "pointer", fontSize: "13px" }}
                                 >
                                     {editingBrand ? "Update Brand" : "Create Brand"}
                                 </button>

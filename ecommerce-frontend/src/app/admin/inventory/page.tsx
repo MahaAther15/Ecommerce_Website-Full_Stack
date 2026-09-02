@@ -118,7 +118,7 @@ export default function AdminInventoryPage() {
   };
 
   return (
-    <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+    <div style={{ maxWidth: "1200px", margin: "0 auto", width: "100%" }}>
       {/* Toast Notification */}
       {toast && (
         <div
@@ -144,7 +144,7 @@ export default function AdminInventoryPage() {
       )}
 
       {/* Header */}
-      <div style={{ marginBottom: "28px" }}>
+      <div style={{ marginBottom: "24px" }}>
         <h1 style={{ fontSize: "24px", fontWeight: "800", color: "#1f2937", margin: "0 0 4px 0" }}>
           Inventory Management
         </h1>
@@ -161,56 +161,56 @@ export default function AdminInventoryPage() {
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
             gap: "16px",
-            marginBottom: "28px",
+            marginBottom: "24px",
           }}
         >
-          <div style={{ backgroundColor: "#fff", borderRadius: "12px", padding: "18px 20px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "14px" }}>
-            <div style={{ width: "44px", height: "44px", borderRadius: "12px", backgroundColor: "#e6f7f5", color: "#088178", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>
+          <div style={{ backgroundColor: "#fff", borderRadius: "12px", padding: "16px 18px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "14px" }}>
+            <div style={{ width: "42px", height: "42px", borderRadius: "10px", backgroundColor: "#e6f7f5", color: "#088178", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "17px", flexShrink: 0 }}>
               <i className="fas fa-boxes" />
             </div>
-            <div>
+            <div style={{ minWidth: 0 }}>
               <div style={{ fontSize: "11px", color: "#9ca3af", fontWeight: "700", textTransform: "uppercase" }}>Total Products</div>
-              <div style={{ fontSize: "20px", fontWeight: "800", color: "#1f2937" }}>{summary.totalProducts}</div>
+              <div style={{ fontSize: "19px", fontWeight: "800", color: "#1f2937" }}>{summary.totalProducts}</div>
             </div>
           </div>
 
-          <div style={{ backgroundColor: "#fff", borderRadius: "12px", padding: "18px 20px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "14px" }}>
-            <div style={{ width: "44px", height: "44px", borderRadius: "12px", backgroundColor: "#dcfce7", color: "#16a34a", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>
+          <div style={{ backgroundColor: "#fff", borderRadius: "12px", padding: "16px 18px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "14px" }}>
+            <div style={{ width: "42px", height: "42px", borderRadius: "10px", backgroundColor: "#dcfce7", color: "#16a34a", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "17px", flexShrink: 0 }}>
               <i className="fas fa-check-circle" />
             </div>
-            <div>
+            <div style={{ minWidth: 0 }}>
               <div style={{ fontSize: "11px", color: "#9ca3af", fontWeight: "700", textTransform: "uppercase" }}>In Stock</div>
-              <div style={{ fontSize: "20px", fontWeight: "800", color: "#16a34a" }}>{summary.inStockProducts}</div>
+              <div style={{ fontSize: "19px", fontWeight: "800", color: "#16a34a" }}>{summary.inStockProducts}</div>
             </div>
           </div>
 
-          <div style={{ backgroundColor: "#fff", borderRadius: "12px", padding: "18px 20px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "14px" }}>
-            <div style={{ width: "44px", height: "44px", borderRadius: "12px", backgroundColor: "#fef3c7", color: "#d97706", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>
+          <div style={{ backgroundColor: "#fff", borderRadius: "12px", padding: "16px 18px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "14px" }}>
+            <div style={{ width: "42px", height: "42px", borderRadius: "10px", backgroundColor: "#fef3c7", color: "#d97706", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "17px", flexShrink: 0 }}>
               <i className="fas fa-exclamation-triangle" />
             </div>
-            <div>
+            <div style={{ minWidth: 0 }}>
               <div style={{ fontSize: "11px", color: "#9ca3af", fontWeight: "700", textTransform: "uppercase" }}>Low Stock (&le; 5)</div>
-              <div style={{ fontSize: "20px", fontWeight: "800", color: "#d97706" }}>{summary.lowStockProducts}</div>
+              <div style={{ fontSize: "19px", fontWeight: "800", color: "#d97706" }}>{summary.lowStockProducts}</div>
             </div>
           </div>
 
-          <div style={{ backgroundColor: "#fff", borderRadius: "12px", padding: "18px 20px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "14px" }}>
-            <div style={{ width: "44px", height: "44px", borderRadius: "12px", backgroundColor: "#fee2e2", color: "#dc2626", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>
+          <div style={{ backgroundColor: "#fff", borderRadius: "12px", padding: "16px 18px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "14px" }}>
+            <div style={{ width: "42px", height: "42px", borderRadius: "10px", backgroundColor: "#fee2e2", color: "#dc2626", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "17px", flexShrink: 0 }}>
               <i className="fas fa-times-circle" />
             </div>
-            <div>
+            <div style={{ minWidth: 0 }}>
               <div style={{ fontSize: "11px", color: "#9ca3af", fontWeight: "700", textTransform: "uppercase" }}>Out of Stock</div>
-              <div style={{ fontSize: "20px", fontWeight: "800", color: "#dc2626" }}>{summary.outOfStockProducts}</div>
+              <div style={{ fontSize: "19px", fontWeight: "800", color: "#dc2626" }}>{summary.outOfStockProducts}</div>
             </div>
           </div>
 
-          <div style={{ backgroundColor: "#fff", borderRadius: "12px", padding: "18px 20px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "14px" }}>
-            <div style={{ width: "44px", height: "44px", borderRadius: "12px", backgroundColor: "#ede9fe", color: "#7c3aed", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>
+          <div style={{ backgroundColor: "#fff", borderRadius: "12px", padding: "16px 18px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", display: "flex", alignItems: "center", gap: "14px" }}>
+            <div style={{ width: "42px", height: "42px", borderRadius: "10px", backgroundColor: "#ede9fe", color: "#7c3aed", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "17px", flexShrink: 0 }}>
               <i className="fas fa-cubes" />
             </div>
-            <div>
+            <div style={{ minWidth: 0 }}>
               <div style={{ fontSize: "11px", color: "#9ca3af", fontWeight: "700", textTransform: "uppercase" }}>Total Units</div>
-              <div style={{ fontSize: "20px", fontWeight: "800", color: "#7c3aed" }}>{summary.totalQuantity}</div>
+              <div style={{ fontSize: "19px", fontWeight: "800", color: "#7c3aed" }}>{summary.totalStockUnits}</div>
             </div>
           </div>
         </div>
@@ -228,7 +228,7 @@ export default function AdminInventoryPage() {
           marginBottom: "20px",
         }}
       >
-        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
           {[
             { key: "all", label: "All Items" },
             { key: "low", label: `Low Stock (${summary?.lowStockProducts ?? 0})` },
@@ -236,17 +236,17 @@ export default function AdminInventoryPage() {
           ].map((tab) => (
             <button
               key={tab.key}
-              onClick={() => handleFilterChange(tab.key)}
+              onClick={() => setFilter(tab.key)}
               style={{
-                padding: "8px 16px",
+                padding: "8px 14px",
                 borderRadius: "8px",
-                fontSize: "13px",
+                fontSize: "12px",
                 fontWeight: "700",
                 border: "none",
                 cursor: "pointer",
                 backgroundColor: filter === tab.key ? "#088178" : "#fff",
                 color: filter === tab.key ? "#fff" : "#4b5563",
-                boxShadow: filter === tab.key ? "0 2px 6px rgba(8,129,120,0.3)" : "0 1px 3px rgba(0,0,0,0.05)",
+                boxShadow: filter === tab.key ? "0 2px 6px rgba(8,129,120,0.25)" : "0 1px 3px rgba(0,0,0,0.05)",
                 transition: "0.15s",
               }}
             >
@@ -255,7 +255,7 @@ export default function AdminInventoryPage() {
           ))}
         </div>
 
-        <form onSubmit={handleSearchSubmit} className="admin-search-wrapper" style={{ position: "relative", minWidth: "280px" }}>
+        <form onSubmit={handleSearchSubmit} className="admin-search-wrapper" style={{ position: "relative", maxWidth: "450px", width: "100%" }}>
           <i className="fas fa-search" style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#9ca3af", fontSize: "13px" }} />
           <input
             type="text"
@@ -291,20 +291,21 @@ export default function AdminInventoryPage() {
         </form>
       </div>
 
-      {/* Inventory Table */}
-      <div className="admin-table-card" style={{ backgroundColor: "#fff", borderRadius: "16px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", overflowX: "auto" }}>
-        {loading ? (
-          <div style={{ padding: "60px", textAlign: "center", color: "#6b7280" }}>
-            <i className="fas fa-spinner fa-spin" style={{ fontSize: "28px", color: "#088178", marginBottom: "12px", display: "block" }} />
-            Loading inventory items...
-          </div>
-        ) : items.length === 0 ? (
-          <div style={{ padding: "60px", textAlign: "center", color: "#9ca3af" }}>
-            <i className="fas fa-box-open" style={{ fontSize: "40px", marginBottom: "12px", display: "block" }} />
-            No inventory items matched your filter.
-          </div>
-        ) : (
-          <div style={{ overflowX: "auto" }}>
+      {/* Inventory Content */}
+      {loading ? (
+        <div style={{ padding: "60px", textAlign: "center", color: "#6b7280", backgroundColor: "#fff", borderRadius: "12px" }}>
+          <i className="fas fa-spinner fa-spin" style={{ fontSize: "28px", color: "#088178", marginBottom: "12px", display: "block" }} />
+          Loading inventory items...
+        </div>
+      ) : items.length === 0 ? (
+        <div style={{ padding: "60px", textAlign: "center", color: "#9ca3af", backgroundColor: "#fff", borderRadius: "12px" }}>
+          <i className="fas fa-box-open" style={{ fontSize: "40px", marginBottom: "12px", display: "block" }} />
+          No inventory items matched your filter.
+        </div>
+      ) : (
+        <>
+          {/* ═══ Desktop Table View ═══ */}
+          <div className="admin-desktop-view admin-table-card" style={{ backgroundColor: "#fff", borderRadius: "16px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: "650px" }}>
               <thead style={{ backgroundColor: "#f9fafb", borderBottom: "1px solid #e5e7eb" }}>
                 <tr>
@@ -437,8 +438,168 @@ export default function AdminInventoryPage() {
               </tbody>
             </table>
           </div>
-        )}
-      </div>
+
+          {/* ═══ Mobile Card View ═══ */}
+          <div className="admin-mobile-view" style={{ display: "none", flexDirection: "column", gap: "12px", width: "100%" }}>
+            {items.map((item) => {
+              const prodId = item.productId || (item as any).ProductId;
+              const title = item.title || (item as any).Title;
+              const price = item.price || (item as any).Price;
+              const category = item.category || (item as any).Category;
+              const brand = item.brand || (item as any).Brand;
+              const stock = item.stockQuantity ?? (item as any).StockQuantity ?? 0;
+              const img = getProductImage({ imageUrl: item.imageUrl || (item as any).ImageUrl, id: prodId });
+
+              const isOut = stock <= 0;
+              const isLow = stock > 0 && stock <= 5;
+
+              const statusBg = isOut ? "#fee2e2" : isLow ? "#fef3c7" : "#dcfce7";
+              const statusColor = isOut ? "#dc2626" : isLow ? "#d97706" : "#16a34a";
+              const statusLabel = isOut ? "Out of Stock" : isLow ? "Low Stock" : "In Stock";
+
+              return (
+                <div
+                  key={prodId}
+                  style={{
+                    backgroundColor: "#fff",
+                    borderRadius: "12px",
+                    padding: "16px",
+                    boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+                    border: "1px solid #f3f4f6",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "12px",
+                  }}
+                >
+                  {/* Top row: Product image + info */}
+                  <div style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                    <img
+                      src={img}
+                      alt={title}
+                      style={{ width: "56px", height: "56px", borderRadius: "8px", objectFit: "cover", backgroundColor: "#f3f4f6", flexShrink: 0 }}
+                    />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: "700", color: "#111827", fontSize: "14px", lineHeight: "1.3", marginBottom: "2px" }}>
+                        {title}
+                      </div>
+                      <div style={{ fontSize: "12px", color: "#6b7280", marginBottom: "6px" }}>
+                        {brand} &middot; ID: #{prodId}
+                      </div>
+                      <span style={{ backgroundColor: "#e0f2fe", color: "#0369a1", padding: "2px 8px", borderRadius: "4px", fontSize: "11px", fontWeight: "700" }}>
+                        {category}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Middle row: Price & Stock Status */}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      paddingTop: "10px",
+                      borderTop: "1px solid #f3f4f6",
+                    }}
+                  >
+                    <div>
+                      <span style={{ fontSize: "10px", color: "#9ca3af", display: "block", textTransform: "uppercase", fontWeight: "700" }}>Price</span>
+                      <span style={{ fontWeight: "800", color: "#111827", fontSize: "16px" }}>${price.toLocaleString()}</span>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <span style={{ fontSize: "10px", color: "#9ca3af", display: "block", textTransform: "uppercase", fontWeight: "700" }}>Stock Level</span>
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px", justifyContent: "flex-end" }}>
+                        <span style={{ fontSize: "15px", fontWeight: "800", color: isOut ? "#dc2626" : isLow ? "#d97706" : "#111827" }}>
+                          {stock} <span style={{ fontSize: "11px", fontWeight: "600", color: "#9ca3af" }}>units</span>
+                        </span>
+                        <span
+                          style={{
+                            backgroundColor: statusBg,
+                            color: statusColor,
+                            padding: "2px 8px",
+                            borderRadius: "999px",
+                            fontWeight: "700",
+                            fontSize: "10px",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "3px",
+                          }}
+                        >
+                          <i className={`fas ${isOut ? "fa-times-circle" : isLow ? "fa-exclamation-triangle" : "fa-check-circle"}`} />
+                          {statusLabel}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions Row */}
+                  <div style={{ display: "flex", gap: "8px", paddingTop: "4px" }}>
+                    <button
+                      onClick={() => handleOpenAdjust(item, "Restock")}
+                      style={{
+                        flex: 1,
+                        backgroundColor: "#088178",
+                        color: "#fff",
+                        border: "none",
+                        padding: "8px 12px",
+                        borderRadius: "8px",
+                        fontSize: "12px",
+                        fontWeight: "700",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "5px",
+                      }}
+                    >
+                      <i className="fas fa-plus" /> Restock
+                    </button>
+
+                    <button
+                      onClick={() => handleOpenAdjust(item, "Adjustment")}
+                      style={{
+                        backgroundColor: "#f3f4f6",
+                        color: "#374151",
+                        border: "1px solid #e5e7eb",
+                        padding: "8px 14px",
+                        borderRadius: "8px",
+                        fontSize: "12px",
+                        fontWeight: "700",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "5px",
+                      }}
+                      title="Adjust / Damage"
+                    >
+                      <i className="fas fa-sliders-h" /> Adjust
+                    </button>
+
+                    <button
+                      onClick={() => handleOpenLogs(item)}
+                      style={{
+                        backgroundColor: "#f3f4f6",
+                        color: "#4b5563",
+                        border: "1px solid #e5e7eb",
+                        padding: "8px 14px",
+                        borderRadius: "8px",
+                        fontSize: "12px",
+                        fontWeight: "700",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "5px",
+                      }}
+                      title="View Audit Logs"
+                    >
+                      <i className="fas fa-history" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
 
       {/* ─── QUICK RESTOCK / ADJUST MODAL ─── */}
       {selectedProduct && (
@@ -452,15 +613,15 @@ export default function AdminInventoryPage() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            padding: "20px",
+            padding: "16px",
           }}
         >
           <div
             style={{
               backgroundColor: "#fff",
               borderRadius: "16px",
-              padding: "28px",
-              maxWidth: "440px",
+              padding: "24px",
+              maxWidth: "460px",
               width: "100%",
               boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
             }}
@@ -471,7 +632,7 @@ export default function AdminInventoryPage() {
               </h3>
               <button
                 onClick={() => setSelectedProduct(null)}
-                style={{ background: "none", border: "none", fontSize: "18px", color: "#9ca3af", cursor: "pointer" }}
+                style={{ background: "none", border: "none", fontSize: "18px", color: "#9ca3af", cursor: "pointer", padding: "4px" }}
               >
                 ✕
               </button>
@@ -485,13 +646,13 @@ export default function AdminInventoryPage() {
             <form onSubmit={handleAdjustSubmit}>
               {/* Action Type */}
               <div style={{ marginBottom: "14px" }}>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "6px" }}>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>
                   Action Type
                 </label>
                 <select
                   value={adjustAction}
                   onChange={(e) => setAdjustAction(e.target.value as any)}
-                  style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px" }}
+                  style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none", backgroundColor: "#fff" }}
                 >
                   <option value="Restock">Restock (+ Add new inventory)</option>
                   <option value="Adjustment">Adjustment (+/- Correction)</option>
@@ -501,7 +662,7 @@ export default function AdminInventoryPage() {
 
               {/* Quantity */}
               <div style={{ marginBottom: "14px" }}>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "6px" }}>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>
                   Quantity
                 </label>
                 <input
@@ -510,13 +671,13 @@ export default function AdminInventoryPage() {
                   value={adjustQty}
                   onChange={(e) => setAdjustQty(Number(e.target.value))}
                   required
-                  style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "14px", fontWeight: "700" }}
+                  style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "14px", fontWeight: "700", outline: "none" }}
                 />
               </div>
 
               {/* Note / Reason */}
               <div style={{ marginBottom: "20px" }}>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "6px" }}>
+                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>
                   Reason / Note (Optional)
                 </label>
                 <input
@@ -524,7 +685,7 @@ export default function AdminInventoryPage() {
                   placeholder="e.g. Received from Supplier shipment #84"
                   value={adjustNote}
                   onChange={(e) => setAdjustNote(e.target.value)}
-                  style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px" }}
+                  style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none" }}
                 />
               </div>
 
@@ -533,14 +694,14 @@ export default function AdminInventoryPage() {
                 <button
                   type="button"
                   onClick={() => setSelectedProduct(null)}
-                  style={{ flex: 1, padding: "10px", borderRadius: "8px", border: "1px solid #d1d5db", backgroundColor: "#fff", color: "#374151", fontWeight: "700", cursor: "pointer" }}
+                  style={{ flex: 1, padding: "10px", borderRadius: "8px", border: "1px solid #d1d5db", backgroundColor: "#fff", color: "#374151", fontWeight: "700", cursor: "pointer", fontSize: "13px" }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={adjusting}
-                  style={{ flex: 1, padding: "10px", borderRadius: "8px", border: "none", backgroundColor: "#088178", color: "#fff", fontWeight: "700", cursor: "pointer" }}
+                  style={{ flex: 1, padding: "10px", borderRadius: "8px", border: "none", backgroundColor: "#088178", color: "#fff", fontWeight: "700", cursor: "pointer", fontSize: "13px" }}
                 >
                   {adjusting ? "Updating..." : "Save Changes"}
                 </button>
@@ -562,33 +723,33 @@ export default function AdminInventoryPage() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            padding: "20px",
+            padding: "16px",
           }}
         >
           <div
             style={{
               backgroundColor: "#fff",
               borderRadius: "16px",
-              padding: "28px",
-              maxWidth: "600px",
+              padding: "24px",
+              maxWidth: "580px",
               width: "100%",
-              maxHeight: "80vh",
+              maxHeight: "85vh",
               overflowY: "auto",
               boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
             }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-              <div>
+              <div style={{ minWidth: 0 }}>
                 <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "800", color: "#1f2937" }}>
                   Stock Movement History
                 </h3>
-                <p style={{ margin: "2px 0 0 0", fontSize: "12px", color: "#6b7280" }}>
+                <p style={{ margin: "2px 0 0 0", fontSize: "12px", color: "#6b7280", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {logProduct.title || (logProduct as any).Title}
                 </p>
               </div>
               <button
                 onClick={() => setLogProduct(null)}
-                style={{ background: "none", border: "none", fontSize: "18px", color: "#9ca3af", cursor: "pointer" }}
+                style={{ background: "none", border: "none", fontSize: "18px", color: "#9ca3af", cursor: "pointer", padding: "4px" }}
               >
                 ✕
               </button>
@@ -618,17 +779,18 @@ export default function AdminInventoryPage() {
                     <div
                       key={log.id}
                       style={{
-                        padding: "12px 16px",
+                        padding: "12px 14px",
                         backgroundColor: "#f9fafb",
                         borderRadius: "10px",
                         border: "1px solid #f3f4f6",
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
+                        gap: "10px"
                       }}
                     >
-                      <div>
-                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
                           <span
                             style={{
                               backgroundColor: isPositive ? "#dcfce7" : "#fee2e2",
@@ -649,7 +811,7 @@ export default function AdminInventoryPage() {
                           {log.note || "No note"} &middot; {date}
                         </div>
                       </div>
-                      <div style={{ textAlign: "right" }}>
+                      <div style={{ textAlign: "right", flexShrink: 0 }}>
                         <div style={{ fontSize: "12px", fontWeight: "800", color: "#111827" }}>
                           {log.previousStock} &rarr; {log.newStock}
                         </div>

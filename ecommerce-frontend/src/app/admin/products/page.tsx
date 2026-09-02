@@ -10,7 +10,7 @@ import { getProductImage } from "@/app/libs/productUtils";
 
 export default function AdminProductsPage() {
     const dispatch = useAppDispatch();
-    const { products, loading, totalItems } = useAppSelector((state) => state.product);
+    const { products, loading } = useAppSelector((state) => state.product);
 
     const [searchTerm, setSearchTerm] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,7 +36,7 @@ export default function AdminProductsPage() {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        dispatch(fetchProducts({ pageSize: 50 }));
+        dispatch(fetchProducts({ pageSize: 1000 }));
         getCategoriesApi()
             .then((data) => setCategories(data))
             .catch((err) => console.error("Failed to load categories:", err));
@@ -150,7 +150,7 @@ export default function AdminProductsPage() {
     );
 
     return (
-        <div>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", width: "100%" }}>
             {/* Toast Notification */}
             {toast && (
                 <div style={{
@@ -170,13 +170,21 @@ export default function AdminProductsPage() {
             )}
 
             {/* Header Bar */}
-            <div className="admin-page-header-row" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "28px" }}>
+            <div className="admin-page-header" style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "24px",
+                flexWrap: "wrap",
+                gap: "14px"
+            }}>
                 <div>
-                    <h1 style={{ fontSize: "24px", fontWeight: "800", color: "#1f2937" }}>Products Management</h1>
-                    <p style={{ color: "#6b7280", fontSize: "14px" }}>Manage inventory, add new stock, update pricing & categories.</p>
+                    <h1 style={{ fontSize: "24px", fontWeight: "800", color: "#1f2937", margin: "0 0 4px 0" }}>Products Management</h1>
+                    <p style={{ color: "#6b7280", fontSize: "14px", margin: 0 }}>Manage inventory, add new stock, update pricing & categories.</p>
                 </div>
                 <button
                     onClick={() => handleOpenModal()}
+                    className="admin-action-btn"
                     style={{
                         backgroundColor: "#088178",
                         color: "#fff",
@@ -185,9 +193,12 @@ export default function AdminProductsPage() {
                         fontWeight: "700",
                         border: "none",
                         cursor: "pointer",
-                        display: "flex",
+                        display: "inline-flex",
                         alignItems: "center",
-                        gap: "8px"
+                        justifyContent: "center",
+                        gap: "8px",
+                        fontSize: "14px",
+                        boxShadow: "0 2px 8px rgba(8,129,120,0.2)"
                     }}
                 >
                     <i className="fas fa-plus"></i> Add New Product
@@ -195,7 +206,7 @@ export default function AdminProductsPage() {
             </div>
 
             {/* Filter / Search Bar */}
-            <div className="admin-search-wrapper" style={{ marginBottom: "20px", position: "relative", maxWidth: "450px" }}>
+            <div className="admin-search-wrapper" style={{ marginBottom: "20px", position: "relative", maxWidth: "450px", width: "100%" }}>
                 <i className="fas fa-search" style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#9ca3af", fontSize: "14px" }} />
                 <input
                     type="text"
@@ -238,75 +249,210 @@ export default function AdminProductsPage() {
                 )}
             </div>
 
-            {/* Products Table */}
-            <div className="admin-table-card" style={{ backgroundColor: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: "620px" }}>
-                    <thead style={{ backgroundColor: "#f9fafb", borderBottom: "1px solid #e5e7eb" }}>
-                        <tr>
-                            <th style={{ padding: "14px 16px", whiteSpace: "nowrap" }}>Image</th>
-                            <th style={{ padding: "14px 16px", whiteSpace: "nowrap" }}>Product</th>
-                            <th style={{ padding: "14px 16px", whiteSpace: "nowrap" }}>Category</th>
-                            <th style={{ padding: "14px 16px", whiteSpace: "nowrap" }}>Price</th>
-                            <th style={{ padding: "14px 16px", whiteSpace: "nowrap" }}>Stock</th>
-                            <th style={{ padding: "14px 16px", whiteSpace: "nowrap" }}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loading ? (
-                            <tr>
-                                <td colSpan={6} style={{ textAlign: "center", padding: "40px" }}>Loading products...</td>
-                            </tr>
-                        ) : filteredProducts.length === 0 ? (
-                            <tr>
-                                <td colSpan={6} style={{ textAlign: "center", padding: "40px" }}>No products found.</td>
-                            </tr>
-                        ) : (
-                            filteredProducts.map((prod) => (
-                                <tr key={prod.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
-                                    <td style={{ padding: "12px 16px", whiteSpace: "nowrap" }}>
+            {/* Products Content */}
+            {loading ? (
+                <div style={{ textAlign: "center", padding: "60px", color: "#6b7280", fontWeight: "600", backgroundColor: "#fff", borderRadius: "12px" }}>
+                    <i className="fas fa-spinner fa-spin" style={{ fontSize: "28px", marginBottom: "12px", display: "block", color: "#088178" }} />Loading products...
+                </div>
+            ) : filteredProducts.length === 0 ? (
+                <div style={{ textAlign: "center", padding: "60px", color: "#9ca3af", backgroundColor: "#fff", borderRadius: "12px" }}>
+                    <i className="fas fa-inbox" style={{ fontSize: "40px", marginBottom: "12px", display: "block" }} />No products found.
+                </div>
+            ) : (
+                <>
+                    {/* ═══ Desktop View (Table) ═══ */}
+                    <div className="admin-desktop-view admin-table-card" style={{ backgroundColor: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", overflowX: "auto" }}>
+                        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: "620px" }}>
+                            <thead style={{ backgroundColor: "#f9fafb", borderBottom: "1px solid #e5e7eb" }}>
+                                <tr>
+                                    <th style={{ padding: "14px 16px", whiteSpace: "nowrap" }}>Image</th>
+                                    <th style={{ padding: "14px 16px", whiteSpace: "nowrap" }}>Product</th>
+                                    <th style={{ padding: "14px 16px", whiteSpace: "nowrap" }}>Category</th>
+                                    <th style={{ padding: "14px 16px", whiteSpace: "nowrap" }}>Price</th>
+                                    <th style={{ padding: "14px 16px", whiteSpace: "nowrap" }}>Stock</th>
+                                    <th style={{ padding: "14px 16px", whiteSpace: "nowrap" }}>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredProducts.map((prod) => (
+                                    <tr key={prod.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
+                                        <td style={{ padding: "12px 16px" }}>
+                                            <img
+                                                src={getProductImage({ id: prod.id, title: prod.title, category: prod.category, imageUrl: prod.imageUrl })}
+                                                alt={prod.title}
+                                                style={{ width: "48px", height: "48px", objectFit: "cover", borderRadius: "6px", backgroundColor: "#f3f4f6" }}
+                                            />
+                                        </td>
+                                        <td style={{ padding: "12px 16px" }}>
+                                            <div style={{ fontWeight: "600", color: "#111827" }}>{prod.title}</div>
+                                            <div style={{ fontSize: "12px", color: "#6b7280" }}>{prod.brand}</div>
+                                        </td>
+                                        <td style={{ padding: "12px 16px" }}>
+                                            <span style={{ backgroundColor: "#e0f2fe", color: "#0369a1", padding: "4px 8px", borderRadius: "4px", fontSize: "12px", fontWeight: "600" }}>
+                                                {prod.category}
+                                            </span>
+                                        </td>
+                                        <td style={{ padding: "12px 16px", fontWeight: "700", color: "#088178" }}>${prod.price}</td>
+                                        <td style={{ padding: "12px 16px" }}>
+                                            <span style={{ color: prod.stockQuantity > 0 ? "#16a34a" : "#dc2626", fontWeight: "600", fontSize: "13px" }}>
+                                                {prod.stockQuantity > 0 ? `${prod.stockQuantity} in stock` : "Out of stock"}
+                                            </span>
+                                        </td>
+                                        <td style={{ padding: "12px 16px" }}>
+                                            <div style={{ display: "flex", gap: "8px" }}>
+                                                <button
+                                                    onClick={() => handleOpenModal(prod)}
+                                                    style={{ background: "#f3f4f6", border: "none", padding: "6px 12px", borderRadius: "6px", cursor: "pointer", color: "#374151", fontWeight: "600", fontSize: "12px" }}
+                                                >
+                                                    <i className="fas fa-edit"></i> Edit
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(prod.id, prod.title)}
+                                                    style={{ background: "#fee2e2", border: "none", padding: "6px 12px", borderRadius: "6px", cursor: "pointer", color: "#dc2626", fontSize: "12px" }}
+                                                    title="Delete Product"
+                                                >
+                                                    <i className="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* ═══ Mobile View (Cards) ═══ */}
+                    <div className="admin-mobile-view" style={{ display: "none", flexDirection: "column", gap: "12px", width: "100%" }}>
+                        {filteredProducts.map((prod) => {
+                            const isOut = prod.stockQuantity <= 0;
+                            const isLow = prod.stockQuantity > 0 && prod.stockQuantity <= 5;
+                            const stockColor = isOut ? "#dc2626" : isLow ? "#d97706" : "#16a34a";
+                            const stockBg = isOut ? "#fee2e2" : isLow ? "#fef3c7" : "#dcfce7";
+                            const stockText = isOut ? "Out of stock" : `${prod.stockQuantity} in stock`;
+
+                            return (
+                                <div
+                                    key={prod.id}
+                                    style={{
+                                        backgroundColor: "#fff",
+                                        borderRadius: "12px",
+                                        padding: "14px",
+                                        boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+                                        border: "1px solid #f3f4f6",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        gap: "10px"
+                                    }}
+                                >
+                                    {/* Top row: Image + Info */}
+                                    <div style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
                                         <img
                                             src={getProductImage({ id: prod.id, title: prod.title, category: prod.category, imageUrl: prod.imageUrl })}
                                             alt={prod.title}
-                                            style={{ width: "48px", height: "48px", objectFit: "cover", borderRadius: "6px" }}
+                                            style={{
+                                                width: "60px",
+                                                height: "60px",
+                                                objectFit: "cover",
+                                                borderRadius: "8px",
+                                                flexShrink: 0,
+                                                backgroundColor: "#f3f4f6"
+                                            }}
                                         />
-                                    </td>
-                                    <td style={{ padding: "12px 16px" }}>
-                                        <div style={{ fontWeight: "600", color: "#111827" }}>{prod.title}</div>
-                                        <div style={{ fontSize: "12px", color: "#6b7280" }}>{prod.brand}</div>
-                                    </td>
-                                    <td style={{ padding: "12px 16px" }}>
-                                        <span style={{ backgroundColor: "#e0f2fe", color: "#0369a1", padding: "4px 8px", borderRadius: "4px", fontSize: "12px" }}>
-                                            {prod.category}
-                                        </span>
-                                    </td>
-                                    <td style={{ padding: "12px 16px", fontWeight: "700", color: "#088178" }}>${prod.price}</td>
-                                    <td style={{ padding: "12px 16px" }}>
-                                        <span style={{ color: prod.stockQuantity > 0 ? "#16a34a" : "#dc2626", fontWeight: "600", fontSize: "13px" }}>
-                                            {prod.stockQuantity > 0 ? `${prod.stockQuantity} in stock` : "Out of stock"}
-                                        </span>
-                                    </td>
-                                    <td style={{ padding: "12px 16px" }}>
-                                        <div style={{ display: "flex", gap: "8px" }}>
-                                            <button
-                                                onClick={() => handleOpenModal(prod)}
-                                                style={{ background: "#f3f4f6", border: "none", padding: "6px 12px", borderRadius: "6px", cursor: "pointer", color: "#374151" }}
-                                            >
-                                                <i className="fas fa-edit"></i> Edit
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(prod.id, prod.title)}
-                                                style={{ background: "#fee2e2", border: "none", padding: "6px 12px", borderRadius: "6px", cursor: "pointer", color: "#dc2626" }}
-                                            >
-                                                <i className="fas fa-trash"></i>
-                                            </button>
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <div style={{ fontWeight: "700", color: "#111827", fontSize: "14px", lineHeight: "1.3", marginBottom: "2px" }}>
+                                                {prod.title}
+                                            </div>
+                                            <div style={{ fontSize: "12px", color: "#6b7280", marginBottom: "6px" }}>
+                                                {prod.brand} &middot; ID: #{prod.id}
+                                            </div>
+                                            <div style={{ display: "flex", gap: "6px", alignItems: "center", flexWrap: "wrap" }}>
+                                                <span style={{ backgroundColor: "#e0f2fe", color: "#0369a1", padding: "2px 8px", borderRadius: "4px", fontSize: "11px", fontWeight: "700" }}>
+                                                    {prod.category}
+                                                </span>
+                                            </div>
                                         </div>
-                                    </td>
-                                </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-            </div>
+                                    </div>
+
+                                    {/* Middle row: Price & Stock */}
+                                    <div style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                        paddingTop: "8px",
+                                        borderTop: "1px solid #f3f4f6"
+                                    }}>
+                                        <div>
+                                            <span style={{ fontSize: "11px", color: "#9ca3af", display: "block", textTransform: "uppercase", fontWeight: "600" }}>Price</span>
+                                            <span style={{ fontWeight: "800", color: "#088178", fontSize: "16px" }}>${prod.price}</span>
+                                        </div>
+                                        <div style={{ textAlign: "right" }}>
+                                            <span style={{ fontSize: "11px", color: "#9ca3af", display: "block", textTransform: "uppercase", fontWeight: "600" }}>Stock</span>
+                                            <span style={{
+                                                backgroundColor: stockBg,
+                                                color: stockColor,
+                                                padding: "3px 8px",
+                                                borderRadius: "999px",
+                                                fontWeight: "700",
+                                                fontSize: "11px",
+                                                display: "inline-flex",
+                                                alignItems: "center",
+                                                gap: "4px"
+                                            }}>
+                                                <i className={`fas ${isOut ? "fa-times-circle" : isLow ? "fa-exclamation-triangle" : "fa-check-circle"}`} style={{ fontSize: "10px" }} />
+                                                {stockText}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Bottom row: Actions */}
+                                    <div style={{ display: "flex", gap: "8px", paddingTop: "4px" }}>
+                                        <button
+                                            onClick={() => handleOpenModal(prod)}
+                                            style={{
+                                                flex: 1,
+                                                background: "#f3f4f6",
+                                                border: "1px solid #e5e7eb",
+                                                padding: "8px 12px",
+                                                borderRadius: "8px",
+                                                cursor: "pointer",
+                                                color: "#374151",
+                                                fontSize: "12px",
+                                                fontWeight: "700",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                gap: "6px"
+                                            }}
+                                        >
+                                            <i className="fas fa-edit"></i> Edit
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(prod.id, prod.title)}
+                                            style={{
+                                                flex: 1,
+                                                background: "#fee2e2",
+                                                border: "1px solid #fecaca",
+                                                padding: "8px 12px",
+                                                borderRadius: "8px",
+                                                cursor: "pointer",
+                                                color: "#dc2626",
+                                                fontSize: "12px",
+                                                fontWeight: "700",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                gap: "6px"
+                                            }}
+                                        >
+                                            <i className="fas fa-trash"></i> Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </>
+            )}
 
             {/* Add / Edit Modal */}
             {isModalOpen && (
@@ -314,24 +460,35 @@ export default function AdminProductsPage() {
                     position: "fixed",
                     inset: 0,
                     backgroundColor: "rgba(0,0,0,0.5)",
+                    backdropFilter: "blur(4px)",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
                     zIndex: 10000,
-                    padding: "20px"
+                    padding: "16px"
                 }}>
                     <div style={{
                         backgroundColor: "#fff",
-                        borderRadius: "12px",
+                        borderRadius: "14px",
                         width: "100%",
-                        maxWidth: "600px",
-                        maxHeight: "90vh",
+                        maxWidth: "560px",
+                        maxHeight: "92vh",
                         overflowY: "auto",
-                        padding: "28px"
+                        padding: "24px",
+                        boxShadow: "0 20px 40px rgba(0,0,0,0.2)"
                     }}>
-                        <h2 style={{ fontSize: "20px", fontWeight: "800", marginBottom: "16px" }}>
-                            {editingProduct ? "✏️ Edit Product" : "✨ Add New Product"}
-                        </h2>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+                            <h2 style={{ fontSize: "18px", fontWeight: "800", margin: 0, color: "#1f2937" }}>
+                                {editingProduct ? "✏️ Edit Product" : "✨ Add New Product"}
+                            </h2>
+                            <button
+                                type="button"
+                                onClick={() => setIsModalOpen(false)}
+                                style={{ background: "none", border: "none", fontSize: "18px", color: "#9ca3af", cursor: "pointer", padding: "4px" }}
+                            >
+                                ✕
+                            </button>
+                        </div>
 
                         {/* In-Modal Error Alert Banner */}
                         {modalError && (
@@ -355,33 +512,33 @@ export default function AdminProductsPage() {
 
                         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
                             <div>
-                                <label style={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "4px" }}>Title</label>
+                                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Title</label>
                                 <input
                                     type="text"
                                     required
                                     value={formData.title}
                                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                    style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc" }}
+                                    style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none" }}
                                 />
                             </div>
 
-                            <div style={{ display: "flex", gap: "12px" }}>
-                                <div style={{ flex: 1 }}>
-                                    <label style={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "4px" }}>Brand</label>
+                            <div className="admin-form-row" style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+                                <div style={{ flex: "1 1 200px" }}>
+                                    <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Brand</label>
                                     <input
                                         type="text"
                                         required
                                         value={formData.brand}
                                         onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                                        style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc" }}
+                                        style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none" }}
                                     />
                                 </div>
-                                <div style={{ flex: 1 }}>
-                                    <label style={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "4px" }}>Category</label>
+                                <div style={{ flex: "1 1 200px" }}>
+                                    <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Category</label>
                                     <select
                                         value={formData.category}
                                         onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                        style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc" }}
+                                        style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none", backgroundColor: "#fff" }}
                                     >
                                         <option value="featured">Featured (Default)</option>
                                         <option value="newArrival">New Arrival (Default)</option>
@@ -394,34 +551,34 @@ export default function AdminProductsPage() {
                                 </div>
                             </div>
 
-                            <div style={{ display: "flex", gap: "12px" }}>
-                                <div style={{ flex: 1 }}>
-                                    <label style={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "4px" }}>Price ($)</label>
+                            <div className="admin-form-row" style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+                                <div style={{ flex: "1 1 200px" }}>
+                                    <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Price ($)</label>
                                     <input
                                         type="number"
                                         step="0.01"
                                         required
                                         value={formData.price}
                                         onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
-                                        style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc" }}
+                                        style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none" }}
                                     />
                                 </div>
-                                <div style={{ flex: 1 }}>
-                                    <label style={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "4px" }}>Stock Quantity</label>
+                                <div style={{ flex: "1 1 200px" }}>
+                                    <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Stock Quantity</label>
                                     <input
                                         type="number"
                                         required
                                         value={formData.stockQuantity}
                                         onChange={(e) => setFormData({ ...formData, stockQuantity: parseInt(e.target.value) || 0 })}
-                                        style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc" }}
+                                        style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none" }}
                                     />
                                 </div>
                             </div>
 
                             {/* Cloudinary Image Upload Section */}
                             <div>
-                                <label style={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "4px" }}>Product Image</label>
-                                <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Product Image</label>
+                                <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
                                     <input
                                         type="file"
                                         ref={fileInputRef}
@@ -434,12 +591,14 @@ export default function AdminProductsPage() {
                                         disabled={imageUploading}
                                         onClick={() => fileInputRef.current?.click()}
                                         style={{
-                                            padding: "8px 16px",
-                                            borderRadius: "6px",
+                                            padding: "9px 16px",
+                                            borderRadius: "8px",
                                             backgroundColor: "#f3f4f6",
                                             border: "1px solid #d1d5db",
                                             cursor: "pointer",
-                                            fontWeight: "600"
+                                            fontWeight: "700",
+                                            fontSize: "13px",
+                                            color: "#374151"
                                         }}
                                     >
                                         {imageUploading ? "Uploading to Cloudinary..." : "📁 Choose Image"}
@@ -448,7 +607,7 @@ export default function AdminProductsPage() {
                                         <img
                                             src={formData.imageUrl}
                                             alt="Preview"
-                                            style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "6px" }}
+                                            style={{ width: "44px", height: "44px", objectFit: "cover", borderRadius: "8px", border: "1px solid #e5e7eb" }}
                                         />
                                     )}
                                 </div>
@@ -457,33 +616,33 @@ export default function AdminProductsPage() {
                                     placeholder="Or paste direct Cloudinary Image URL"
                                     value={formData.imageUrl}
                                     onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                                    style={{ width: "100%", marginTop: "6px", padding: "6px 10px", borderRadius: "6px", border: "1px solid #ccc", fontSize: "12px" }}
+                                    style={{ width: "100%", marginTop: "8px", padding: "8px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "12px", outline: "none" }}
                                 />
                             </div>
 
                             <div>
-                                <label style={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "4px" }}>Description</label>
+                                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Description</label>
                                 <textarea
                                     rows={3}
                                     required
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc" }}
+                                    style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none", resize: "vertical" }}
                                 />
                             </div>
 
-                            <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginTop: "12px" }}>
+                            <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginTop: "10px" }}>
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    style={{ padding: "8px 16px", borderRadius: "6px", border: "1px solid #ccc", background: "#fff", cursor: "pointer" }}
+                                    style={{ flex: 1, padding: "10px 16px", borderRadius: "8px", border: "1px solid #d1d5db", background: "#fff", color: "#374151", fontWeight: "700", cursor: "pointer", fontSize: "13px" }}
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={imageUploading}
-                                    style={{ padding: "8px 20px", borderRadius: "6px", border: "none", background: "#088178", color: "#fff", fontWeight: "700", cursor: "pointer" }}
+                                    style={{ flex: 1, padding: "10px 20px", borderRadius: "8px", border: "none", background: "#088178", color: "#fff", fontWeight: "700", cursor: "pointer", fontSize: "13px" }}
                                 >
                                     {editingProduct ? "Update Product" : "Create Product"}
                                 </button>

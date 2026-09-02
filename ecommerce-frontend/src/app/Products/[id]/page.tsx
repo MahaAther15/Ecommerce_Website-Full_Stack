@@ -402,7 +402,7 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
               {activeTab === "reviews" && (
                 <div>
                   {/* Ratings Breakdown Header */}
-                  <div style={{ display: "grid", gridTemplateColumns: "180px 1fr", gap: "24px", backgroundColor: "#f8faf9", padding: "20px", borderRadius: "14px", marginBottom: "24px", alignItems: "center" }}>
+                  <div className="reviews-summary-grid" style={{ display: "grid", gridTemplateColumns: "180px 1fr", gap: "24px", backgroundColor: "#f8faf9", padding: "20px", borderRadius: "14px", marginBottom: "24px", alignItems: "center" }}>
                     <div style={{ textAlign: "center", borderRight: "1px solid #e5e7eb", paddingRight: "16px" }}>
                       <h2 style={{ fontSize: "36px", fontWeight: "900", color: "#111827", margin: 0 }}>
                         {reviewSummary?.averageRating ? reviewSummary.averageRating.toFixed(1) : (product.rating ? product.rating.toFixed(1) : "0.0")}

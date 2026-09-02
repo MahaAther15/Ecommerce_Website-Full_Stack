@@ -76,8 +76,14 @@ export default function AdminCategoriesPage() {
         }
     };
 
+    const filteredCategories = categories.filter((c) =>
+        c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.slug.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (c.description && c.description.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+
     return (
-        <div>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", width: "100%" }}>
             {/* Toast */}
             {toast && (
                 <div style={{
@@ -97,13 +103,14 @@ export default function AdminCategoriesPage() {
             )}
 
             {/* Header */}
-            <div className="admin-page-header-row" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "28px" }}>
+            <div className="admin-page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", flexWrap: "wrap", gap: "12px" }}>
                 <div>
-                    <h1 style={{ fontSize: "24px", fontWeight: "800", color: "#1f2937" }}>Categories Management</h1>
-                    <p style={{ color: "#6b7280", fontSize: "14px" }}>Create and manage product categories / store sections.</p>
+                    <h1 style={{ fontSize: "24px", fontWeight: "800", color: "#1f2937", margin: "0 0 4px 0" }}>Categories Management</h1>
+                    <p style={{ color: "#6b7280", fontSize: "14px", margin: 0 }}>Create and manage product categories / store sections.</p>
                 </div>
                 <button
                     onClick={() => handleOpenModal()}
+                    className="admin-action-btn"
                     style={{
                         backgroundColor: "#088178",
                         color: "#fff",
@@ -112,9 +119,11 @@ export default function AdminCategoriesPage() {
                         fontWeight: "700",
                         border: "none",
                         cursor: "pointer",
-                        display: "flex",
+                        display: "inline-flex",
                         alignItems: "center",
-                        gap: "8px"
+                        gap: "8px",
+                        fontSize: "14px",
+                        boxShadow: "0 2px 8px rgba(8,129,120,0.2)"
                     }}
                 >
                     <i className="fas fa-plus"></i> Add New Category
@@ -122,7 +131,7 @@ export default function AdminCategoriesPage() {
             </div>
 
             {/* Search Bar */}
-            <div className="admin-search-wrapper" style={{ marginBottom: "20px", position: "relative", maxWidth: "450px" }}>
+            <div className="admin-search-wrapper" style={{ marginBottom: "20px", position: "relative", maxWidth: "450px", width: "100%" }}>
                 <i className="fas fa-search" style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "#9ca3af", fontSize: "14px" }} />
                 <input
                     type="text"
@@ -165,66 +174,149 @@ export default function AdminCategoriesPage() {
                 )}
             </div>
 
-            {/* Categories Table */}
-            <div className="admin-table-card" style={{ backgroundColor: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: "600px" }}>
-                    <thead style={{ backgroundColor: "#f9fafb", borderBottom: "1px solid #e5e7eb" }}>
-                        <tr>
-                            <th style={{ padding: "14px 16px" }}>ID</th>
-                            <th style={{ padding: "14px 16px" }}>Category Name</th>
-                            <th style={{ padding: "14px 16px" }}>Slug</th>
-                            <th style={{ padding: "14px 16px" }}>Description</th>
-                            <th style={{ padding: "14px 16px" }}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loading ? (
-                            <tr><td colSpan={5} style={{ textAlign: "center", padding: "40px" }}>Loading categories...</td></tr>
-                        ) : categories.filter((c) =>
-                            c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                            c.slug.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                            (c.description && c.description.toLowerCase().includes(searchTerm.toLowerCase()))
-                        ).length === 0 ? (
-                            <tr><td colSpan={5} style={{ textAlign: "center", padding: "40px" }}>No categories found matching your search.</td></tr>
-                        ) : (
-                            categories
-                                .filter((c) =>
-                                    c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                    c.slug.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                    (c.description && c.description.toLowerCase().includes(searchTerm.toLowerCase()))
-                                )
-                                .map((cat) => (
-                                <tr key={cat.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
-                                    <td style={{ padding: "14px 16px", color: "#6b7280" }}>#{cat.id}</td>
-                                    <td style={{ padding: "14px 16px", fontWeight: "700", color: "#111827" }}>{cat.name}</td>
-                                    <td style={{ padding: "14px 16px" }}>
-                                        <span style={{ backgroundColor: "#f3f4f6", padding: "4px 8px", borderRadius: "4px", fontSize: "12px", color: "#4b5563" }}>
-                                            {cat.slug}
-                                        </span>
-                                    </td>
-                                    <td style={{ padding: "14px 16px", color: "#6b7280", fontSize: "13px" }}>{cat.description || "—"}</td>
-                                    <td style={{ padding: "14px 16px" }}>
-                                        <div style={{ display: "flex", gap: "8px" }}>
-                                            <button
-                                                onClick={() => handleOpenModal(cat)}
-                                                style={{ background: "#f3f4f6", border: "none", padding: "6px 12px", borderRadius: "6px", cursor: "pointer", color: "#374151" }}
-                                            >
-                                                <i className="fas fa-edit"></i> Edit
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(cat.id, cat.name)}
-                                                style={{ background: "#fee2e2", border: "none", padding: "6px 12px", borderRadius: "6px", cursor: "pointer", color: "#dc2626" }}
-                                            >
-                                                <i className="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </td>
+            {/* Categories Content */}
+            {loading ? (
+                <div style={{ textAlign: "center", padding: "60px", color: "#6b7280", fontWeight: "600", backgroundColor: "#fff", borderRadius: "12px" }}>
+                    <i className="fas fa-spinner fa-spin" style={{ fontSize: "28px", color: "#088178", marginBottom: "12px", display: "block" }} />
+                    Loading categories...
+                </div>
+            ) : filteredCategories.length === 0 ? (
+                <div style={{ textAlign: "center", padding: "60px", color: "#9ca3af", backgroundColor: "#fff", borderRadius: "12px" }}>
+                    <i className="fas fa-tags" style={{ fontSize: "40px", marginBottom: "12px", display: "block" }} />
+                    No categories found matching your search.
+                </div>
+            ) : (
+                <>
+                    {/* ═══ Desktop Table View ═══ */}
+                    <div className="admin-desktop-view admin-table-card" style={{ backgroundColor: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", overflowX: "auto" }}>
+                        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: "600px" }}>
+                            <thead style={{ backgroundColor: "#f9fafb", borderBottom: "1px solid #e5e7eb" }}>
+                                <tr>
+                                    <th style={{ padding: "14px 16px" }}>ID</th>
+                                    <th style={{ padding: "14px 16px" }}>Category Name</th>
+                                    <th style={{ padding: "14px 16px" }}>Slug</th>
+                                    <th style={{ padding: "14px 16px" }}>Description</th>
+                                    <th style={{ padding: "14px 16px" }}>Actions</th>
                                 </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-            </div>
+                            </thead>
+                            <tbody>
+                                {filteredCategories.map((cat) => (
+                                    <tr key={cat.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
+                                        <td style={{ padding: "14px 16px", color: "#6b7280" }}>#{cat.id}</td>
+                                        <td style={{ padding: "14px 16px", fontWeight: "700", color: "#111827" }}>{cat.name}</td>
+                                        <td style={{ padding: "14px 16px" }}>
+                                            <span style={{ backgroundColor: "#f3f4f6", padding: "4px 8px", borderRadius: "4px", fontSize: "12px", color: "#4b5563" }}>
+                                                {cat.slug}
+                                            </span>
+                                        </td>
+                                        <td style={{ padding: "14px 16px", color: "#6b7280", fontSize: "13px" }}>{cat.description || "—"}</td>
+                                        <td style={{ padding: "14px 16px" }}>
+                                            <div style={{ display: "flex", gap: "8px" }}>
+                                                <button
+                                                    onClick={() => handleOpenModal(cat)}
+                                                    style={{ background: "#f3f4f6", border: "none", padding: "6px 12px", borderRadius: "6px", cursor: "pointer", color: "#374151", fontWeight: "600", fontSize: "12px" }}
+                                                >
+                                                    <i className="fas fa-edit"></i> Edit
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(cat.id, cat.name)}
+                                                    style={{ background: "#fee2e2", border: "none", padding: "6px 12px", borderRadius: "6px", cursor: "pointer", color: "#dc2626", fontSize: "12px" }}
+                                                    title="Delete Category"
+                                                >
+                                                    <i className="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* ═══ Mobile Card View ═══ */}
+                    <div className="admin-mobile-view" style={{ display: "none", flexDirection: "column", gap: "12px", width: "100%" }}>
+                        {filteredCategories.map((cat) => (
+                            <div
+                                key={cat.id}
+                                style={{
+                                    backgroundColor: "#fff",
+                                    borderRadius: "12px",
+                                    padding: "16px",
+                                    boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+                                    border: "1px solid #f3f4f6",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    gap: "10px"
+                                }}
+                            >
+                                {/* Top row: Name & Slug + ID */}
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "10px" }}>
+                                    <div>
+                                        <div style={{ fontWeight: "700", color: "#111827", fontSize: "15px" }}>
+                                            {cat.name}
+                                        </div>
+                                        <div style={{ fontSize: "11px", color: "#9ca3af", marginTop: "2px" }}>
+                                            ID: #{cat.id}
+                                        </div>
+                                    </div>
+                                    <span style={{ backgroundColor: "#e0f2fe", color: "#0369a1", padding: "3px 8px", borderRadius: "4px", fontSize: "11px", fontWeight: "700" }}>
+                                        {cat.slug}
+                                    </span>
+                                </div>
+
+                                {/* Description */}
+                                <p style={{ margin: 0, fontSize: "13px", color: cat.description ? "#4b5563" : "#9ca3af", fontStyle: cat.description ? "normal" : "italic", lineHeight: "1.4" }}>
+                                    {cat.description || "No description provided."}
+                                </p>
+
+                                {/* Action Buttons */}
+                                <div style={{ display: "flex", gap: "8px", paddingTop: "8px", borderTop: "1px solid #f3f4f6" }}>
+                                    <button
+                                        onClick={() => handleOpenModal(cat)}
+                                        style={{
+                                            flex: 1,
+                                            background: "#f3f4f6",
+                                            border: "1px solid #e5e7eb",
+                                            padding: "8px 12px",
+                                            borderRadius: "8px",
+                                            cursor: "pointer",
+                                            color: "#374151",
+                                            fontSize: "12px",
+                                            fontWeight: "700",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            gap: "6px"
+                                        }}
+                                    >
+                                        <i className="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(cat.id, cat.name)}
+                                        style={{
+                                            flex: 1,
+                                            background: "#fee2e2",
+                                            border: "1px solid #fecaca",
+                                            padding: "8px 12px",
+                                            borderRadius: "8px",
+                                            cursor: "pointer",
+                                            color: "#dc2626",
+                                            fontSize: "12px",
+                                            fontWeight: "700",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            gap: "6px"
+                                        }}
+                                    >
+                                        <i className="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </>
+            )}
 
             {/* Add / Edit Modal */}
             {isModalOpen && (
@@ -232,22 +324,33 @@ export default function AdminCategoriesPage() {
                     position: "fixed",
                     inset: 0,
                     backgroundColor: "rgba(0,0,0,0.5)",
+                    backdropFilter: "blur(4px)",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
                     zIndex: 10000,
-                    padding: "20px"
+                    padding: "16px"
                 }}>
                     <div style={{
                         backgroundColor: "#fff",
-                        borderRadius: "12px",
+                        borderRadius: "14px",
                         width: "100%",
-                        maxWidth: "500px",
-                        padding: "28px"
+                        maxWidth: "480px",
+                        padding: "24px",
+                        boxShadow: "0 20px 40px rgba(0,0,0,0.2)"
                     }}>
-                        <h2 style={{ fontSize: "20px", fontWeight: "800", marginBottom: "16px" }}>
-                            {editingCategory ? "✏️ Edit Category" : "✨ Add New Category"}
-                        </h2>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+                            <h2 style={{ fontSize: "18px", fontWeight: "800", margin: 0, color: "#1f2937" }}>
+                                {editingCategory ? "✏️ Edit Category" : "✨ Add New Category"}
+                            </h2>
+                            <button
+                                type="button"
+                                onClick={() => setIsModalOpen(false)}
+                                style={{ background: "none", border: "none", fontSize: "18px", color: "#9ca3af", cursor: "pointer", padding: "4px" }}
+                            >
+                                ✕
+                            </button>
+                        </div>
 
                         {error && (
                             <div style={{
@@ -258,47 +361,51 @@ export default function AdminCategoriesPage() {
                                 borderRadius: "8px",
                                 fontSize: "13px",
                                 fontWeight: "600",
-                                marginBottom: "14px"
+                                marginBottom: "14px",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "8px"
                             }}>
-                                {error}
+                                <i className="fas fa-exclamation-circle" />
+                                <span>{error}</span>
                             </div>
                         )}
 
                         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
                             <div>
-                                <label style={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "4px" }}>Category Name</label>
+                                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Category Name</label>
                                 <input
                                     type="text"
                                     required
                                     placeholder="e.g. Hoodies, Summer Collection, Footwear"
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc" }}
+                                    style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none" }}
                                 />
                             </div>
 
                             <div>
-                                <label style={{ display: "block", fontSize: "13px", fontWeight: "600", marginBottom: "4px" }}>Description (Optional)</label>
+                                <label style={{ display: "block", fontSize: "12px", fontWeight: "700", color: "#374151", marginBottom: "4px" }}>Description (Optional)</label>
                                 <textarea
                                     rows={3}
                                     placeholder="Short description for this section..."
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #ccc" }}
+                                    style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #d1d5db", fontSize: "13px", outline: "none", resize: "vertical" }}
                                 />
                             </div>
 
-                            <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginTop: "12px" }}>
+                            <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginTop: "10px" }}>
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    style={{ padding: "8px 16px", borderRadius: "6px", border: "1px solid #ccc", background: "#fff", cursor: "pointer" }}
+                                    style={{ flex: 1, padding: "10px 16px", borderRadius: "8px", border: "1px solid #d1d5db", background: "#fff", color: "#374151", fontWeight: "700", cursor: "pointer", fontSize: "13px" }}
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
-                                    style={{ padding: "8px 20px", borderRadius: "6px", border: "none", background: "#088178", color: "#fff", fontWeight: "700", cursor: "pointer" }}
+                                    style={{ flex: 1, padding: "10px 20px", borderRadius: "8px", border: "none", background: "#088178", color: "#fff", fontWeight: "700", cursor: "pointer", fontSize: "13px" }}
                                 >
                                     {editingCategory ? "Update Category" : "Create Category"}
                                 </button>

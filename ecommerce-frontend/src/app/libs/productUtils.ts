@@ -36,13 +36,22 @@ const TITLE_IMAGE_MAP: Record<string, { featured: string; newArrival: string }> 
 export function getProductImage(product?: { id?: number | string; imageUrl?: string; image?: string; title?: string; category?: string } | null): string {
   if (!product) return DEFAULT_PRODUCT_IMAGES[0];
 
-  const raw = product.imageUrl || product.image;
-  // If it's a valid remote URL (e.g. Cloudinary) or custom uploaded URL that isn't default f1.jpg
-  if (raw && raw.trim() !== "" && (raw.startsWith("http://") || raw.startsWith("https://") || (raw.startsWith("/img/products/") && raw !== "/img/products/f1.jpg"))) {
+  const raw = (product.imageUrl || product.image || "").trim();
+
+  // 1. If custom uploaded URL (Cloudinary, remote HTTPS/HTTP, base64 data)
+  if (raw.startsWith("http://") || raw.startsWith("https://") || raw.startsWith("data:")) {
     return raw;
   }
 
-  // Check matching by title and category
+  // 2. If it's a specific catalog local image that is NOT the generic default f1.jpg
+  if (raw.startsWith("/img/products/") && raw !== "/img/products/f1.jpg") {
+    return raw;
+  }
+  if (raw.startsWith("img/products/") && raw !== "img/products/f1.jpg") {
+    return `/${raw}`;
+  }
+
+  // 3. Match by Product Title & Category (maps 8 featured + 8 newArrivals uniquely)
   if (product.title) {
     const key = product.title.trim().toLowerCase();
     const cat = (product.category || "").toLowerCase();
@@ -52,6 +61,12 @@ export function getProductImage(product?: { id?: number | string; imageUrl?: str
     }
   }
 
+  // 4. If raw is non-empty and starts with slash or local path (e.g. uploaded file)
+  if (raw && raw !== "/img/products/f1.jpg" && raw !== "null" && raw !== "undefined") {
+    return raw.startsWith("/") ? raw : `/${raw}`;
+  }
+
+  // 5. Fallback distinctly distributed by product ID
   const numId = Number(product.id) || 1;
   const index = Math.abs((numId - 1) % DEFAULT_PRODUCT_IMAGES.length);
   return DEFAULT_PRODUCT_IMAGES[index];

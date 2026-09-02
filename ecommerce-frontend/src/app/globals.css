@@ -544,6 +544,7 @@ button.white {
   justify-content: space-between;
   flex-wrap: wrap;
   padding: 0 80px;
+  gap: 15px;
 }
 
 #Banner3 .banner-box {
@@ -553,7 +554,8 @@ button.white {
   justify-content: center;
   background-image: url('/img/banner/b7.jpg');
   height: 30vh;
-  min-width: 30%;
+  min-width: 22%;
+  flex: 1 1 22%;
   background-size: cover;
   background-position: center;
   padding: 20px;
@@ -566,6 +568,10 @@ button.white {
 
 #Banner3 .banner-box4 {
   background-image: url('/img/banner/b18.jpg');
+}
+
+#Banner3 .banner-box5 {
+  background-image: url('/img/banner/b16.jpg');
 }
 
 #Banner3 .banner-box h2 {
@@ -796,30 +802,39 @@ footer .copyright {
 
   /* ── Hero Section ── */
   #hero {
-    height: 50vh !important;
-    min-height: 340px !important;
-    background-position: top 25% right -120px !important;
+    height: 54vh !important;
+    min-height: 390px !important;
+    background-position: 72% 12% !important;
     background-size: cover !important;
-    padding: 0 25px !important;
+    padding: 0 25px 28px 25px !important;
+    justify-content: flex-end !important;
   }
 
   #hero h4 {
+    color: #ffffff !important;
     font-size: 14px !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6) !important;
   }
 
   #hero h2 {
+    color: #ffffff !important;
     font-size: 26px !important;
     line-height: 32px !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6) !important;
   }
 
   #hero h1 {
+    color: #00dfa2 !important;
     font-size: 30px !important;
     line-height: 36px !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6) !important;
   }
 
   #hero p {
+    color: #f1f5f9 !important;
     font-size: 12px !important;
-    max-width: 50% !important;
+    max-width: 55% !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6) !important;
   }
 
   /* ── Feature Cards (2 per row on tablet) ── */
@@ -942,19 +957,22 @@ footer .copyright {
     margin-bottom: 10px !important;
   }
 
-  /* ── Triple Banners (Banner3) ── */
+  /* ── Triple/Quad Banners (Banner3) ── */
   #Banner3 {
-    display: flex !important;
-    flex-direction: column !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
     padding: 0 20px !important;
     width: 100% !important;
+    box-sizing: border-box !important;
+    margin-bottom: 20px !important;
   }
 
   #Banner3 .banner-box {
     width: 100% !important;
-    min-width: 100% !important;
-    height: 160px !important;
-    margin-bottom: 15px !important;
+    min-width: 0 !important;
+    height: 150px !important;
+    margin-bottom: 0 !important;
     border-radius: 8px !important;
     background-size: cover !important;
     background-position: center !important;
@@ -1269,6 +1287,8 @@ footer .copyright {
   .admin-search-wrapper {
     max-width: 100% !important;
     width: 100% !important;
+    height: auto !important;
+    flex: none !important;
   }
 
   .admin-filters-bar {
@@ -1401,32 +1421,41 @@ footer .copyright {
 
   /* ── Hero Section (image properly fitting mobile) ── */
   #hero {
-    height: 45vh !important;
-    min-height: 320px !important;
-    padding: 0 15px !important;
-    background-position: top 25% right -150px !important;
+    height: 54vh !important;
+    min-height: 380px !important;
+    padding: 0 16px 20px 16px !important;
+    background-position: 72% 10% !important;
     background-size: cover !important;
+    justify-content: flex-end !important;
   }
 
   #hero h4 {
+    color: #ffffff !important;
     font-size: 12px !important;
     padding-bottom: 5px !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6) !important;
   }
 
   #hero h2 {
+    color: #ffffff !important;
     font-size: 22px !important;
     line-height: 28px !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6) !important;
   }
 
   #hero h1 {
+    color: #00dfa2 !important;
     font-size: 26px !important;
     line-height: 32px !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6) !important;
   }
 
   #hero p {
+    color: #f1f5f9 !important;
     font-size: 11px !important;
     margin: 6px 0 10px 0 !important;
-    max-width: 55% !important;
+    max-width: 60% !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6) !important;
   }
 
   #hero button {
@@ -1604,12 +1633,15 @@ footer .copyright {
     font-size: 11px !important;
   }
 
-  /* ── Triple Banners (Banner3) ── */
+  /* ── Triple/Quad Banners (Banner3) ── */
   #banner3, #Banner3 {
-    display: flex !important;
-    flex-direction: column !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
     padding: 0 15px !important;
     width: 100% !important;
+    box-sizing: border-box !important;
+    margin-bottom: 20px !important;
   }
 
   #Banner3 .banner-box {
@@ -1617,26 +1649,27 @@ footer .copyright {
     flex-direction: column !important;
     justify-content: center !important;
     align-items: flex-start !important;
-    height: 130px !important;
-    min-width: 100% !important;
+    height: 125px !important;
+    min-width: 0 !important;
     width: 100% !important;
-    padding: 15px 18px !important;
-    margin-bottom: 10px !important;
+    padding: 12px 14px !important;
+    margin-bottom: 0 !important;
     border-radius: 8px !important;
     background-size: cover !important;
     background-position: center !important;
+    box-sizing: border-box !important;
   }
 
   #Banner3 .banner-box h2 {
-    font-size: 16px !important;
-    line-height: 20px !important;
+    font-size: 13px !important;
+    line-height: 17px !important;
     margin-bottom: 3px !important;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
   }
 
   #Banner3 .banner-box h3 {
-    font-size: 12px !important;
-    line-height: 15px !important;
+    font-size: 10px !important;
+    line-height: 13px !important;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
   }
 
@@ -2168,6 +2201,8 @@ footer .copyright {
   .admin-search-wrapper {
     max-width: 100% !important;
     width: 100% !important;
+    height: auto !important;
+    flex: none !important;
   }
 
   .admin-filters-bar {
@@ -4407,24 +4442,242 @@ footer .copyright {
 /* Mobile & Tablet Responsive for #prodetails */
 @media (max-width: 900px) {
   #prodetails {
-    flex-direction: column;
-    padding: 20px 20px;
-    gap: 30px;
+    flex-direction: column !important;
+    padding: 16px 16px !important;
+    gap: 24px !important;
+    margin: 15px auto !important;
   }
 
   #prodetails .single-pro-image {
-    width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  #prodetails .main-img-wrap {
+    height: min(420px, 85vw) !important;
+    max-height: 420px !important;
+    border-radius: 16px !important;
   }
 
   #prodetails .main-img-wrap img {
-    height: 400px;
+    height: 100% !important;
+    max-height: 420px !important;
+    object-fit: cover !important;
   }
 
   #prodetails .single-pro-details {
-    width: 100%;
+    width: 100% !important;
+  }
+
+  #prodetails .pro-title {
+    font-size: 22px !important;
+    line-height: 28px !important;
+    margin-bottom: 8px !important;
+  }
+
+  #prodetails .pro-rating-row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 6px 10px !important;
+    margin-bottom: 14px !important;
+  }
+
+  #prodetails .pro-stars {
+    white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+  }
+
+  #prodetails .pro-reviews-count {
+    font-size: 12px !important;
+  }
+
+  #prodetails .pro-price-box {
+    padding: 10px 16px !important;
+    gap: 10px !important;
+    margin-bottom: 16px !important;
+  }
+
+  #prodetails .pro-price {
+    font-size: 26px !important;
+  }
+
+  #prodetails .size-options {
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+    margin-bottom: 16px !important;
+  }
+
+  #prodetails .size-btn {
+    padding: 8px 14px !important;
+    font-size: 12px !important;
+    min-width: 42px !important;
+    border-radius: 8px !important;
+  }
+
+  #prodetails .color-options {
+    gap: 10px !important;
+    margin-bottom: 18px !important;
+  }
+
+  #prodetails .color-swatch {
+    width: 28px !important;
+    height: 28px !important;
   }
 
   #prodetails .qty-actions-row {
-    flex-wrap: wrap;
+    display: grid !important;
+    grid-template-columns: 105px 1fr !important;
+    gap: 10px !important;
+    margin-bottom: 18px !important;
+  }
+
+  #prodetails .qty-stepper {
+    height: 44px !important;
+  }
+
+  #prodetails .btn-add-cart {
+    height: 44px !important;
+    font-size: 13px !important;
+  }
+
+  #prodetails .btn-buy-now {
+    grid-column: span 2 !important;
+    width: 100% !important;
+    height: 44px !important;
+    font-size: 13px !important;
+  }
+
+  #prodetails .perks-box {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    padding: 14px 12px !important;
+    margin-bottom: 20px !important;
+  }
+
+  #prodetails .perk-item {
+    font-size: 11px !important;
+    gap: 6px !important;
+  }
+
+  #prodetails .tabs-header {
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  #prodetails .tab-btn {
+    padding: 8px 14px !important;
+    font-size: 13px !important;
+  }
+
+  .reviews-summary-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+    padding: 16px !important;
+  }
+
+  .reviews-summary-grid > div:first-child {
+    border-right: none !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    padding-right: 0 !important;
+    padding-bottom: 14px !important;
+  }
+}
+
+/* ── Admin Dashboard Mobile/Desktop Responsive Utilities ── */
+.admin-desktop-view {
+  display: block;
+}
+.admin-mobile-view {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .admin-desktop-view {
+    display: none !important;
+  }
+  .admin-mobile-view {
+    display: flex !important;
+  }
+  .admin-page-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+  .admin-page-header .admin-action-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  .admin-form-row {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+  .admin-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  .admin-stats-grid .admin-kpi-highlight {
+    grid-column: span 2 !important;
+  }
+  .admin-analytics-pnl-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  .notification-dropdown-menu {
+    position: fixed !important;
+    top: 60px !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    max-width: calc(100vw - 24px) !important;
+    max-height: 75vh !important;
+    margin-top: 0 !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25) !important;
+    z-index: 999999 !important;
+  }
+  .admin-user-kpi-row {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-user-kpi-row {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 6px !important;
+  }
+  .admin-stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+  .admin-stats-grid .admin-kpi-highlight {
+    grid-column: span 2 !important;
+  }
+  .notification-dropdown-menu {
+    top: 56px !important;
+    left: 8px !important;
+    right: 8px !important;
+    max-width: calc(100vw - 16px) !important;
+  }
+}
+
+/* ── Toast and Alert Popups Mobile Responsiveness ── */
+@media (max-width: 600px) {
+  div[style*="position: fixed"][style*="top: 24px"],
+  div[style*="position: fixed"][style*="top:24px"] {
+    left: 12px !important;
+    right: 12px !important;
+    top: 12px !important;
+    max-width: calc(100vw - 24px) !important;
+    text-align: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    font-size: 13px !important;
+    padding: 10px 16px !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2) !important;
   }
 }
