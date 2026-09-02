@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
   InventoryItem,
   InventorySummary,
@@ -43,9 +43,10 @@ export default function AdminInventoryPage() {
   const loadData = async () => {
     try {
       setLoading(true);
+      const apiFilter = filter === "low" ? "lowstock" : filter === "out" ? "outofstock" : filter;
       const [sumData, listData] = await Promise.all([
         getInventorySummaryApi(),
-        getInventoryListApi(filter, search),
+        getInventoryListApi(apiFilter, search),
       ]);
       setSummary(sumData);
       setItems(listData);
@@ -62,6 +63,36 @@ export default function AdminInventoryPage() {
     }, 250);
     return () => clearTimeout(timer);
   }, [filter, search]);
+
+  // Dynamic filter and search for 100% accurate display
+  const displayedItems: InventoryItem[] = useMemo(() => {
+    if (!items) return [];
+    let list = [...items];
+
+    if (filter === "low" || filter === "lowstock") {
+      list = list.filter((item: InventoryItem) => {
+        const stock = item.stockQuantity ?? (item as any).StockQuantity ?? 0;
+        return stock > 0 && stock <= 10;
+      });
+    } else if (filter === "out" || filter === "outofstock") {
+      list = list.filter((item: InventoryItem) => {
+        const stock = item.stockQuantity ?? (item as any).StockQuantity ?? 0;
+        return stock <= 0;
+      });
+    }
+
+    if (search && search.trim()) {
+      const q = search.trim().toLowerCase();
+      list = list.filter((item: InventoryItem) => {
+        const title = (item.title || (item as any).Title || "").toLowerCase();
+        const brand = (item.brand || (item as any).Brand || "").toLowerCase();
+        const category = (item.category || (item as any).Category || "").toLowerCase();
+        return title.includes(q) || brand.includes(q) || category.includes(q);
+      });
+    }
+
+    return list;
+  }, [items, filter, search]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -297,7 +328,7 @@ export default function AdminInventoryPage() {
           <i className="fas fa-spinner fa-spin" style={{ fontSize: "28px", color: "#088178", marginBottom: "12px", display: "block" }} />
           Loading inventory items...
         </div>
-      ) : items.length === 0 ? (
+      ) : displayedItems.length === 0 ? (
         <div style={{ padding: "60px", textAlign: "center", color: "#9ca3af", backgroundColor: "#fff", borderRadius: "12px" }}>
           <i className="fas fa-box-open" style={{ fontSize: "40px", marginBottom: "12px", display: "block" }} />
           No inventory items matched your filter.
@@ -317,7 +348,7 @@ export default function AdminInventoryPage() {
                 </tr>
               </thead>
               <tbody>
-                {items.map((item) => {
+                {displayedItems.map((item) => {
                   const prodId = item.productId || (item as any).ProductId;
                   const title = item.title || (item as any).Title;
                   const price = item.price || (item as any).Price;
@@ -327,7 +358,7 @@ export default function AdminInventoryPage() {
                   const img = getProductImage({ imageUrl: item.imageUrl || (item as any).ImageUrl, id: prodId });
 
                   const isOut = stock <= 0;
-                  const isLow = stock > 0 && stock <= 5;
+                  const isLow = stock > 0 && stock <= 10;
 
                   const statusBg = isOut ? "#fee2e2" : isLow ? "#fef3c7" : "#dcfce7";
                   const statusColor = isOut ? "#dc2626" : isLow ? "#d97706" : "#16a34a";
@@ -441,7 +472,7 @@ export default function AdminInventoryPage() {
 
           {/* ═══ Mobile Card View ═══ */}
           <div className="admin-mobile-view" style={{ display: "none", flexDirection: "column", gap: "12px", width: "100%" }}>
-            {items.map((item) => {
+            {displayedItems.map((item) => {
               const prodId = item.productId || (item as any).ProductId;
               const title = item.title || (item as any).Title;
               const price = item.price || (item as any).Price;
@@ -451,7 +482,7 @@ export default function AdminInventoryPage() {
               const img = getProductImage({ imageUrl: item.imageUrl || (item as any).ImageUrl, id: prodId });
 
               const isOut = stock <= 0;
-              const isLow = stock > 0 && stock <= 5;
+              const isLow = stock > 0 && stock <= 10;
 
               const statusBg = isOut ? "#fee2e2" : isLow ? "#fef3c7" : "#dcfce7";
               const statusColor = isOut ? "#dc2626" : isLow ? "#d97706" : "#16a34a";

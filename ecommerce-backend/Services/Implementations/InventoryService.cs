@@ -25,8 +25,8 @@ namespace ecommerce_backend.Services.Implementations
             var summary = new InventorySummaryDto
             {
                 TotalProducts = products.Count,
-                InStockProducts = products.Count(p => p.StockQuantity > 5),
-                LowStockProducts = products.Count(p => p.StockQuantity > 0 && p.StockQuantity <= 5),
+                InStockProducts = products.Count(p => p.StockQuantity > 10),
+                LowStockProducts = products.Count(p => p.StockQuantity > 0 && p.StockQuantity <= 10),
                 OutOfStockProducts = products.Count(p => p.StockQuantity <= 0),
                 TotalStockUnits = products.Sum(p => p.StockQuantity)
             };
@@ -44,9 +44,10 @@ namespace ecommerce_backend.Services.Implementations
                 query = query.Where(p => p.Title.ToLower().Contains(search) || p.Category.ToLower().Contains(search) || p.Brand.ToLower().Contains(search));
             }
 
-            if (filter?.ToLower() == "lowstock")
-                query = query.Where(p => p.StockQuantity > 0 && p.StockQuantity <= 5);
-            else if (filter?.ToLower() == "outofstock")
+            var f = filter?.Trim().ToLower();
+            if (f is "low" or "lowstock" or "low_stock" or "low-stock")
+                query = query.Where(p => p.StockQuantity > 0 && p.StockQuantity <= 10);
+            else if (f is "out" or "nostock" or "outofstock" or "out_of_stock" or "out-of-stock")
                 query = query.Where(p => p.StockQuantity <= 0);
 
             var list = await query
