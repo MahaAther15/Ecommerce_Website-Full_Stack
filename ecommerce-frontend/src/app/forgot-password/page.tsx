@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { forgotPasswordApi } from "@/app/libs/authApi";
+import "../register/register.css";
 
 export default function ForgotPasswordPage() {
     const [email, setEmail] = useState("");

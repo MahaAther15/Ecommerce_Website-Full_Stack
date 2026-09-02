@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { fetchOrderById, cancelOrder, clearSelectedOrder, fetchMyOrders } from "@/app/redux/slices/orderSlice";
 import ReturnRefundModal from "../ReturnRefundModal";
 import { getProductImage } from "@/app/libs/productUtils";
+import "../orders.css";
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: string }> = {
     Pending: { label: "Pending", color: "#d97706", bg: "#fef3c7", icon: "fas fa-clock" },

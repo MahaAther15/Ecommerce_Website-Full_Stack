@@ -1,4 +1,5 @@
 import RegisterForm from "../Components/Auth/RegisterForm";
+import "./register.css";
 
 export default function RegisterPage() {
   return (

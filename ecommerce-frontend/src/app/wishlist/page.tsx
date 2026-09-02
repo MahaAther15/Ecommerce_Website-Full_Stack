@@ -10,6 +10,7 @@ import {
   clearUserWishlist,
 } from "../redux/slices/wishlistslice";
 import { getProductImage } from "../libs/productUtils";
+import "./wishlist.css";
 
 interface ToastState {
   message: string;

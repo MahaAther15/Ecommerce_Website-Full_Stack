@@ -1,0 +1,108 @@
+/* User Profile & Dashboard Styles */
+.profile-dashboard-wrapper {
+  overflow-y: visible !important;
+  width: 100%;
+  padding: 40px 20px;
+  background-color: #f8fafc;
+}
+
+.profile-dashboard-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.04);
+  display: flex;
+  overflow: visible !important;
+  border: 1px solid #f1f5f9;
+}
+
+.profile-dashboard-sidebar {
+  width: 280px;
+  background-color: #ffffff;
+  border-right: 1px solid #f1f5f9;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.profile-dashboard-main {
+  flex: 1;
+  min-width: 0;
+  overflow-y: visible !important;
+  height: auto !important;
+  scrollbar-width: thin;
+  scrollbar-color: #088178 #f1f1f1;
+}
+
+.profile-content-area {
+  padding: 30px;
+}
+
+.profile-hamburger-btn {
+  display: none !important;
+}
+
+.profile-close-btn {
+  display: none !important;
+}
+
+.profile-address-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+/* Mobile Profile Dashboard Media Queries */
+@media (max-width: 992px) {
+  .profile-dashboard-wrapper {
+    padding: 16px 12px !important;
+    min-height: auto !important;
+    display: block !important;
+  }
+  .profile-dashboard-container {
+    flex-direction: column !important;
+    min-height: auto !important;
+    height: auto !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
+  }
+  .profile-dashboard-sidebar {
+    position: fixed !important;
+    left: -300px !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: 270px !important;
+    z-index: 99999 !important;
+    border-radius: 0 !important;
+    transition: left 0.3s ease-in-out !important;
+    box-shadow: 4px 0 25px rgba(0, 0, 0, 0.3) !important;
+  }
+  .profile-dashboard-sidebar.open {
+    left: 0 !important;
+  }
+  .profile-hamburger-btn {
+    display: flex !important;
+  }
+  .profile-close-btn {
+    display: block !important;
+  }
+  .profile-header-bar {
+    padding: 14px 16px !important;
+    border-radius: 16px 16px 0 0 !important;
+  }
+  .profile-dashboard-main {
+    border-radius: 16px !important;
+    overflow-y: visible !important;
+    height: auto !important;
+  }
+  .profile-content-area {
+    padding: 16px 14px !important;
+    overflow-y: visible !important;
+  }
+  .profile-address-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+}

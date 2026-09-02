@@ -9,6 +9,7 @@ import { getUserAddressesApi, AddressDto } from "@/app/libs/addressApi";
 
 import PaymentForm from "@/app/Components/Payment/PaymentForm";
 import OrderSummary from "@/app/Components/Payment/OrderSummary";
+import "./payment.css";
 
 export default function PaymentPage() {
   const router = useRouter();

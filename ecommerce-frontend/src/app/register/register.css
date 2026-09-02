@@ -1,0 +1,132 @@
+/* Auth (Login / Register / Password Reset) Styles */
+.auth-page-root {
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-page-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.auth-card-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  max-width: 920px;
+  max-height: 580px;
+  min-height: 520px;
+  background-color: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(8, 129, 120, 0.12);
+  overflow: hidden;
+}
+
+.auth-banner-side {
+  flex: 1;
+  padding: 45px 38px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 24px 0 0 24px;
+  text-align: left;
+}
+
+.auth-form-side {
+  flex: 1.15;
+  padding: 45px 45px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 0 24px 24px 0;
+}
+
+.auth-scrollable-form {
+  overflow-y: auto;
+  padding-right: 6px;
+  max-height: 480px;
+}
+
+.auth-scrollable-form::-webkit-scrollbar {
+  width: 5px;
+}
+.auth-scrollable-form::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.auth-input-group {
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.auth-input-group label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+}
+
+.auth-input-group input {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1.5px solid #e5e7eb;
+  font-size: 13px;
+  outline: none;
+  transition: all 0.2s ease;
+  background-color: #f9fafb;
+}
+
+.auth-input-group input:focus {
+  border-color: #088178;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(8, 129, 120, 0.12);
+}
+
+.auth-submit-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  background-color: #088178;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(8, 129, 120, 0.25);
+  margin-top: 10px;
+}
+
+.auth-submit-btn:hover {
+  background-color: #066a63;
+  transform: translateY(-1px);
+}
+
+/* Auth Responsive */
+@media (max-width: 900px) {
+  .auth-card-container {
+    flex-direction: column !important;
+    max-width: 480px !important;
+    max-height: 94vh !important;
+    height: auto !important;
+    overflow-y: auto !important;
+  }
+  .auth-banner-side {
+    display: none !important;
+  }
+  .auth-form-side {
+    padding: 30px 24px !important;
+  }
+}

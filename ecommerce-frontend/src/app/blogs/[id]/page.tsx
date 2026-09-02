@@ -5,6 +5,7 @@ import Link from "next/link";
 import { getBlogByIdApi, BlogItem } from "@/app/libs/blogApi";
 import fallbackBlogs from "@/app/data/blogs.json";
 import Newsletter from "@/app/Components/Layout/Newsletter";
+import "../blogs.css";
 
 interface BlogDetailPageProps {
   params: Promise<{ id: string }>;

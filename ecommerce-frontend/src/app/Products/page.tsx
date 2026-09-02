@@ -8,6 +8,7 @@ import ProductGrid from "@/app/Components/Products/ProductGrid";
 import ProductFilters from "@/app/Components/Products/ProductFilters";
 import ProductSort from "@/app/Components/Products/ProductSort";
 import Newsletter from "@/app/Components/Layout/Newsletter";
+import "./products.css";
 
 export default function ProductsPage() {
   const dispatch = useAppDispatch();

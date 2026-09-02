@@ -9,6 +9,7 @@ import { useAppDispatch } from "@/app/redux/hooks";
 import { logout as reduxLogout } from "@/app/redux/slices/authslice";
 import { resetWishlist } from "@/app/redux/slices/wishlistslice";
 import NotificationDropdown from "@/app/Components/Notification/NotificationDropdown";
+import "./admin.css";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const router = useRouter();

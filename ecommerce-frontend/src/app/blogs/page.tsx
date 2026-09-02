@@ -8,6 +8,7 @@ import Newsletter from "../Components/Layout/Newsletter";
 import { getAllBlogsApi, getBlogCategoriesApi, searchBlogsApi, BlogItem } from "@/app/libs/blogApi";
 import fallbackBlogs from "@/app/data/blogs.json";
 import { BlogPost } from "@/app/types/blog";
+import "./blogs.css";
 
 export default function BlogsPage() {
   const [blogs, setBlogs] = useState<BlogPost[]>([]);

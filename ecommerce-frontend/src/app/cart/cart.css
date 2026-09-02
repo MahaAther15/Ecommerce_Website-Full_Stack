@@ -1,0 +1,141 @@
+/* Cart Page Styles */
+#cart {
+  overflow-x: auto;
+}
+
+#cart table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  white-space: nowrap;
+}
+
+#cart table img {
+  width: 70px;
+}
+
+#cart table td:nth-child(1) {
+  width: 100px;
+  text-align: center;
+}
+
+#cart table td:nth-child(2) {
+  width: 150px;
+  text-align: center;
+}
+
+#cart table td:nth-child(3) {
+  width: 250px;
+  text-align: center;
+}
+
+#cart table td:nth-child(4),
+#cart table td:nth-child(5),
+#cart table td:nth-child(6) {
+  width: 150px;
+  text-align: center;
+}
+
+#cart table td:nth-child(5) input {
+  width: 70px;
+  padding: 10px 5px 10px 15px;
+}
+
+#cart table thead {
+  border: 1px solid #e2e9e2;
+  border-left: none;
+  border-right: none;
+}
+
+#cart table thead td {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 15px;
+  padding: 18px 0;
+}
+
+#cart table tbody tr td {
+  padding-top: 15px;
+}
+
+#cart table tbody td {
+  font-size: 15px;
+}
+
+#cart-add {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+#subtotal button {
+  background-color: #088178;
+  color: white;
+  padding: 12px 20px;
+}
+
+#subtotal {
+  width: 100%;
+  max-width: 480px;
+  margin-bottom: 30px;
+  border: 1px solid #e2e9e2;
+  border-radius: 12px;
+  padding: 28px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+}
+
+#subtotal table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+#subtotal table td {
+  width: 50%;
+  border: 1px solid #e2e9e2;
+  padding: 10px;
+  font-size: 15px;
+}
+
+#subtotal h3 {
+  padding-bottom: 15px;
+}
+
+/* Cart Mobile/Desktop Responsive Views */
+.cart-desktop-view {
+  display: block;
+}
+.cart-mobile-view {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .cart-desktop-view {
+    display: none !important;
+  }
+  .cart-mobile-view {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+  #cart {
+    padding: 20px 14px !important;
+    overflow-x: visible !important;
+  }
+  #cart-add {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 20px 14px 40px !important;
+    gap: 20px !important;
+  }
+  #subtotal {
+    width: 100% !important;
+    padding: 22px 18px !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 14px !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
+    box-sizing: border-box !important;
+    margin-bottom: 0 !important;
+  }
+}

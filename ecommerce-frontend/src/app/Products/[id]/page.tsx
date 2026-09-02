@@ -10,6 +10,7 @@ import { toggleWishlistItem } from "@/app/redux/slices/wishlistslice";
 import { fetchProductById } from "@/app/redux/slices/productSlice";
 import { fetchProductReviews } from "@/app/redux/slices/reviewSlice";
 import { getProductImage } from "@/app/libs/productUtils";
+import "../products.css";
 
 interface ProductDetailsProps {
   params: Promise<{ id: string }>;

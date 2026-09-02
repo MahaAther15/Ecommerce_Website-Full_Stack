@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { removeFromCart, updateQuantity } from "../redux/slices/cartslice";
 
 import { CartItemType } from "../types/cart";
+import "./cart.css";
 
 export default function CartPage() {
   const [mounted, setMounted] = useState(false);

@@ -4,6 +4,7 @@ import { useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { resetPasswordApi } from "@/app/libs/authApi";
+import "../register/register.css";
 
 function ResetPasswordForm() {
     const searchParams = useSearchParams();

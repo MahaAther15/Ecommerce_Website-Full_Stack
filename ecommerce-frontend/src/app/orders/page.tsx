@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/app/redux/hooks";
 import { fetchMyOrders } from "@/app/redux/slices/orderSlice";
+import "./orders.css";
 
 const STATUS_CONFIG: Record<string, { color: string; bg: string; icon: string }> = {
     Pending:   { color: "#d97706", bg: "#fef3c7", icon: "fas fa-clock" },
