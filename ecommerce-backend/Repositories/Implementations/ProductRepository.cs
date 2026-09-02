@@ -34,6 +34,12 @@ namespace ecommerce_backend.Repositories.Implementations
                 query = query.Where(p => p.Category.ToLower() == filter.Category.Trim().ToLower());
             }
 
+            // 2b. Brand filter
+            if (!string.IsNullOrWhiteSpace(filter.Brand) && filter.Brand.ToLower() != "all")
+            {
+                query = query.Where(p => p.Brand.ToLower() == filter.Brand.Trim().ToLower());
+            }
+
             // 3. Price filter
             if (filter.MinPrice.HasValue)
                 query = query.Where(p => p.Price >= filter.MinPrice.Value);
@@ -44,10 +50,12 @@ namespace ecommerce_backend.Repositories.Implementations
             // 4. Sorting
             query = filter.SortBy?.ToLower() switch
             {
-                "price_asc" => query.OrderBy(p => p.Price),
-                "price_desc" => query.OrderByDescending(p => p.Price),
-                "rating" => query.OrderByDescending(p => p.Rating),
-                "newest" => query.OrderByDescending(p => p.CreatedAt),
+                "price_asc" or "price-low-high" or "low-to-high" => query.OrderBy(p => p.Price),
+                "price_desc" or "price-high-low" or "high-to-low" => query.OrderByDescending(p => p.Price),
+                "rating" or "best-rating" => query.OrderByDescending(p => p.Rating),
+                "newest" or "new-arrivals" => query.OrderByDescending(p => p.CreatedAt),
+                "title_asc" or "title-az" or "name-az" => query.OrderBy(p => p.Title),
+                "title_desc" or "title-za" or "name-za" => query.OrderByDescending(p => p.Title),
                 _ => query.OrderByDescending(p => p.Id)
             };
 
