@@ -264,9 +264,6 @@ export default function ProductDetailsPage({ params }: ProductDetailsProps) {
           <div style={{ marginBottom: "18px" }}>
             <div className="variant-label">
               <span>Select Size: <strong>{selectedSize}</strong></span>
-              <a href="#" onClick={(e) => { e.preventDefault(); alert("Standard US Sizing. True to size fit."); }} style={{ color: "#088178", fontSize: "12px", textDecoration: "underline" }}>
-                Size Guide
-              </a>
             </div>
             <div className="size-options">
               {["S", "M", "L", "XL", "XXL"].map((sz) => (
