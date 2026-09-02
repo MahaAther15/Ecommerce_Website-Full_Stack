@@ -4758,3 +4758,26 @@ footer .copyright {
     gap: 12px !important;
   }
 }
+
+/* ── Cart Mobile/Desktop Responsive Views ── */
+.cart-desktop-view {
+  display: block;
+}
+.cart-mobile-view {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .cart-desktop-view {
+    display: none !important;
+  }
+  .cart-mobile-view {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+  #cart {
+    padding: 20px 14px !important;
+    overflow-x: visible !important;
+  }
+}
