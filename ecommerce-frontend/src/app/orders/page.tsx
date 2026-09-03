@@ -27,7 +27,7 @@ export default function MyOrdersPage() {
     }, [isAuthenticated]);
 
     return (
-        <div style={{ maxWidth: "900px", margin: "40px auto", padding: "0 24px", fontFamily: "'Inter', system-ui, sans-serif" }}>
+        <div style={{ maxWidth: "900px", margin: "40px auto", padding: "0 24px 60px 24px", fontFamily: "'Inter', system-ui, sans-serif" }}>
             <style>{`
                 @keyframes spin { to { transform: rotate(360deg); } }
                 @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

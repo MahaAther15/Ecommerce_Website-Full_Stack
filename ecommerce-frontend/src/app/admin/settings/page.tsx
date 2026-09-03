@@ -40,7 +40,7 @@ export default function AdminSettingsPage() {
     };
 
     return (
-        <div style={{ maxWidth: "800px" }}>
+        <div style={{ maxWidth: "800px", paddingBottom: "50px" }}>
             {/* Toast Notification */}
             {toastMessage && (
                 <div style={{

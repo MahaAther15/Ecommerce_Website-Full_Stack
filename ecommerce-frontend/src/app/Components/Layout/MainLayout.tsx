@@ -16,7 +16,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
 
   if (isNoHeaderFooterPage) {
-    return <main style={{ height: "100vh", overflow: "hidden" }}>{children}</main>;
+    return <main className="min-h-screen w-full">{children}</main>;
   }
 
   return (

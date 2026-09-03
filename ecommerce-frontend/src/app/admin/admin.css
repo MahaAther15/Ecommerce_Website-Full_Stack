@@ -156,6 +156,13 @@
     grid-template-columns: repeat(3, 1fr) !important;
     gap: 8px !important;
   }
+  .admin-content-padding {
+    padding: 14px 10px 100px 10px !important;
+  }
+  .admin-settings-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
   .admin-product-modal {
     width: 100% !important;
     max-width: calc(100vw - 28px) !important;

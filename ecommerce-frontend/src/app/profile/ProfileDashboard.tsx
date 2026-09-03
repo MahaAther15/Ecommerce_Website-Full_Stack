@@ -353,7 +353,7 @@ export default function ProfileDashboard() {
         fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif",
         display: "flex",
         justifyContent: "center",
-        alignItems: "center",
+        alignItems: "flex-start",
       }}
     >
       {/* Outer Dashboard Container */}
@@ -803,7 +803,7 @@ export default function ProfileDashboard() {
 
             {/* ═══ EDIT PROFILE TAB ═══ */}
             {activeTab === "profile" && (
-              <div style={{ backgroundColor: "#fff", border: "1px solid #f0ebe6", padding: "28px", borderRadius: "16px" }}>
+              <div style={{ backgroundColor: "#fff", border: "1px solid #f0ebe6", padding: "28px", borderRadius: "16px", marginBottom: "50px" }}>
                 <h3 style={{ margin: "0 0 4px 0", fontSize: "18px", fontWeight: "800", color: "#1a1a1a" }}>Edit Personal Profile</h3>
                 <p style={{ fontSize: "12px", color: "#888", marginBottom: "24px" }}>Update your display name and contact details.</p>
 
@@ -847,7 +847,7 @@ export default function ProfileDashboard() {
 
             {/* ═══ SAVED ADDRESSES TAB ═══ */}
             {activeTab === "address" && (
-              <div style={{ backgroundColor: "#fff", border: "1px solid #f0ebe6", padding: "28px", borderRadius: "16px" }}>
+              <div style={{ backgroundColor: "#fff", border: "1px solid #f0ebe6", padding: "28px", borderRadius: "16px", marginBottom: "50px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "12px" }}>
                   <div>
                     <h3 style={{ margin: "0 0 4px 0", fontSize: "18px", fontWeight: "800", color: "#1a1a1a" }}>My Saved Addresses</h3>
@@ -1038,7 +1038,7 @@ export default function ProfileDashboard() {
 
             {/* ═══ ORDERS TAB ═══ */}
             {activeTab === "orders" && (
-              <div style={{ backgroundColor: "#fff", border: "1px solid #f0ebe6", borderRadius: "16px", overflow: "hidden" }}>
+              <div style={{ backgroundColor: "#fff", border: "1px solid #f0ebe6", borderRadius: "16px", overflow: "hidden", marginBottom: "40px" }}>
                 <div style={{ padding: "20px 24px", borderBottom: "1px solid #f0ebe6", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <div>
                     <h3 style={{ margin: 0, fontSize: "17px", fontWeight: "800", color: "#1a1a1a" }}>Order History</h3>
@@ -1098,7 +1098,7 @@ export default function ProfileDashboard() {
 
             {/* ═══ SETTINGS TAB ═══ */}
             {activeTab === "settings" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "24px", marginBottom: "50px" }}>
                 <div style={{ backgroundColor: "#fff", border: "1px solid #f0ebe6", padding: "28px", borderRadius: "16px" }}>
                   <h3 style={{ margin: "0 0 4px 0", fontSize: "18px", fontWeight: "800", color: "#1a1a1a" }}>Account & Security Settings</h3>
                   <p style={{ fontSize: "12px", color: "#888", marginBottom: "24px" }}>Manage your account session and permanent data controls.</p>

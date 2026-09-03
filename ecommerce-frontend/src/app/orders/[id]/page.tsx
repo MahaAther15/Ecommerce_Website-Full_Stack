@@ -77,7 +77,7 @@ export default function OrderDetailPage() {
     const orderCode = order.orderNumber || `ORD-${10000 + order.id}`;
 
     return (
-        <div className="order-tracking-wrapper" style={{ maxWidth: "900px", margin: "40px auto", padding: "0 24px", fontFamily: "'Inter', system-ui, sans-serif" }}>
+        <div className="order-tracking-wrapper" style={{ maxWidth: "900px", margin: "40px auto", padding: "0 24px 60px 24px", fontFamily: "'Inter', system-ui, sans-serif" }}>
 
             {/* Header */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "32px", flexWrap: "wrap", gap: "16px" }}>
