@@ -7,6 +7,7 @@ export default function AdminAnalyticsPage() {
     const [range, setRange] = useState("30days");
     const [report, setReport] = useState<AnalyticReport | null>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [showExpenseModal, setShowExpenseModal] = useState(false);
     const [expTitle, setExpTitle] = useState("");
     const [expAmount, setExpAmount] = useState("");
@@ -19,10 +20,12 @@ export default function AdminAnalyticsPage() {
 
     const loadData = async (selectedRange: string) => {
         setLoading(true);
+        setError(null);
         try {
             const data = await getAnalyticsReportApi(selectedRange);
             setReport(data);
         } catch (err: any) {
+            setError(err.message || "Unable to fetch live analytics from server.");
             showToast(err.message || "Error loading analytics", "error");
         } finally {
             setLoading(false);
@@ -48,14 +51,33 @@ export default function AdminAnalyticsPage() {
         }
     };
 
-    if (loading || !report) {
+    if (loading) {
         return (
-            <div style={{ padding: "60px", textAlign: "center", backgroundColor: "#fff", borderRadius: "12px" }}>
-                <i className="fas fa-spinner fa-spin" style={{ fontSize: "28px", color: "#088178", marginBottom: "12px", display: "block" }} />
-                <p style={{ margin: 0, color: "#6b7280", fontWeight: "600" }}>Calculating financial metrics from database sources...</p>
+            <div style={{ padding: "60px", textAlign: "center", backgroundColor: "#fff", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
+                <i className="fas fa-spinner fa-spin" style={{ fontSize: "32px", color: "#088178", marginBottom: "16px", display: "block" }} />
+                <h3 style={{ margin: "0 0 6px 0", fontSize: "16px", color: "#1f2937", fontWeight: "700" }}>Calculating Financial Metrics...</h3>
+                <p style={{ margin: 0, color: "#6b7280", fontSize: "13px" }}>Aggregating live transactions, revenue, and inventory data from database sources.</p>
             </div>
         );
     }
+
+    if (error && !report) {
+        return (
+            <div style={{ padding: "40px", textAlign: "center", backgroundColor: "#fff", borderRadius: "12px", border: "1px solid #fee2e2", boxShadow: "0 2px 8px rgba(0,0,0,0.05)", maxWidth: "600px", margin: "40px auto" }}>
+                <i className="fas fa-exclamation-triangle" style={{ fontSize: "36px", color: "#dc2626", marginBottom: "16px", display: "block" }} />
+                <h3 style={{ margin: "0 0 8px 0", fontSize: "18px", color: "#1f2937", fontWeight: "800" }}>Analytics Data Unavailable</h3>
+                <p style={{ margin: "0 0 20px 0", color: "#6b7280", fontSize: "14px" }}>{error}</p>
+                <button
+                    onClick={() => loadData(range)}
+                    style={{ backgroundColor: "#088178", color: "#fff", border: "none", padding: "10px 24px", borderRadius: "8px", fontWeight: "700", fontSize: "13px", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px" }}
+                >
+                    <i className="fas fa-redo-alt" /> Retry Connection
+                </button>
+            </div>
+        );
+    }
+
+    if (!report) return null;
 
     const { financials, returnsAndLoss } = report;
 
