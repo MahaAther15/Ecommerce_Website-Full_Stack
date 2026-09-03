@@ -346,14 +346,15 @@ export default function ProfileDashboard() {
     <div
       className="profile-dashboard-wrapper"
       style={{
-        minHeight: "100vh",
+        height: "100vh",
         backgroundColor: "#f5f0eb",
         padding: "24px",
         boxSizing: "border-box",
         fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif",
         display: "flex",
         justifyContent: "center",
-        alignItems: "flex-start",
+        alignItems: "center",
+        overflow: "hidden",
       }}
     >
       {/* Outer Dashboard Container */}
@@ -362,13 +363,14 @@ export default function ProfileDashboard() {
         style={{
           width: "100%",
           maxWidth: "1280px",
-          minHeight: "calc(100vh - 48px)",
-          height: "auto",
+          height: "calc(100vh - 48px)",
+          maxHeight: "calc(100vh - 48px)",
           backgroundColor: "#ffffff",
           borderRadius: "24px",
           boxShadow: "0 20px 60px rgba(0, 0, 0, 0.08)",
           display: "flex",
           position: "relative",
+          overflow: "hidden",
         }}
       >
         {/* Mobile Backdrop Overlay */}
@@ -393,6 +395,7 @@ export default function ProfileDashboard() {
           className={`profile-dashboard-sidebar ${sidebarOpen ? "open" : ""}`}
           style={{
             width: "230px",
+            height: "100%",
             background: "linear-gradient(180deg, #088178 0%, #065c54 100%)",
             padding: "28px 16px",
             display: "flex",
@@ -400,6 +403,7 @@ export default function ProfileDashboard() {
             color: "#ffffff",
             flexShrink: 0,
             borderRadius: "24px 0 0 24px",
+            overflowY: "auto",
           }}
         >
           {/* Logo / Brand & Close button */}
@@ -531,7 +535,7 @@ export default function ProfileDashboard() {
         </aside>
 
         {/* ───── RIGHT MAIN PANEL ───── */}
-        <main className="profile-dashboard-main" style={{ flex: 1, backgroundColor: "#faf8f5", display: "flex", flexDirection: "column", overflowY: "auto" }}>
+        <main className="profile-dashboard-main" style={{ flex: 1, minWidth: 0, minHeight: 0, height: "100%", backgroundColor: "#faf8f5", display: "flex", flexDirection: "column", overflow: "hidden" }}>
 
           {/* Top Header Bar */}
           <header
@@ -543,6 +547,7 @@ export default function ProfileDashboard() {
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
+              flexShrink: 0,
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -612,7 +617,7 @@ export default function ProfileDashboard() {
           </header>
 
           {/* Main Content Padding */}
-          <div className="profile-content-area" style={{ padding: "24px 30px", flex: 1 }}>
+          <div className="profile-content-area" style={{ padding: "24px 30px", flex: 1, minHeight: 0, overflowY: "auto" }}>
 
             {/* 🔴 Error Alert */}
             {errorMessage && (
